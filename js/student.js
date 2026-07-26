@@ -77,22 +77,17 @@
     const palette = ["#4f7cff", "#4fd1c5", "#ffb454", "#ff6b9d", "#a78bfa", "#34d399", "#ffd54a", "#63b3ff"];
     const labels = ordered.map((r) => `${r.semester || ""} ${r.examType || ""}`.trim() || r.date || "");
 
-    subjectNames.forEach((name, i) => {
-      const color = palette[i % palette.length];
-      const scores = ordered.map((r) => {
-        const s = (r.subjects || []).find((x) => x.name === name);
-        return s ? s.score : null;
-      });
+    function addMiniChart(title, color, scores, isAverage) {
       const validScores = scores.filter((v) => typeof v === "number");
       const minScore = validScores.length ? Math.min(...validScores) : 0;
-      // 下限＝該科目歷史最低分再往下 10 分（不低於 0），上限固定 100 分，讓趨勢起伏更明顯
+      // 下限＝歷史最低分再往下 10 分（不低於 0），上限固定 100 分，讓趨勢起伏更明顯
       const yMin = Math.max(0, Math.floor(minScore) - 10);
 
       const card = document.createElement("div");
-      card.className = "card mini-chart-card";
+      card.className = "card mini-chart-card" + (isAverage ? " mini-chart-average" : "");
       card.innerHTML = `
         <div class="mini-chart-head">
-          <div class="mini-chart-title"><span class="dot" style="background:${color}"></span>${escapeHtml(name)}</div>
+          <div class="mini-chart-title"><span class="dot" style="background:${color}"></span>${escapeHtml(title)}</div>
           <div class="mini-chart-range">${yMin} ~ 100</div>
         </div>
         <canvas height="160"></canvas>
@@ -105,7 +100,7 @@
           labels,
           datasets: [
             {
-              label: name,
+              label: title,
               data: scores,
               borderColor: color,
               backgroundColor: color + "22",
@@ -126,6 +121,19 @@
           },
         },
       });
+    }
+
+    // 最上方先放「平均」趨勢圖（取每次紀錄所有科目的平均分）
+    const avgScores = ordered.map((r) => (typeof r.result?.avgScore === "number" ? r.result.avgScore : null));
+    addMiniChart("平均", "#e7ecf7", avgScores, true);
+
+    subjectNames.forEach((name, i) => {
+      const color = palette[i % palette.length];
+      const scores = ordered.map((r) => {
+        const s = (r.subjects || []).find((x) => x.name === name);
+        return s ? s.score : null;
+      });
+      addMiniChart(name, color, scores, false);
     });
   }
 
