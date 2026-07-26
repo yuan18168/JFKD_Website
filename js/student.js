@@ -59,36 +59,40 @@
   function renderChart(rows) {
     const ordered = [...rows].reverse(); // 時間由舊到新
     const ctx = document.getElementById("trendChart");
+
+    // 依第一次出現的順序，收集所有出現過的科目名稱
+    const subjectNames = [];
+    ordered.forEach((r) => {
+      (r.subjects || []).forEach((s) => {
+        if (!subjectNames.includes(s.name)) subjectNames.push(s.name);
+      });
+    });
+
+    const palette = ["#4f7cff", "#4fd1c5", "#ffb454", "#ff6b9d", "#a78bfa", "#34d399", "#ffd54a", "#63b3ff"];
+
+    const datasets = subjectNames.map((name, i) => ({
+      label: name,
+      data: ordered.map((r) => {
+        const s = (r.subjects || []).find((x) => x.name === name);
+        return s ? s.score : null;
+      }),
+      borderColor: palette[i % palette.length],
+      backgroundColor: "transparent",
+      tension: 0.3,
+      spanGaps: true,
+    }));
+
     new Chart(ctx, {
       type: "line",
       data: {
         labels: ordered.map((r) => `${r.date || ""} ${r.examType || ""}`),
-        datasets: [
-          {
-            label: "總獎金 (NT$)",
-            data: ordered.map((r) => r.total),
-            borderColor: "#4f7cff",
-            backgroundColor: "rgba(79,124,255,0.15)",
-            tension: 0.3,
-            fill: true,
-            yAxisID: "y",
-          },
-          {
-            label: "平均分數",
-            data: ordered.map((r) => r.result.avgScore),
-            borderColor: "#4fd1c5",
-            backgroundColor: "transparent",
-            tension: 0.3,
-            yAxisID: "y1",
-          },
-        ],
+        datasets,
       },
       options: {
         responsive: true,
         interaction: { mode: "index", intersect: false },
         scales: {
-          y: { position: "left", ticks: { color: "#93a0c2" }, grid: { color: "#263354" } },
-          y1: { position: "right", min: 0, max: 100, ticks: { color: "#93a0c2" }, grid: { drawOnChartArea: false } },
+          y: { min: 0, max: 100, ticks: { color: "#93a0c2" }, grid: { color: "#263354" } },
           x: { ticks: { color: "#93a0c2" }, grid: { color: "#1a2440" } },
         },
         plugins: { legend: { labels: { color: "#e7ecf7" } } },
