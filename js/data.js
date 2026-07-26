@@ -19,6 +19,19 @@ async function saveRules(rules) {
   await db.collection("config").doc("rules").set(rules, { merge: false });
 }
 
+// ------------------------------------------------------------------
+// 科目對照表：依「年級」（上下學期共用同一份）固定科目清單，例如
+// { "一": ["國語","英文","數學"], "三": ["國語","英文","數學","自然","社會"], ... }
+// 該年級沒有設定（陣列為空或不存在）時，考試表單維持自由輸入科目的方式。
+async function getSubjectPresets() {
+  const doc = await db.collection("config").doc("subjectPresets").get();
+  return doc.exists ? doc.data() : {};
+}
+
+async function saveSubjectPresets(presets) {
+  await db.collection("config").doc("subjectPresets").set(presets, { merge: false });
+}
+
 async function listStudents() {
   const snap = await db.collection("students").orderBy("order", "asc").get();
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
