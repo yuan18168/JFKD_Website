@@ -250,6 +250,7 @@ th.num { text-align: right; }
 .badge-normal { background: rgba(136,146,176,0.15); color: var(--tier-normal); }
 .badge-penalty { background: rgba(255,107,107,0.15); color: var(--tier-penalty); }
 .badge-done { background: rgba(52,211,153,0.15); color: var(--good); }
+.badge-warn { background: rgba(255,180,84,0.15); color: var(--warn); }
 .badge-first { background: rgba(147,160,194,0.15); color: var(--text-dim); margin-left: 6px; }
 
 /* ---------- Forms ---------- */
@@ -290,11 +291,16 @@ input[readonly] { background: var(--bg-card); color: var(--text-dim); cursor: de
 .btn-sm { padding: 6px 10px; font-size: 12px; }
 
 /* ---------- 考試紀錄表單：科目與計算合併表格 ---------- */
+/* 注意：不要在 td 本身設 display:flex，會讓該欄位跳出表格版面模型，
+   導致同一列其他欄位的格線高度對不齊、看起來像斷線。改成在 td 裡面包一層
+   inline-flex 的 span，td 本身維持預設的 table-cell 顯示模式。 */
 #subjectsCalcTable td:first-child {
-  display: flex;
+  white-space: nowrap;
+}
+.subject-name-cell {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  white-space: nowrap;
 }
 .subject-badges { display: inline-flex; align-items: center; gap: 4px; }
 .subject-badges:empty { display: none; }
