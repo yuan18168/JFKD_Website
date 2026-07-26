@@ -289,11 +289,11 @@
       let loadedFromLast = false;
       if (lastRecord && (lastRecord.subjects || []).length) {
         const useLast = confirm(
-          `偵測到最近一筆紀錄（${lastRecord.date || ""} ${lastRecord.semester || ""} ${lastRecord.examType || ""}），要直接帶出該次的科目與分數，作為這次的「上次分數」嗎？`
+          `偵測到最近一筆紀錄（${lastRecord.date || ""} ${lastRecord.semester || ""} ${lastRecord.examType || ""}），要直接帶出該次的科目清單嗎？分數請重新輸入，系統會自動與上一次分數比對計算進步／衛冕獎金。`
         );
         if (useLast) {
           subjectRowsEl.innerHTML = "";
-          lastRecord.subjects.forEach((s) => addSubjectRow(s.name, "", s.score));
+          lastRecord.subjects.forEach((s) => addSubjectRow(s.name, ""));
           loadedFromLast = true;
         }
       }
@@ -352,12 +352,12 @@
       else subjectRowsEl.insertBefore(draggedRow, afterEl);
     });
 
-    function addSubjectRow(name = "", score = "", prevScore = "") {
+    function addSubjectRow(name = "", score = "") {
       rowCount++;
       const rowId = "row" + rowCount;
       const row = document.createElement("div");
       row.className = "subject-row";
-      row.style.gridTemplateColumns = "auto 1.2fr 1fr 1fr auto";
+      row.style.gridTemplateColumns = "auto 1.2fr 1fr auto";
       row.dataset.rowId = rowId;
       row.innerHTML = `
         <div style="display:flex; align-items:flex-end; padding-bottom:9px;">
@@ -370,10 +370,6 @@
         <div>
           <label>本次分數</label>
           <input type="number" class="f-subject-score" min="0" max="100" value="${score}" />
-        </div>
-        <div>
-          <label>上次分數（選填，用於計算進步獎金）</label>
-          <input type="number" class="f-subject-prev" min="0" max="100" value="${prevScore}" />
         </div>
         <div>
           <button class="btn btn-sm btn-danger" type="button" data-remove>移除</button>
@@ -403,12 +399,9 @@
       });
 
       const scoreInput = row.querySelector(".f-subject-score");
-      const prevInput = row.querySelector(".f-subject-prev");
-      [scoreInput, prevInput].forEach((inp) => {
-        inp.addEventListener("input", () => {
-          validateScoreInput(inp);
-          updatePreview();
-        });
+      scoreInput.addEventListener("input", () => {
+        validateScoreInput(scoreInput);
+        updatePreview();
       });
       row.querySelector(".f-subject-name").addEventListener("input", updatePreview);
     }
@@ -418,34 +411,32 @@
     // 提示：科目的上下順序會影響「同分時」的名次判定（分數不同時不影響總金額），
     // 可以按住科目左邊的「⠿」拖曳調整順序。
 
-    async function autofillPrevScores() {
-      const rows = [...subjectRowsEl.children];
-      for (const row of rows) {
-        const nameInput = row.querySelector(".f-subject-name");
-        const prevInput = row.querySelector(".f-subject-prev");
-        if (nameInput.value && !prevInput.value) {
-          const last = await getLastScoreForSubject(studentId, nameInput.value.trim());
-          if (last !== null) prevInput.value = last;
-        }
+    // 依「這筆紀錄的學期＋考試類型」判斷學制順序，從已載入的歷史紀錄中自動找出
+    // 每個科目「前一次」的分數，不需要使用者手動輸入「上次分數」。
+    // excludeRecordId：編輯既有紀錄時，排除自己這一筆，避免拿自己當作「前一次」。
+    function getPrevScoresMap(currentMeta, excludeRecordId) {
+      const currentOrdinal = getCurriculumOrdinal(currentMeta);
+      const map = {};
+      for (const r of records) {
+        if (excludeRecordId && r.id === excludeRecordId) continue;
+        const ord = getCurriculumOrdinal(r);
+        const isEarlier =
+          currentOrdinal !== null && ord !== null
+            ? ord < currentOrdinal
+            : (r.date || "") < (currentMeta.date || "");
+        if (!isEarlier) continue;
+        (r.subjects || []).forEach((s) => {
+          if (!(s.name in map)) map[s.name] = s.score;
+        });
       }
-      updatePreview();
+      return map;
     }
-    subjectRowsEl.addEventListener(
-      "blur",
-      (e) => {
-        if (e.target.classList.contains("f-subject-name")) autofillPrevScores();
-      },
-      true
-    );
 
     function collectSubjects() {
       return [...subjectRowsEl.children]
         .map((row) => ({
           name: row.querySelector(".f-subject-name").value.trim(),
           score: Number(row.querySelector(".f-subject-score").value),
-          prevScore: row.querySelector(".f-subject-prev").value
-            ? Number(row.querySelector(".f-subject-prev").value)
-            : undefined,
         }))
         .filter((s) => s.name && !Number.isNaN(s.score));
     }
@@ -459,7 +450,16 @@
         if (punishmentRow) punishmentRow.style.display = "none";
         return;
       }
-      const result = calcExamRecord(subjects, rules);
+      const currentMeta = {
+        date: document.getElementById("fDate").value,
+        semester: semesterEl.value,
+        examType: document.getElementById("fExamType").value,
+      };
+      const prevMap = getPrevScoresMap(currentMeta, editingRecordId);
+      const subjectsWithPrev = subjects.map((s) =>
+        s.name in prevMap ? { ...s, prevScore: prevMap[s.name] } : { ...s }
+      );
+      const result = calcExamRecord(subjectsWithPrev, rules);
       if (punishmentRow) punishmentRow.style.display = result.hasPunishment ? "block" : "none";
       previewEl.innerHTML = `
         <div class="grid grid-cols-4" style="margin-bottom:10px;">
@@ -483,7 +483,7 @@
     updatePreview();
 
     saveBtn.addEventListener("click", async () => {
-      const allScoreInputs = [...subjectRowsEl.querySelectorAll(".f-subject-score, .f-subject-prev")];
+      const allScoreInputs = [...subjectRowsEl.querySelectorAll(".f-subject-score")];
       const allValid = allScoreInputs.map((inp) => validateScoreInput(inp)).every(Boolean);
       if (!allValid) {
         alert("有分數超出 0-100 的範圍，請修正後再儲存（已用紅框標示）");
@@ -500,19 +500,28 @@
         alert("請選擇日期");
         return;
       }
+      const semesterVal = document.getElementById("fSemester").value.trim();
+      const examTypeVal = document.getElementById("fExamType").value;
+      // 自動與歷史紀錄比對「前一次」分數，不需使用者手動輸入
+      const currentMeta = { date, semester: semesterVal, examType: examTypeVal };
+      const prevMap = getPrevScoresMap(currentMeta, editingRecordId);
+      const subjectsWithPrev = subjects.map((s) =>
+        s.name in prevMap ? { ...s, prevScore: prevMap[s.name] } : { ...s }
+      );
+
       const overrideVal = document.getElementById("fOverride").value;
       const record = {
         studentId,
         date,
-        semester: document.getElementById("fSemester").value.trim(),
-        examType: document.getElementById("fExamType").value,
-        subjects,
+        semester: semesterVal,
+        examType: examTypeVal,
+        subjects: subjectsWithPrev,
         note: document.getElementById("fNote").value.trim(),
       };
       if (overrideVal !== "") record.manualOverrideTotal = Number(overrideVal);
 
       const isEdit = !!editingRecordId;
-      const calcResult = calcExamRecord(subjects, rules);
+      const calcResult = calcExamRecord(subjectsWithPrev, rules);
       if (calcResult.hasPunishment) {
         const statusSelect = document.getElementById("fPunishmentStatus");
         record.punishmentStatus = statusSelect ? statusSelect.value : "pending";
@@ -554,7 +563,7 @@
       if (punishmentSelectLoad) punishmentSelectLoad.value = record.punishmentStatus === "done" ? "done" : "pending";
 
       subjectRowsEl.innerHTML = "";
-      (record.subjects || []).forEach((s) => addSubjectRow(s.name, s.score, s.prevScore ?? ""));
+      (record.subjects || []).forEach((s) => addSubjectRow(s.name, s.score));
       if (!(record.subjects || []).length) addSubjectRow();
 
       formEl.style.display = "block";
