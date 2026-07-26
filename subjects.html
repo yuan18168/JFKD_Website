@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>總覽｜【JFKD】家規獎懲系統</title>
+<title>科目對照表｜【JFKD】家規獎懲系統</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -17,14 +17,14 @@
         </div>
       </div>
 
-      <a href="index.html" class="nav-link active">🏠 總覽</a>
+      <a href="index.html" class="nav-link">🏠 總覽</a>
 
       <div class="nav-section-label">學生</div>
       <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
 
       <div class="nav-section-label">管理</div>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
-      <a href="subjects.html" class="nav-link">📚 科目對照表</a>
+      <a href="subjects.html" class="nav-link active">📚 科目對照表</a>
 
       <div class="sidebar-footer">
         <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
@@ -36,34 +36,18 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>家庭總覽</h1>
-          <div class="desc">全家目前的獎懲累計狀態</div>
+          <h1>科目對照表</h1>
+          <div class="desc">
+            設定每個年級固定會考的科目與順序（上下學期共用同一份）。新增考試紀錄時，選定學制／學期後會自動帶出這裡設定的科目，只需要回填分數；沒有設定的年級仍維持自由輸入科目的方式。
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-4" id="statCards">
-        <div class="card stat-card"><div class="label">學生人數</div><div class="value">–</div></div>
-        <div class="card stat-card"><div class="label">累計紀錄數</div><div class="value">–</div></div>
-        <div class="card stat-card"><div class="label">本學期累計獎金</div><div class="value">–</div></div>
-        <div class="card stat-card"><div class="label">待處理處罰</div><div class="value">–</div></div>
-      </div>
+      <div id="presetGroups"></div>
 
-      <div class="section-title">依學生查看</div>
-      <div class="grid grid-cols-3" id="studentCards">
-        <div class="empty-state">載入中...</div>
-      </div>
-
-      <div class="section-title">最新紀錄</div>
-      <div class="card" style="padding:0; overflow:hidden;">
-        <table id="recentTable">
-          <thead>
-            <tr>
-              <th>日期</th><th>學生</th><th>學期</th><th>考試</th>
-              <th class="num">平均分</th><th class="num">總獎金</th><th>狀態</th>
-            </tr>
-          </thead>
-          <tbody><tr><td colspan="7" class="empty-state">載入中...</td></tr></tbody>
-        </table>
+      <div style="margin-top:22px; display:flex; gap:10px; align-items:center;">
+        <button class="btn btn-primary" id="saveSubjectPresetsBtn">儲存科目對照表</button>
+        <span id="saveSubjectMsg" class="text-faint" style="font-size:12px;"></span>
       </div>
     </main>
   </div>
@@ -76,6 +60,6 @@
   <script src="js/calc.js"></script>
   <script src="js/data.js"></script>
   <script src="js/nav.js"></script>
-  <script src="js/dashboard.js"></script>
+  <script src="js/subjects.js"></script>
 </body>
 </html>
