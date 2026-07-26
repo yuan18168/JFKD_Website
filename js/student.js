@@ -45,7 +45,7 @@
     const avgRecent = recent5.length
       ? Math.round((recent5.reduce((a, r) => a + r.result.avgScore, 0) / recent5.length) * 10) / 10
       : "-";
-    const punishCount = rows.filter((r) => r.result.hasPunishment).length;
+    const punishCount = rows.filter((r) => r.result.hasPunishment && r.punishmentStatus !== "done").length;
 
     const el = document.getElementById("studentStats");
     el.innerHTML = `
@@ -58,7 +58,8 @@
 
   function renderChart(rows) {
     const ordered = [...rows].reverse(); // 時間由舊到新
-    const ctx = document.getElementById("trendChart");
+    const container = document.getElementById("trendCharts");
+    container.innerHTML = "";
 
     // 依第一次出現的順序，收集所有出現過的科目名稱
     const subjectNames = [];
@@ -68,35 +69,63 @@
       });
     });
 
-    const palette = ["#4f7cff", "#4fd1c5", "#ffb454", "#ff6b9d", "#a78bfa", "#34d399", "#ffd54a", "#63b3ff"];
+    if (!subjectNames.length) {
+      container.innerHTML = `<div class="card empty-state">還沒有科目成績資料</div>`;
+      return;
+    }
 
-    const datasets = subjectNames.map((name, i) => ({
-      label: name,
-      data: ordered.map((r) => {
+    const palette = ["#4f7cff", "#4fd1c5", "#ffb454", "#ff6b9d", "#a78bfa", "#34d399", "#ffd54a", "#63b3ff"];
+    const labels = ordered.map((r) => `${r.semester || ""} ${r.examType || ""}`.trim() || r.date || "");
+
+    subjectNames.forEach((name, i) => {
+      const color = palette[i % palette.length];
+      const scores = ordered.map((r) => {
         const s = (r.subjects || []).find((x) => x.name === name);
         return s ? s.score : null;
-      }),
-      borderColor: palette[i % palette.length],
-      backgroundColor: "transparent",
-      tension: 0.3,
-      spanGaps: true,
-    }));
+      });
+      const validScores = scores.filter((v) => typeof v === "number");
+      const minScore = validScores.length ? Math.min(...validScores) : 0;
+      // 下限＝該科目歷史最低分再往下 10 分（不低於 0），上限固定 100 分，讓趨勢起伏更明顯
+      const yMin = Math.max(0, Math.floor(minScore) - 10);
 
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: ordered.map((r) => `${r.date || ""} ${r.examType || ""}`),
-        datasets,
-      },
-      options: {
-        responsive: true,
-        interaction: { mode: "index", intersect: false },
-        scales: {
-          y: { min: 0, max: 100, ticks: { color: "#93a0c2" }, grid: { color: "#263354" } },
-          x: { ticks: { color: "#93a0c2" }, grid: { color: "#1a2440" } },
+      const card = document.createElement("div");
+      card.className = "card mini-chart-card";
+      card.innerHTML = `
+        <div class="mini-chart-head">
+          <div class="mini-chart-title"><span class="dot" style="background:${color}"></span>${escapeHtml(name)}</div>
+          <div class="mini-chart-range">${yMin} ~ 100</div>
+        </div>
+        <canvas height="160"></canvas>
+      `;
+      container.appendChild(card);
+
+      new Chart(card.querySelector("canvas"), {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: name,
+              data: scores,
+              borderColor: color,
+              backgroundColor: color + "22",
+              fill: true,
+              tension: 0.3,
+              spanGaps: true,
+              pointRadius: 3,
+            },
+          ],
         },
-        plugins: { legend: { labels: { color: "#e7ecf7" } } },
-      },
+        options: {
+          responsive: true,
+          interaction: { mode: "index", intersect: false },
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { min: yMin, max: 100, ticks: { color: "#93a0c2" }, grid: { color: "#263354" } },
+            x: { ticks: { color: "#93a0c2" }, grid: { color: "#1a2440" } },
+          },
+        },
+      });
     });
   }
 
@@ -118,7 +147,13 @@
           <td class="text-dim">${subjectsText}</td>
           <td class="num">${r.result.avgScore}</td>
           <td class="num">${fmtMoney(r.total)}</td>
-          <td>${r.result.hasPunishment ? '<span class="badge badge-penalty">需處罰</span>' : '<span class="badge badge-normal">正常</span>'}</td>
+          <td>${
+            r.result.hasPunishment
+              ? r.punishmentStatus === "done"
+                ? '<span class="badge badge-done">已執行處罰</span>'
+                : '<span class="badge badge-penalty">需處罰</span>'
+              : '<span class="badge badge-normal">正常</span>'
+          }</td>
           <td style="white-space:nowrap;">
             <button class="btn btn-sm" data-edit-id="${r.id}">編輯</button>
             <button class="btn btn-sm btn-danger" data-del-id="${r.id}">刪除</button>
@@ -172,6 +207,8 @@
       document.getElementById("fExamType").value = "期中";
       document.getElementById("fOverride").value = "";
       document.getElementById("fNote").value = "";
+      const punishmentSelectReset = document.getElementById("fPunishmentStatus");
+      if (punishmentSelectReset) punishmentSelectReset.value = "pending";
 
       const lastRecord = records[0]; // records 已依日期新到舊排序（外層 IIFE 抓取）
       let loadedFromLast = false;
@@ -342,11 +379,14 @@
     function updatePreview() {
       const subjects = collectSubjects();
       const previewEl = document.getElementById("calcPreview");
+      const punishmentRow = document.getElementById("punishmentStatusRow");
       if (!subjects.length) {
         previewEl.innerHTML = "請至少輸入一科分數";
+        if (punishmentRow) punishmentRow.style.display = "none";
         return;
       }
       const result = calcExamRecord(subjects, rules);
+      if (punishmentRow) punishmentRow.style.display = result.hasPunishment ? "block" : "none";
       previewEl.innerHTML = `
         <div class="grid grid-cols-4" style="margin-bottom:10px;">
           ${result.detail
@@ -398,6 +438,15 @@
       if (overrideVal !== "") record.manualOverrideTotal = Number(overrideVal);
 
       const isEdit = !!editingRecordId;
+      const calcResult = calcExamRecord(subjects, rules);
+      if (calcResult.hasPunishment) {
+        const statusSelect = document.getElementById("fPunishmentStatus");
+        record.punishmentStatus = statusSelect ? statusSelect.value : "pending";
+      } else if (isEdit) {
+        // 分數已修正到不再需要處罰，若編輯時清掉了先前的處罰狀態欄位
+        record.punishmentStatus = firebase.firestore.FieldValue.delete();
+      }
+
       saveBtn.disabled = true;
       saveBtn.textContent = isEdit ? "更新中..." : "儲存中...";
       try {
@@ -425,6 +474,8 @@
       document.getElementById("fOverride").value =
         typeof record.manualOverrideTotal === "number" ? record.manualOverrideTotal : "";
       document.getElementById("fNote").value = record.note || "";
+      const punishmentSelectLoad = document.getElementById("fPunishmentStatus");
+      if (punishmentSelectLoad) punishmentSelectLoad.value = record.punishmentStatus === "done" ? "done" : "pending";
 
       subjectRowsEl.innerHTML = "";
       (record.subjects || []).forEach((s) => addSubjectRow(s.name, s.score, s.prevScore ?? ""));
