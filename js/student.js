@@ -152,9 +152,39 @@
       saveBtn.textContent = mode === "edit" ? "更新紀錄" : "儲存紀錄";
     }
 
+    const subjectRowsEl = document.getElementById("subjectRows");
+    let rowCount = 0;
+
+    function populateDefaultRows() {
+      subjectRowsEl.innerHTML = "";
+      ["國語", "數學", "英文"].forEach((n) => addSubjectRow(n));
+    }
+
     document.getElementById("openFormBtn").addEventListener("click", () => {
       editingRecordId = null;
       setFormMode("create");
+      document.getElementById("fDate").valueAsDate = new Date();
+      document.getElementById("fSemester").value = "";
+      document.getElementById("fExamType").value = "期中";
+      document.getElementById("fOverride").value = "";
+      document.getElementById("fNote").value = "";
+
+      const lastRecord = records[0]; // records 已依日期新到舊排序（外層 IIFE 抓取）
+      let loadedFromLast = false;
+      if (lastRecord && (lastRecord.subjects || []).length) {
+        const useLast = confirm(
+          `偵測到最近一筆紀錄（${lastRecord.date || ""} ${lastRecord.semester || ""} ${lastRecord.examType || ""}），要直接帶出該次的科目與分數，作為這次的「上次分數」嗎？`
+        );
+        if (useLast) {
+          subjectRowsEl.innerHTML = "";
+          lastRecord.subjects.forEach((s) => addSubjectRow(s.name, "", s.score));
+          document.getElementById("fSemester").value = lastRecord.semester || "";
+          loadedFromLast = true;
+        }
+      }
+      if (!loadedFromLast) populateDefaultRows();
+
+      updatePreview();
       formEl.style.display = "block";
       formEl.scrollIntoView({ behavior: "smooth" });
     });
@@ -165,17 +195,59 @@
 
     document.getElementById("fDate").valueAsDate = new Date();
 
-    const subjectRowsEl = document.getElementById("subjectRows");
-    let rowCount = 0;
+    // ---- 分數區間驗證（0-100） ----
+    function validateScoreInput(input) {
+      const v = input.value;
+      const invalid = v !== "" && (Number(v) < 0 || Number(v) > 100 || Number.isNaN(Number(v)));
+      input.classList.toggle("input-error", invalid);
+      let msg = input.parentElement.querySelector(".field-error");
+      if (invalid) {
+        if (!msg) {
+          msg = document.createElement("div");
+          msg.className = "field-error";
+          msg.style.cssText = "color:var(--bad); font-size:11px; margin-top:4px;";
+          input.parentElement.appendChild(msg);
+        }
+        msg.textContent = "分數需介於 0-100";
+      } else if (msg) {
+        msg.remove();
+      }
+      return !invalid;
+    }
+
+    // ---- 拖曳排序 ----
+    let draggedRow = null;
+    function getDragAfterElement(container, y) {
+      const els = [...container.querySelectorAll(".subject-row:not(.dragging)")];
+      return els.reduce(
+        (closest, child) => {
+          const box = child.getBoundingClientRect();
+          const offset = y - box.top - box.height / 2;
+          if (offset < 0 && offset > closest.offset) return { offset, element: child };
+          return closest;
+        },
+        { offset: Number.NEGATIVE_INFINITY, element: null }
+      ).element;
+    }
+    subjectRowsEl.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      if (!draggedRow) return;
+      const afterEl = getDragAfterElement(subjectRowsEl, e.clientY);
+      if (afterEl == null) subjectRowsEl.appendChild(draggedRow);
+      else subjectRowsEl.insertBefore(draggedRow, afterEl);
+    });
 
     function addSubjectRow(name = "", score = "", prevScore = "") {
       rowCount++;
       const rowId = "row" + rowCount;
       const row = document.createElement("div");
       row.className = "subject-row";
-      row.style.gridTemplateColumns = "1.2fr 1fr 1fr auto auto";
+      row.style.gridTemplateColumns = "auto 1.2fr 1fr 1fr auto";
       row.dataset.rowId = rowId;
       row.innerHTML = `
+        <div style="display:flex; align-items:flex-end; padding-bottom:9px;">
+          <span class="drag-handle" title="按住拖曳調整順序">⠿</span>
+        </div>
         <div>
           <label>科目</label>
           <input type="text" class="f-subject-name" placeholder="例如：英文" value="${escapeHtml(name)}" />
@@ -189,13 +261,6 @@
           <input type="number" class="f-subject-prev" min="0" max="100" value="${prevScore}" />
         </div>
         <div>
-          <label class="text-faint" style="font-size:10px;">排序</label>
-          <div style="display:flex; gap:4px;">
-            <button class="btn btn-sm" type="button" data-move-up title="往上移">▲</button>
-            <button class="btn btn-sm" type="button" data-move-down title="往下移">▼</button>
-          </div>
-        </div>
-        <div>
           <button class="btn btn-sm btn-danger" type="button" data-remove>移除</button>
         </div>
       `;
@@ -204,25 +269,39 @@
         row.remove();
         updatePreview();
       });
-      row.querySelector("[data-move-up]").addEventListener("click", () => {
-        const prev = row.previousElementSibling;
-        if (prev) subjectRowsEl.insertBefore(row, prev);
+
+      const handle = row.querySelector(".drag-handle");
+      handle.addEventListener("mousedown", () => {
+        row.draggable = true;
+      });
+      row.addEventListener("dragstart", (e) => {
+        draggedRow = row;
+        row.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", rowId);
+      });
+      row.addEventListener("dragend", () => {
+        row.classList.remove("dragging");
+        row.draggable = false;
+        draggedRow = null;
         updatePreview();
       });
-      row.querySelector("[data-move-down]").addEventListener("click", () => {
-        const next = row.nextElementSibling;
-        if (next) subjectRowsEl.insertBefore(next, row);
-        updatePreview();
+
+      const scoreInput = row.querySelector(".f-subject-score");
+      const prevInput = row.querySelector(".f-subject-prev");
+      [scoreInput, prevInput].forEach((inp) => {
+        inp.addEventListener("input", () => {
+          validateScoreInput(inp);
+          updatePreview();
+        });
       });
-      row.querySelectorAll("input").forEach((inp) => inp.addEventListener("input", updatePreview));
+      row.querySelector(".f-subject-name").addEventListener("input", updatePreview);
     }
 
     document.getElementById("addSubjectBtn").addEventListener("click", () => addSubjectRow());
-    // 預設帶三個常見科目
-    ["國語", "數學", "英文"].forEach((n) => addSubjectRow(n));
 
     // 提示：科目的上下順序會影響「同分時」的名次判定（分數不同時不影響總金額），
-    // 可以用 ▲▼ 調整順序，讓同分科目照您希望的優先順序排列。
+    // 可以按住科目左邊的「⠿」拖曳調整順序。
 
     async function autofillPrevScores() {
       const rows = [...subjectRowsEl.children];
@@ -286,6 +365,13 @@
     updatePreview();
 
     saveBtn.addEventListener("click", async () => {
+      const allScoreInputs = [...subjectRowsEl.querySelectorAll(".f-subject-score, .f-subject-prev")];
+      const allValid = allScoreInputs.map((inp) => validateScoreInput(inp)).every(Boolean);
+      if (!allValid) {
+        alert("有分數超出 0-100 的範圍，請修正後再儲存（已用紅框標示）");
+        return;
+      }
+
       const subjects = collectSubjects();
       if (!subjects.length) {
         alert("請至少輸入一科分數");
