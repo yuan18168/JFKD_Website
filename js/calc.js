@@ -43,12 +43,15 @@ function calcExamRecord(subjects, rules) {
     const improved = typeof s.prevScore === "number" ? Math.max(0, s.score - s.prevScore) : 0;
     const progressBonus = improved * (rules.progressBonusPerPoint || 0);
 
-    // 衛冕獎金：這次與上次都達 90 分以上，代表「守住」上次的級距，
-    // 獎金依「上次分數的級距」發放（例：上次 95-100 分這次仍 ≥90，發 95-100 級距的衛冕獎金）
+    // 衛冕獎金：這次與上次都達 90 分以上，代表「守住」某個級距。
+    // 獎金依「這次與上次兩個分數中，較低那個」對應的級距發放——
+    // 因為唯有這個較低分數對應的級距，才是兩次都真正達到、確實「守住」的水準。
+    // （例：上次 100 分、這次 98 分，只能算守住 95-100 級距，不能用 100 分的級距發獎金）
     let defenseBonus = 0;
     if (s.score >= 90 && typeof s.prevScore === "number" && s.prevScore >= 90) {
-      const prevTier = findTier(s.prevScore, tiers);
-      defenseBonus = prevTier.defenseBonus || 0;
+      const lowerScore = Math.min(s.score, s.prevScore);
+      const lowerTier = findTier(lowerScore, tiers);
+      defenseBonus = lowerTier.defenseBonus || 0;
     }
 
     const punishment = !!tier.punishment;
