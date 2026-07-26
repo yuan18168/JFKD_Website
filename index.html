@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>總覽｜【JFKD】家規獎懲系統</title>
+<title>總覽｜【JFKD】成績記錄表</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -12,7 +12,7 @@
       <div class="brand">
         <div class="brand-mark">JF</div>
         <div class="brand-text">
-          <div class="title">JFKD 家規獎懲</div>
+          <div class="title">JFKD 成績記錄表</div>
           <div class="subtitle">家庭儀表板</div>
         </div>
       </div>
@@ -24,6 +24,7 @@
 
       <div class="nav-section-label">管理</div>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
+      <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
 
       <div class="sidebar-footer">
@@ -36,7 +37,7 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>家庭總覽</h1>
+          <h1>JFKD Family 成績記錄表</h1>
           <div class="desc">全家目前的獎懲累計狀態</div>
         </div>
       </div>
@@ -44,7 +45,7 @@
       <div class="grid grid-cols-4" id="statCards">
         <div class="card stat-card"><div class="label">學生人數</div><div class="value">–</div></div>
         <div class="card stat-card"><div class="label">累計紀錄數</div><div class="value">–</div></div>
-        <div class="card stat-card"><div class="label">本學期累計獎金</div><div class="value">–</div></div>
+        <div class="card stat-card"><div class="label">累計獎金</div><div class="value">–</div></div>
         <div class="card stat-card"><div class="label">待處理處罰</div><div class="value">–</div></div>
       </div>
 
@@ -54,23 +55,14 @@
       </div>
 
       <div class="section-title">最新紀錄</div>
-      <div class="card" style="padding:0; overflow:hidden;">
-        <table id="recentTable">
-          <thead>
-            <tr>
-              <th>日期</th><th>學生</th><th>學期</th><th>考試</th>
-              <th class="num">平均分</th><th class="num">總獎金</th><th>狀態</th>
-            </tr>
-          </thead>
-          <tbody><tr><td colspan="7" class="empty-state">載入中...</td></tr></tbody>
-        </table>
-      </div>
+      <div id="recentByStudent"><div class="empty-state">載入中...</div></div>
     </main>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/calc.js"></script>

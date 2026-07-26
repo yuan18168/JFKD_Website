@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>科目對照表｜【JFKD】成績記錄表</title>
+<title>學生名單｜【JFKD】成績記錄表</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -24,8 +24,8 @@
 
       <div class="nav-section-label">管理</div>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
-      <a href="students.html" class="nav-link">👤 學生名單</a>
-      <a href="subjects.html" class="nav-link active">📚 科目對照表</a>
+      <a href="students.html" class="nav-link active">👤 學生名單</a>
+      <a href="subjects.html" class="nav-link">📚 科目對照表</a>
 
       <div class="sidebar-footer">
         <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
@@ -37,18 +37,18 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>科目對照表</h1>
-          <div class="desc">
-            設定每個年級固定會考的科目與順序（上下學期共用同一份）。新增考試紀錄時，選定學制／學期後會自動帶出這裡設定的科目，只需要回填分數；沒有設定的年級仍維持自由輸入科目的方式。
-          </div>
+          <h1>學生名單</h1>
+          <div class="desc">刪除學生會一併刪除他的所有歷史考試紀錄，請小心操作</div>
         </div>
       </div>
 
-      <div id="presetGroups"></div>
-
-      <div style="margin-top:22px; display:flex; gap:10px; align-items:center;">
-        <button class="btn btn-primary" id="saveSubjectPresetsBtn">儲存科目對照表</button>
-        <span id="saveSubjectMsg" class="text-faint" style="font-size:12px;"></span>
+      <div class="section-title mt-0">目前的學生</div>
+      <div class="card">
+        <div id="studentList" class="chip-row" style="margin-bottom:14px;"></div>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="newStudentName" placeholder="輸入學生暱稱，例如：哈哈" style="max-width:260px;" />
+          <button class="btn btn-primary" id="addStudentBtn">新增學生</button>
+        </div>
       </div>
     </main>
   </div>
@@ -61,6 +61,6 @@
   <script src="js/calc.js"></script>
   <script src="js/data.js"></script>
   <script src="js/nav.js"></script>
-  <script src="js/subjects.js"></script>
+  <script src="js/students.js"></script>
 </body>
 </html>

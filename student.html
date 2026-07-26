@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>學生紀錄｜【JFKD】家規獎懲系統</title>
+<title>學生紀錄｜【JFKD】成績記錄表</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -12,7 +12,7 @@
       <div class="brand">
         <div class="brand-mark">JF</div>
         <div class="brand-text">
-          <div class="title">JFKD 家規獎懲</div>
+          <div class="title">JFKD 成績記錄表</div>
           <div class="subtitle">家庭儀表板</div>
         </div>
       </div>
@@ -24,6 +24,7 @@
 
       <div class="nav-section-label">管理</div>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
+      <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
 
       <div class="sidebar-footer">
@@ -87,6 +88,14 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-2" style="margin-top:14px;">
+          <div>
+            <label>套用設定檔</label>
+            <select id="fRuleProfile"></select>
+          </div>
+          <div class="text-faint" id="recordMetaInfo" style="align-self:end; font-size:12px; display:none;"></div>
+        </div>
+
         <div class="section-title">科目與分數</div>
 
         <div id="subjectsBlockedMsg" class="card empty-state" style="display:none;">
@@ -96,7 +105,7 @@
           </div>
         </div>
 
-        <div class="card" style="padding:0; overflow:hidden;" id="subjectsTableWrap">
+        <div class="card" style="padding:0; overflow-x:auto;" id="subjectsTableWrap">
           <table id="subjectsCalcTable">
             <thead>
               <tr>
@@ -116,23 +125,26 @@
 
         <div id="calcPreview" class="text-dim" style="font-size:13px;"></div>
 
-        <div id="punishmentStatusRow" style="display:none; margin-top:14px; max-width:260px;">
-          <label>處罰執行狀態</label>
-          <select id="fPunishmentStatus">
-            <option value="pending">尚未執行</option>
-            <option value="done">已執行完畢</option>
-          </select>
+        <div class="grid grid-cols-2" style="margin-top:14px;">
+          <div id="punishmentStatusRow" style="display:none;">
+            <label>處罰狀態</label>
+            <select id="fPunishmentStatus">
+              <option value="pending">尚未執行處罰</option>
+              <option value="done">已執行處罰</option>
+            </select>
+          </div>
+          <div id="bonusStatusRow" style="display:none;">
+            <label>獎金狀態</label>
+            <select id="fBonusStatus">
+              <option value="pending">尚未發放獎金</option>
+              <option value="done">已發放獎金</option>
+            </select>
+          </div>
         </div>
 
-        <div class="grid grid-cols-2" style="margin-top:16px;">
-          <div>
-            <label>手動覆寫總額（選填，留空則自動計算）</label>
-            <input type="number" id="fOverride" placeholder="例如：500" />
-          </div>
-          <div>
-            <label>備註（選填）</label>
-            <input type="text" id="fNote" placeholder="例如：已發放獎金" />
-          </div>
+        <div style="margin-top:16px;">
+          <label>備註（選填）</label>
+          <input type="text" id="fNote" placeholder="例如：已跟孩子說明這次的表現" />
         </div>
 
         <div style="display:flex; gap:10px; margin-top:20px;">
@@ -147,10 +159,10 @@
           <thead>
             <tr>
               <th>日期</th><th>學制</th><th>學期</th><th>考試</th><th>科目明細</th>
-              <th class="num">平均分</th><th class="num">總獎金</th><th>狀態</th><th></th>
+              <th class="num">平均分</th><th class="num">總獎金</th><th>處罰狀態</th><th>獎金狀態</th><th></th>
             </tr>
           </thead>
-          <tbody><tr><td colspan="9" class="empty-state">載入中...</td></tr></tbody>
+          <tbody><tr><td colspan="10" class="empty-state">載入中...</td></tr></tbody>
         </table>
       </div>
     </main>

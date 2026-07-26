@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>獎懲規則設定｜【JFKD】家規獎懲系統</title>
+<title>獎懲規則設定｜【JFKD】成績記錄表</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -12,7 +12,7 @@
       <div class="brand">
         <div class="brand-mark">JF</div>
         <div class="brand-text">
-          <div class="title">JFKD 家規獎懲</div>
+          <div class="title">JFKD 成績記錄表</div>
           <div class="subtitle">家庭儀表板</div>
         </div>
       </div>
@@ -24,6 +24,7 @@
 
       <div class="nav-section-label">管理</div>
       <a href="config.html" class="nav-link active">⚙️ 獎懲規則設定</a>
+      <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
 
       <div class="sidebar-footer">
@@ -37,20 +38,26 @@
       <div class="topbar">
         <div>
           <h1>獎懲規則設定</h1>
-          <div class="desc">調整級距獎金、進步獎金、全科加碼與處罰機制，全站即時套用</div>
+          <div class="desc">可建立多個設定檔；每筆考試紀錄會記住當初套用的設定檔，之後新增其他設定檔不會連動更改舊紀錄</div>
         </div>
       </div>
 
-      <div class="section-title mt-0">學生名單</div>
+      <div class="section-title mt-0">設定檔</div>
       <div class="card">
-        <div id="studentList" class="chip-row" style="margin-bottom:14px;"></div>
-        <div style="display:flex; gap:10px;">
-          <input type="text" id="newStudentName" placeholder="輸入學生暱稱，例如：哈哈" style="max-width:260px;" />
-          <button class="btn btn-primary" id="addStudentBtn">新增學生</button>
+        <div id="profileChips" class="chip-row" style="margin-bottom:14px;"></div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="text" id="newProfileName" placeholder="輸入新設定檔名稱" style="max-width:220px;" />
+          <button class="btn btn-primary" id="addProfileBtn">＋ 新增設定檔（複製目前內容）</button>
+          <button class="btn" id="setDefaultProfileBtn">設為家庭預設</button>
+          <button class="btn btn-danger" id="deleteProfileBtn">刪除此設定檔</button>
         </div>
+        <div class="text-faint" id="profileHint" style="font-size:12px; margin-top:10px;"></div>
       </div>
 
-      <div class="section-title">成績級距與獎金</div>
+      <div class="section-title">
+        成績級距與獎金
+        <span class="text-faint" style="text-transform:none; font-weight:400; letter-spacing:normal;">－ 正在編輯：<span id="editingProfileName">-</span></span>
+      </div>
       <div class="card" style="padding:0; overflow:hidden;">
         <table id="tiersTable">
           <thead>
@@ -87,7 +94,7 @@
       </div>
 
       <div style="margin-top:22px; display:flex; gap:10px;">
-        <button class="btn btn-primary" id="saveRulesBtn">儲存規則設定</button>
+        <button class="btn btn-primary" id="saveRulesBtn">儲存這個設定檔</button>
         <span id="saveMsg" class="text-faint" style="align-self:center; font-size:12px;"></span>
       </div>
     </main>
