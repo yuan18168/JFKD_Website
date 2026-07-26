@@ -88,8 +88,29 @@
         </div>
 
         <div class="section-title">科目與分數</div>
-        <div id="subjectRows"></div>
-        <button class="btn btn-sm" id="addSubjectBtn" type="button">＋ 新增科目</button>
+
+        <div id="subjectsBlockedMsg" class="card empty-state" style="display:none;">
+          這個年級還沒有設定固定科目，請先前往「科目對照表」設定後，再回來新增這個年級的成績。
+          <div style="margin-top:14px;">
+            <a href="subjects.html" target="_blank" class="btn btn-primary">前往科目對照表設定</a>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;" id="subjectsTableWrap">
+          <table id="subjectsCalcTable">
+            <thead>
+              <tr>
+                <th>科目</th>
+                <th class="num">本次分數</th>
+                <th class="num">基礎</th>
+                <th class="num">進步</th>
+                <th class="num">衛冕</th>
+                <th class="num">小計</th>
+              </tr>
+            </thead>
+            <tbody id="subjectRows"></tbody>
+          </table>
+        </div>
 
         <div class="divider"></div>
 
