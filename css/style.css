@@ -250,6 +250,7 @@ th.num { text-align: right; }
 .badge-normal { background: rgba(136,146,176,0.15); color: var(--tier-normal); }
 .badge-penalty { background: rgba(255,107,107,0.15); color: var(--tier-penalty); }
 .badge-done { background: rgba(52,211,153,0.15); color: var(--good); }
+.badge-first { background: rgba(147,160,194,0.15); color: var(--text-dim); margin-left: 6px; }
 
 /* ---------- Forms ---------- */
 label { font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 6px; }
