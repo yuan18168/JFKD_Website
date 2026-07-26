@@ -157,10 +157,18 @@
     });
   }
 
+  // 依學期文字（例如「四下」「國一上」「高三下」）判斷屬於哪個學制，轉成表格顯示用文字
+  function schoolLevelLabel(semesterText) {
+    const s = (semesterText || "").trim();
+    if (s.startsWith("國")) return "國中";
+    if (s.startsWith("高")) return "高中";
+    return s ? "國小" : "-";
+  }
+
   function renderTable(rows) {
     const tbody = document.querySelector("#recordsTable tbody");
     if (!rows.length) {
-      tbody.innerHTML = `<tr><td colspan="8" class="empty-state">還沒有任何紀錄，點右上角「新增考試紀錄」開始記錄吧！</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="empty-state">還沒有任何紀錄，點右上角「新增考試紀錄」開始記錄吧！</td></tr>`;
       return;
     }
     tbody.innerHTML = rows
@@ -170,6 +178,7 @@
           .join("、");
         return `<tr>
           <td>${r.date || "-"}</td>
+          <td>${schoolLevelLabel(r.semester)}</td>
           <td>${escapeHtml(r.semester || "-")}</td>
           <td>${escapeHtml(r.examType || "-")}</td>
           <td class="text-dim">${subjectsText}</td>
