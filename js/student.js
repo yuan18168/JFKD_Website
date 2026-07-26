@@ -222,6 +222,40 @@
     const subjectRowsEl = document.getElementById("subjectRows");
     let rowCount = 0;
 
+    // ---- 學制 / 學期連動下拉選單 ----
+    const schoolLevelEl = document.getElementById("fSchoolLevel");
+    const semesterEl = document.getElementById("fSemester");
+    const SCHOOL_LEVELS = {
+      elementary: ["一", "二", "三", "四", "五", "六"],
+      middle: ["國一", "國二", "國三"],
+      high: ["高一", "高二", "高三"],
+    };
+
+    // 依選定學制，重新產生學期下拉選單的選項（每個年級各有上/下兩個學期）
+    function populateSemesterOptions(levelKey, preferredValue) {
+      const grades = SCHOOL_LEVELS[levelKey] || SCHOOL_LEVELS.elementary;
+      const options = [];
+      grades.forEach((g) => {
+        options.push(`${g}上`);
+        options.push(`${g}下`);
+      });
+      semesterEl.innerHTML = options.map((o) => `<option value="${o}">${o}</option>`).join("");
+      if (preferredValue && options.includes(preferredValue)) {
+        semesterEl.value = preferredValue;
+      }
+    }
+
+    // 依學期文字（例如「四下」「國一上」「高三下」）判斷屬於哪個學制，供編輯/帶出上次紀錄時使用
+    function detectSchoolLevel(semesterText) {
+      const s = (semesterText || "").trim();
+      if (s.startsWith("國")) return "middle";
+      if (s.startsWith("高")) return "high";
+      return "elementary";
+    }
+
+    schoolLevelEl.addEventListener("change", () => populateSemesterOptions(schoolLevelEl.value));
+    populateSemesterOptions(schoolLevelEl.value);
+
     function populateDefaultRows() {
       subjectRowsEl.innerHTML = "";
       ["國語", "數學", "英文"].forEach((n) => addSubjectRow(n));
@@ -231,14 +265,18 @@
       editingRecordId = null;
       setFormMode("create");
       document.getElementById("fDate").valueAsDate = new Date();
-      document.getElementById("fSemester").value = "";
       document.getElementById("fExamType").value = "期中";
       document.getElementById("fOverride").value = "";
       document.getElementById("fNote").value = "";
       const punishmentSelectReset = document.getElementById("fPunishmentStatus");
       if (punishmentSelectReset) punishmentSelectReset.value = "pending";
 
-      const lastRecord = records[0]; // records 已依日期新到舊排序（外層 IIFE 抓取）
+      const lastRecord = records[0]; // records 已依學制排序新到舊排序（外層 IIFE 抓取）
+      // 預設學制/學期沿用最近一筆紀錄，若無歷史紀錄則預設國小一上
+      const defaultLevel = lastRecord ? detectSchoolLevel(lastRecord.semester) : "elementary";
+      schoolLevelEl.value = defaultLevel;
+      populateSemesterOptions(defaultLevel, lastRecord ? lastRecord.semester : null);
+
       let loadedFromLast = false;
       if (lastRecord && (lastRecord.subjects || []).length) {
         const useLast = confirm(
@@ -247,7 +285,6 @@
         if (useLast) {
           subjectRowsEl.innerHTML = "";
           lastRecord.subjects.forEach((s) => addSubjectRow(s.name, "", s.score));
-          document.getElementById("fSemester").value = lastRecord.semester || "";
           loadedFromLast = true;
         }
       }
@@ -497,7 +534,9 @@
       setFormMode("edit");
 
       document.getElementById("fDate").value = record.date || "";
-      document.getElementById("fSemester").value = record.semester || "";
+      const editLevel = detectSchoolLevel(record.semester);
+      schoolLevelEl.value = editLevel;
+      populateSemesterOptions(editLevel, record.semester);
       document.getElementById("fExamType").value = record.examType || "期中";
       document.getElementById("fOverride").value =
         typeof record.manualOverrideTotal === "number" ? record.manualOverrideTotal : "";
