@@ -173,6 +173,7 @@ a { color: inherit; text-decoration: none; }
   gap: 16px;
 }
 .mini-chart-card { padding: 16px 18px 10px; }
+.mini-chart-average { grid-column: 1 / -1; border-color: var(--brand-dim); background: linear-gradient(180deg, rgba(79,124,255,0.08), var(--bg-card) 60%); }
 .mini-chart-head {
   display: flex;
   align-items: center;
