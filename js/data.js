@@ -62,6 +62,20 @@ async function deleteExamRecord(id) {
   await db.collection("examRecords").doc(id).delete();
 }
 
+async function updateExamRecord(id, record) {
+  await db.collection("examRecords").doc(id).update({
+    ...record,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedBy: auth.currentUser ? auth.currentUser.email : null,
+  });
+}
+
+async function getExamRecord(id) {
+  const doc = await db.collection("examRecords").doc(id).get();
+  if (!doc.exists) return null;
+  return { id: doc.id, ...doc.data() };
+}
+
 /** 取得某學生、某科目「最近一次」紀錄中的分數，做為下一次的 prevScore 預設值 */
 async function getLastScoreForSubject(studentId, subjectName, beforeDate) {
   const records = await listExamRecords(studentId);

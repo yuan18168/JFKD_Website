@@ -115,16 +115,26 @@
           <td class="num">${r.result.avgScore}</td>
           <td class="num">${fmtMoney(r.total)}</td>
           <td>${r.result.hasPunishment ? '<span class="badge badge-penalty">需處罰</span>' : '<span class="badge badge-normal">正常</span>'}</td>
-          <td><button class="btn btn-sm btn-danger" data-id="${r.id}">刪除</button></td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-sm" data-edit-id="${r.id}">編輯</button>
+            <button class="btn btn-sm btn-danger" data-del-id="${r.id}">刪除</button>
+          </td>
         </tr>`;
       })
       .join("");
 
-    tbody.querySelectorAll("button[data-id]").forEach((btn) => {
+    tbody.querySelectorAll("button[data-del-id]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         if (!confirm("確定要刪除這筆紀錄嗎？此動作無法復原。")) return;
-        await deleteExamRecord(btn.dataset.id);
+        await deleteExamRecord(btn.dataset.delId);
         window.location.reload();
+      });
+    });
+
+    tbody.querySelectorAll("button[data-edit-id]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const record = rows.find((r) => r.id === btn.dataset.editId);
+        if (record && window.__loadRecordIntoForm) window.__loadRecordIntoForm(record);
       });
     });
   }
@@ -132,12 +142,25 @@
   // ------------------------------------------------------------------
   function setupForm(rules, student) {
     const formEl = document.getElementById("recordForm");
+    const formTitleEl = document.getElementById("recordFormTitle");
+    const saveBtn = document.getElementById("saveRecordBtn");
+    let editingRecordId = null;
+
+    function setFormMode(mode) {
+      // mode: "create" | "edit"
+      if (formTitleEl) formTitleEl.textContent = mode === "edit" ? "編輯考試紀錄" : "新增考試紀錄";
+      saveBtn.textContent = mode === "edit" ? "更新紀錄" : "儲存紀錄";
+    }
+
     document.getElementById("openFormBtn").addEventListener("click", () => {
+      editingRecordId = null;
+      setFormMode("create");
       formEl.style.display = "block";
       formEl.scrollIntoView({ behavior: "smooth" });
     });
     document.getElementById("cancelFormBtn").addEventListener("click", () => {
       formEl.style.display = "none";
+      editingRecordId = null;
     });
 
     document.getElementById("fDate").valueAsDate = new Date();
@@ -145,11 +168,12 @@
     const subjectRowsEl = document.getElementById("subjectRows");
     let rowCount = 0;
 
-    function addSubjectRow(name = "") {
+    function addSubjectRow(name = "", score = "", prevScore = "") {
       rowCount++;
       const rowId = "row" + rowCount;
       const row = document.createElement("div");
       row.className = "subject-row";
+      row.style.gridTemplateColumns = "1.2fr 1fr 1fr auto auto";
       row.dataset.rowId = rowId;
       row.innerHTML = `
         <div>
@@ -158,11 +182,18 @@
         </div>
         <div>
           <label>本次分數</label>
-          <input type="number" class="f-subject-score" min="0" max="100" />
+          <input type="number" class="f-subject-score" min="0" max="100" value="${score}" />
         </div>
         <div>
           <label>上次分數（選填，用於計算進步獎金）</label>
-          <input type="number" class="f-subject-prev" min="0" max="100" />
+          <input type="number" class="f-subject-prev" min="0" max="100" value="${prevScore}" />
+        </div>
+        <div>
+          <label class="text-faint" style="font-size:10px;">排序</label>
+          <div style="display:flex; gap:4px;">
+            <button class="btn btn-sm" type="button" data-move-up title="往上移">▲</button>
+            <button class="btn btn-sm" type="button" data-move-down title="往下移">▼</button>
+          </div>
         </div>
         <div>
           <button class="btn btn-sm btn-danger" type="button" data-remove>移除</button>
@@ -173,12 +204,25 @@
         row.remove();
         updatePreview();
       });
+      row.querySelector("[data-move-up]").addEventListener("click", () => {
+        const prev = row.previousElementSibling;
+        if (prev) subjectRowsEl.insertBefore(row, prev);
+        updatePreview();
+      });
+      row.querySelector("[data-move-down]").addEventListener("click", () => {
+        const next = row.nextElementSibling;
+        if (next) subjectRowsEl.insertBefore(next, row);
+        updatePreview();
+      });
       row.querySelectorAll("input").forEach((inp) => inp.addEventListener("input", updatePreview));
     }
 
     document.getElementById("addSubjectBtn").addEventListener("click", () => addSubjectRow());
     // 預設帶三個常見科目
     ["國語", "數學", "英文"].forEach((n) => addSubjectRow(n));
+
+    // 提示：科目的上下順序會影響「同分時」的名次判定（分數不同時不影響總金額），
+    // 可以用 ▲▼ 調整順序，讓同分科目照您希望的優先順序排列。
 
     async function autofillPrevScores() {
       const rows = [...subjectRowsEl.children];
@@ -241,7 +285,7 @@
     }
     updatePreview();
 
-    document.getElementById("saveRecordBtn").addEventListener("click", async () => {
+    saveBtn.addEventListener("click", async () => {
       const subjects = collectSubjects();
       if (!subjects.length) {
         alert("請至少輸入一科分數");
@@ -263,17 +307,42 @@
       };
       if (overrideVal !== "") record.manualOverrideTotal = Number(overrideVal);
 
-      const btn = document.getElementById("saveRecordBtn");
-      btn.disabled = true;
-      btn.textContent = "儲存中...";
+      const isEdit = !!editingRecordId;
+      saveBtn.disabled = true;
+      saveBtn.textContent = isEdit ? "更新中..." : "儲存中...";
       try {
-        await addExamRecord(record);
+        if (isEdit) {
+          await updateExamRecord(editingRecordId, record);
+        } else {
+          await addExamRecord(record);
+        }
         window.location.reload();
       } catch (err) {
-        alert("儲存失敗：" + err.message);
-        btn.disabled = false;
-        btn.textContent = "儲存紀錄";
+        alert((isEdit ? "更新失敗：" : "儲存失敗：") + err.message);
+        saveBtn.disabled = false;
+        setFormMode(isEdit ? "edit" : "create");
       }
     });
+
+    // 提供給歷史紀錄表格的「編輯」按鈕呼叫：把既有紀錄載入表單
+    window.__loadRecordIntoForm = function (record) {
+      editingRecordId = record.id;
+      setFormMode("edit");
+
+      document.getElementById("fDate").value = record.date || "";
+      document.getElementById("fSemester").value = record.semester || "";
+      document.getElementById("fExamType").value = record.examType || "期中";
+      document.getElementById("fOverride").value =
+        typeof record.manualOverrideTotal === "number" ? record.manualOverrideTotal : "";
+      document.getElementById("fNote").value = record.note || "";
+
+      subjectRowsEl.innerHTML = "";
+      (record.subjects || []).forEach((s) => addSubjectRow(s.name, s.score, s.prevScore ?? ""));
+      if (!(record.subjects || []).length) addSubjectRow();
+
+      formEl.style.display = "block";
+      formEl.scrollIntoView({ behavior: "smooth" });
+      updatePreview();
+    };
   }
 })();

@@ -9,8 +9,9 @@
      （退步不倒扣，最低 0）
   3. 衛冕獎金：若該科這次與上次分數都達到 90 分以上，代表「守住」上次的級距，
      依「上次分數對應的級距」核發衛冕獎金
-  4. 全科加碼獎金：當本次全部科目都落在同一個級距（或以上）時，
-     依科目數（3 科 / 5 科）核發整組加碼獎金（擇最高級距發放，不重複疊加不同科目數的加碼）
+  4. 全科加碼獎金：取「本次分數前 3 高」的科目，若這 3 科都達到某個級距（以其中最低
+     那科的級距為準），核發 3 科加碼獎金；若科目數 ≥5，另外再取「前 5 高」比照辦理算出
+     5 科加碼獎金。兩者都符合時取金額較高者發放（不會疊加）
   5. 若分數 < 80，該科不計基礎/進步/衛冕獎金，並標記「需處罰」
 
   這是盡量還原試算表公式的近似邏輯；若實際家規認定與計算結果有落差，
@@ -75,11 +76,19 @@ function calcExamRecord(subjects, rules) {
     return ai - bi;
   });
 
-  // 全科加碼獎金：全部科目都達到同一級距（以最低那科的級距為準）
-  const worstTierIdx = Math.max(...detail.map((d) => tiers.findIndex((t) => t.key === d.tierKey)));
-  const worstTier = tiers[worstTierIdx];
-  const comboTable = subjects.length >= 5 ? rules.comboBonus5 : rules.comboBonus3;
-  const comboBonus = worstTier && !worstTier.punishment ? (comboTable?.[worstTier.key] || 0) : 0;
+  // 全科加碼獎金：分別檢查「前 3 高分」與「前 5 高分」(若有 5 科以上) 這兩組科目，
+  // 取組內最低級距核發對應加碼獎金，兩組都符合時取較高金額
+  function comboForTopN(n, comboTable) {
+    if (ranked.length < n || !comboTable) return 0;
+    const topN = ranked.slice(0, n);
+    const worstIdx = Math.max(...topN.map((d) => tiers.findIndex((t) => t.key === findTier(d.score, tiers).key)));
+    const worstTier = tiers[worstIdx];
+    if (!worstTier || worstTier.punishment) return 0;
+    return comboTable[worstTier.key] || 0;
+  }
+  const combo3 = comboForTopN(3, rules.comboBonus3);
+  const combo5 = comboForTopN(5, rules.comboBonus5);
+  const comboBonus = Math.max(combo3, combo5);
 
   const baseBonusTotal = sum(detail.map((d) => d.baseBonus));
   const progressBonusTotal = sum(detail.map((d) => d.progressBonus));
