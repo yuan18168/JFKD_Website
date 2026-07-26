@@ -7,12 +7,12 @@
 
 // TODO: 貼上您在 Firebase 主控台取得的設定值
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyDgbEMi7gDspWJwjUO08ZmA37g-dEdoOpY",
+  authDomain: "jfkd-website.firebaseapp.com",
+  projectId: "jfkd-website",
+  storageBucket: "jfkd-website.firebasestorage.app",
+  messagingSenderId: "1327565734",
+  appId: "1:1327565734:web:7002ff9483c8327f60dd67",
 };
 
 // TODO: 填入允許登入本網站的家人 Google 帳號（Email）
