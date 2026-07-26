@@ -38,9 +38,15 @@ function calcExamRecord(subjects, rules) {
   const detail = ranked.map((s, rank) => {
     const tier = findTier(s.score, tiers);
     const multiplier = Math.pow(2, rank); // 第1名 x1, 第2名 x2, 第3名 x4...
-    const baseBonus = tier.baseBonus * multiplier;
 
-    const improved = typeof s.prevScore === "number" ? Math.max(0, s.score - s.prevScore) : 0;
+    // 這科沒有「前一次分數」可比對時（例如這是該科目在系統裡最早一筆紀錄、
+    // 或剛升上新學年新增的科目），本次不計算任何獎金（基礎/進步/衛冕皆為 0），
+    // 這次分數僅作為之後比對用的基準分數。
+    const hasPrevScore = typeof s.prevScore === "number";
+
+    const baseBonus = hasPrevScore ? tier.baseBonus * multiplier : 0;
+
+    const improved = hasPrevScore ? Math.max(0, s.score - s.prevScore) : 0;
     const progressBonus = improved * (rules.progressBonusPerPoint || 0);
 
     // 衛冕獎金：這次與上次都達 90 分以上，代表「守住」某個級距。
@@ -48,7 +54,7 @@ function calcExamRecord(subjects, rules) {
     // 因為唯有這個較低分數對應的級距，才是兩次都真正達到、確實「守住」的水準。
     // （例：上次 100 分、這次 98 分，只能算守住 95-100 級距，不能用 100 分的級距發獎金）
     let defenseBonus = 0;
-    if (s.score >= 90 && typeof s.prevScore === "number" && s.prevScore >= 90) {
+    if (hasPrevScore && s.score >= 90 && s.prevScore >= 90) {
       const lowerScore = Math.min(s.score, s.prevScore);
       const lowerTier = findTier(lowerScore, tiers);
       defenseBonus = lowerTier.defenseBonus || 0;
