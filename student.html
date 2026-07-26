@@ -56,14 +56,22 @@
       <!-- 新增紀錄表單（預設隱藏） -->
       <div class="card" id="recordForm" style="display:none; margin-top:18px;">
         <div class="section-title mt-0" id="recordFormTitle">新增考試紀錄</div>
-        <div class="grid grid-cols-3">
+        <div class="grid grid-cols-4">
           <div>
             <label>日期</label>
             <input type="date" id="fDate" />
           </div>
           <div>
-            <label>學期（例：一下 / 四下）</label>
-            <input type="text" id="fSemester" placeholder="例如：一下" />
+            <label>學制</label>
+            <select id="fSchoolLevel">
+              <option value="elementary">國小</option>
+              <option value="middle">國中</option>
+              <option value="high">高中</option>
+            </select>
+          </div>
+          <div>
+            <label>學期</label>
+            <select id="fSemester"></select>
           </div>
           <div>
             <label>考試類型</label>
