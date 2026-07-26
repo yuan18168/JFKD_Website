@@ -230,7 +230,7 @@
     }
 
     const subjectRowsEl = document.getElementById("subjectRows");
-    let rowCount = 0;
+    let subjectsBlocked = false;
 
     // ---- 學制 / 學期連動下拉選單 ----
     const schoolLevelEl = document.getElementById("fSchoolLevel");
@@ -284,24 +284,33 @@
     });
     populateSemesterOptions(schoolLevelEl.value);
 
-    function populateDefaultRows() {
-      subjectRowsEl.innerHTML = "";
-      ["國語", "數學", "英文"].forEach((n) => addSubjectRow(n));
+    // 科目與分數區塊：有對照表設定就帶出固定科目清單（僅能回填分數）；
+    // 沒有設定（例如目前的五、六年級）就整個區塊改顯示提示，引導使用者先去「科目對照表」設定，
+    // 自由輸入科目的舊模式已完全移除。
+    const subjectsBlockedMsgEl = document.getElementById("subjectsBlockedMsg");
+    const subjectsTableWrapEl = document.getElementById("subjectsTableWrap");
+    function setSubjectsBlocked(blocked) {
+      subjectsBlocked = blocked;
+      if (subjectsBlockedMsgEl) subjectsBlockedMsgEl.style.display = blocked ? "block" : "none";
+      if (subjectsTableWrapEl) subjectsTableWrapEl.style.display = blocked ? "none" : "";
+      saveBtn.disabled = blocked;
+      if (blocked) {
+        const previewEl = document.getElementById("calcPreview");
+        const punishmentRow = document.getElementById("punishmentStatusRow");
+        if (previewEl) previewEl.innerHTML = "";
+        if (punishmentRow) punishmentRow.style.display = "none";
+      }
     }
 
-    // 依「年級」查科目對照表：有設定就帶出固定、鎖定的科目清單（僅能回填分數），
-    // 沒有設定就維持現行的自由輸入科目方式（預設三科＋可自行新增/移除/拖曳排序）。
     function populateSubjectsForGrade(gradeKey) {
       const preset = subjectPresets[gradeKey];
       const hasPreset = Array.isArray(preset) && preset.length > 0;
-      const addBtn = document.getElementById("addSubjectBtn");
       subjectRowsEl.innerHTML = "";
       if (hasPreset) {
-        preset.forEach((name) => addSubjectRow(name, "", true));
-        if (addBtn) addBtn.style.display = "none";
+        setSubjectsBlocked(false);
+        preset.forEach((name) => addSubjectRow(name, ""));
       } else {
-        populateDefaultRows();
-        if (addBtn) addBtn.style.display = "";
+        setSubjectsBlocked(true);
       }
     }
 
@@ -329,29 +338,7 @@
       schoolLevelEl.value = defaultLevel;
       populateSemesterOptions(defaultLevel, lastRecord ? lastRecord.semester : null);
 
-      const gradeKey = extractGradeKey(semesterEl.value);
-      const preset = subjectPresets[gradeKey];
-      const hasPreset = Array.isArray(preset) && preset.length > 0;
-
-      if (hasPreset) {
-        // 這個年級已有固定科目對照表，直接帶出鎖定的科目清單，不需要再詢問「帶出上次紀錄」
-        populateSubjectsForGrade(gradeKey);
-      } else {
-        let loadedFromLast = false;
-        if (lastRecord && (lastRecord.subjects || []).length) {
-          const useLast = confirm(
-            `偵測到最近一筆紀錄（${lastRecord.date || ""} ${lastRecord.semester || ""} ${lastRecord.examType || ""}），要直接帶出該次的科目清單嗎？分數請重新輸入，系統會自動與上一次分數比對計算進步／衛冕獎金。`
-          );
-          if (useLast) {
-            subjectRowsEl.innerHTML = "";
-            lastRecord.subjects.forEach((s) => addSubjectRow(s.name, ""));
-            loadedFromLast = true;
-          }
-        }
-        if (!loadedFromLast) populateDefaultRows();
-        const addBtn = document.getElementById("addSubjectBtn");
-        if (addBtn) addBtn.style.display = "";
-      }
+      populateSubjectsForGrade(extractGradeKey(semesterEl.value));
 
       updatePreview();
       formEl.style.display = "block";
@@ -385,90 +372,24 @@
       return !invalid;
     }
 
-    // ---- 拖曳排序 ----
-    let draggedRow = null;
-    function getDragAfterElement(container, y) {
-      const els = [...container.querySelectorAll(".subject-row:not(.dragging)")];
-      return els.reduce(
-        (closest, child) => {
-          const box = child.getBoundingClientRect();
-          const offset = y - box.top - box.height / 2;
-          if (offset < 0 && offset > closest.offset) return { offset, element: child };
-          return closest;
-        },
-        { offset: Number.NEGATIVE_INFINITY, element: null }
-      ).element;
-    }
-    subjectRowsEl.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      if (!draggedRow) return;
-      const afterEl = getDragAfterElement(subjectRowsEl, e.clientY);
-      if (afterEl == null) subjectRowsEl.appendChild(draggedRow);
-      else subjectRowsEl.insertBefore(draggedRow, afterEl);
-    });
-
-    // locked=true 時代表這科來自「科目對照表」的固定設定：科目名稱不可編輯、不能移除、不能拖曳排序，
-    // 只能回填分數（新增/移除/排序的管理都集中到「科目對照表」管理頁面）。
-    function addSubjectRow(name = "", score = "", locked = false) {
-      rowCount++;
-      const rowId = "row" + rowCount;
-      const row = document.createElement("div");
-      row.className = "subject-row" + (locked ? " subject-row-locked" : "");
-      row.style.gridTemplateColumns = locked ? "1fr 1fr" : "auto 1.2fr 1fr auto";
-      row.dataset.rowId = rowId;
-      row.innerHTML = locked
-        ? `
-        <div>
-          <label>科目</label>
-          <input type="text" class="f-subject-name" value="${escapeHtml(name)}" readonly />
-        </div>
-        <div>
-          <label>本次分數</label>
-          <input type="number" class="f-subject-score" min="0" max="100" value="${score}" />
-        </div>
-      `
-        : `
-        <div style="display:flex; align-items:flex-end; padding-bottom:9px;">
-          <span class="drag-handle" title="按住拖曳調整順序">⠿</span>
-        </div>
-        <div>
-          <label>科目</label>
-          <input type="text" class="f-subject-name" placeholder="例如：英文" value="${escapeHtml(name)}" />
-        </div>
-        <div>
-          <label>本次分數</label>
-          <input type="number" class="f-subject-score" min="0" max="100" value="${score}" />
-        </div>
-        <div>
-          <button class="btn btn-sm btn-danger" type="button" data-remove>移除</button>
-        </div>
+    // 科目清單已完全固定（來自「科目對照表」），此表單只負責回填分數，
+    // 不再提供新增/移除/拖曳排序等操作——科目的增刪與順序統一到「科目對照表」管理頁面調整。
+    // 每一列同時是「科目與級距/首次成績徽章」＋「本次分數」＋「基礎/進步/衛冕/小計」的完整計算表格列。
+    function addSubjectRow(name = "", score = "") {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>
+          <span class="subject-badges"></span>
+          <span class="subj-label">${escapeHtml(name)}</span>
+          <input type="hidden" class="f-subject-name" value="${escapeHtml(name)}" />
+        </td>
+        <td class="num"><input type="number" class="f-subject-score" min="0" max="100" value="${score}" /></td>
+        <td class="num" data-cell="base">–</td>
+        <td class="num" data-cell="progress">–</td>
+        <td class="num" data-cell="defense">–</td>
+        <td class="num" data-cell="subtotal">–</td>
       `;
       subjectRowsEl.appendChild(row);
-
-      if (!locked) {
-        row.querySelector("[data-remove]").addEventListener("click", () => {
-          row.remove();
-          updatePreview();
-        });
-
-        const handle = row.querySelector(".drag-handle");
-        handle.addEventListener("mousedown", () => {
-          row.draggable = true;
-        });
-        row.addEventListener("dragstart", (e) => {
-          draggedRow = row;
-          row.classList.add("dragging");
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData("text/plain", rowId);
-        });
-        row.addEventListener("dragend", () => {
-          row.classList.remove("dragging");
-          row.draggable = false;
-          draggedRow = null;
-          updatePreview();
-        });
-        row.querySelector(".f-subject-name").addEventListener("input", updatePreview);
-      }
 
       const scoreInput = row.querySelector(".f-subject-score");
       scoreInput.addEventListener("input", () => {
@@ -476,11 +397,6 @@
         updatePreview();
       });
     }
-
-    document.getElementById("addSubjectBtn").addEventListener("click", () => addSubjectRow());
-
-    // 提示：科目的上下順序會影響「同分時」的名次判定（分數不同時不影響總金額），
-    // 可以按住科目左邊的「⠿」拖曳調整順序。
 
     // 依「這筆紀錄的學期＋考試類型」判斷學制順序，從已載入的歷史紀錄中自動找出
     // 每個科目「前一次」的分數，不需要使用者手動輸入「上次分數」。
@@ -513,9 +429,14 @@
     }
 
     function updatePreview() {
-      const subjects = collectSubjects();
       const previewEl = document.getElementById("calcPreview");
       const punishmentRow = document.getElementById("punishmentStatusRow");
+      if (subjectsBlocked) {
+        previewEl.innerHTML = "";
+        if (punishmentRow) punishmentRow.style.display = "none";
+        return;
+      }
+      const subjects = collectSubjects();
       if (!subjects.length) {
         previewEl.innerHTML = "請至少輸入一科分數";
         if (punishmentRow) punishmentRow.style.display = "none";
@@ -535,19 +456,28 @@
       const firstTimeNames = new Set(subjects.filter((s) => !(s.name in prevMap)).map((s) => s.name));
       const result = calcExamRecord(subjectsWithPrev, rules);
       if (punishmentRow) punishmentRow.style.display = result.hasPunishment ? "block" : "none";
+
+      // 直接把每科的級距/首次成績徽章與基礎/進步/衛冕/小計數字，填回同一張表格對應的列，
+      // 不重新產生分數輸入框，避免使用者輸入到一半游標被打斷。
+      const rowEls = [...subjectRowsEl.children];
+      result.detail.forEach((d, i) => {
+        const rowEl = rowEls[i];
+        if (!rowEl) return;
+        const badgesEl = rowEl.querySelector(".subject-badges");
+        if (badgesEl) {
+          badgesEl.innerHTML = `
+            <span class="badge badge-${d.tierKey}">${d.tierLabel}</span>
+            ${firstTimeNames.has(d.name) ? '<span class="badge badge-first" title="沒有前一次分數可比對，暫不計算進步／衛冕獎金">首次成績</span>' : ""}
+          `;
+        }
+        rowEl.querySelector('[data-cell="base"]').textContent = fmtMoney(d.baseBonus);
+        rowEl.querySelector('[data-cell="progress"]').textContent = fmtMoney(d.progressBonus);
+        rowEl.querySelector('[data-cell="defense"]').textContent = fmtMoney(d.defenseBonus);
+        rowEl.querySelector('[data-cell="subtotal"]').textContent = fmtMoney(d.subtotal);
+        rowEl.classList.toggle("row-punishment", !!d.punishment);
+      });
+
       previewEl.innerHTML = `
-        <div class="grid grid-cols-4" style="margin-bottom:10px;">
-          ${result.detail
-            .map(
-              (d) => `<div>
-                <span class="badge badge-${d.tierKey}">${d.tierLabel}</span>
-                ${firstTimeNames.has(d.name) ? '<span class="badge badge-first" title="沒有前一次分數可比對，暫不計算進步／衛冕獎金">首次成績</span>' : ""}
-                <div style="font-size:13px; margin-top:6px;">${escapeHtml(d.name)}：${fmtMoney(d.subtotal)}</div>
-                <div class="text-faint" style="font-size:11px;">基礎${fmtMoney(d.baseBonus)}｜進步${fmtMoney(d.progressBonus)}｜衛冕${fmtMoney(d.defenseBonus)}</div>
-              </div>`
-            )
-            .join("")}
-        </div>
         <div class="flex-between">
           <span>全科加碼：${fmtMoney(result.comboBonus)}</span>
           <span style="font-weight:800; font-size:16px;">預估總計：${fmtMoney(result.total)}</span>
@@ -638,27 +568,12 @@
       const punishmentSelectLoad = document.getElementById("fPunishmentStatus");
       if (punishmentSelectLoad) punishmentSelectLoad.value = record.punishmentStatus === "done" ? "done" : "pending";
 
-      // 編輯既有紀錄時，一律顯示這筆紀錄「實際儲存」的科目（尊重歷史資料，不強制套用目前的對照表設定）；
-      // 只有當這筆紀錄的科目跟目前該年級的對照表設定完全一致時，才視為「來自對照表」而鎖定編輯。
+      // 編輯既有紀錄時，一律顯示這筆紀錄「實際儲存」的科目（尊重歷史資料），
+      // 不因為目前的對照表設定而擋住編輯——既然資料已經存在，就是可以編輯的。
       const recordSubjects = record.subjects || [];
-      const gradeKey = extractGradeKey(record.semester);
-      const preset = subjectPresets[gradeKey];
-      const matchesPreset =
-        Array.isArray(preset) &&
-        preset.length > 0 &&
-        preset.length === recordSubjects.length &&
-        preset.every((name, i) => recordSubjects[i] && recordSubjects[i].name === name);
-
+      setSubjectsBlocked(false);
       subjectRowsEl.innerHTML = "";
-      const addBtn = document.getElementById("addSubjectBtn");
-      if (matchesPreset) {
-        recordSubjects.forEach((s) => addSubjectRow(s.name, s.score, true));
-        if (addBtn) addBtn.style.display = "none";
-      } else {
-        recordSubjects.forEach((s) => addSubjectRow(s.name, s.score));
-        if (!recordSubjects.length) addSubjectRow();
-        if (addBtn) addBtn.style.display = "";
-      }
+      recordSubjects.forEach((s) => addSubjectRow(s.name, s.score));
 
       formEl.style.display = "block";
       formEl.scrollIntoView({ behavior: "smooth" });
