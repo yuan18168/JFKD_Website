@@ -265,6 +265,7 @@ input, select {
   font-family: inherit;
 }
 input:focus, select:focus { outline: none; border-color: var(--brand); }
+input[readonly] { background: var(--bg-card); color: var(--text-dim); cursor: default; }
 
 .btn {
   display: inline-flex;
@@ -399,6 +400,8 @@ input:focus, select:focus { outline: none; border-color: var(--brand); }
   cursor: pointer;
 }
 .chip.active { background: var(--brand-dim); border-color: var(--brand); color: #cddcff; }
+.subject-chip { cursor: grab; }
+.subject-chip.dragging { opacity: 0.35; }
 
 .text-dim { color: var(--text-dim); }
 .text-faint { color: var(--text-faint); }
