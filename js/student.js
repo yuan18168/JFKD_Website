@@ -270,9 +270,17 @@
       ["國語", "數學", "英文"].forEach((n) => addSubjectRow(n));
     }
 
+    // 新增／編輯表單展開時，隱藏上方統計卡片與趨勢圖表，讓畫面聚焦在表單本身；
+    // 關閉表單（取消／儲存後重新整理）時才恢復顯示。
+    const dashboardSummaryEl = document.getElementById("dashboardSummarySection");
+    function setDashboardSummaryVisible(visible) {
+      if (dashboardSummaryEl) dashboardSummaryEl.style.display = visible ? "" : "none";
+    }
+
     document.getElementById("openFormBtn").addEventListener("click", () => {
       editingRecordId = null;
       setFormMode("create");
+      setDashboardSummaryVisible(false);
       document.getElementById("fDate").valueAsDate = new Date();
       document.getElementById("fExamType").value = "期中";
       document.getElementById("fOverride").value = "";
@@ -306,6 +314,7 @@
     document.getElementById("cancelFormBtn").addEventListener("click", () => {
       formEl.style.display = "none";
       editingRecordId = null;
+      setDashboardSummaryVisible(true);
     });
 
     document.getElementById("fDate").valueAsDate = new Date();
@@ -459,6 +468,9 @@
       const subjectsWithPrev = subjects.map((s) =>
         s.name in prevMap ? { ...s, prevScore: prevMap[s.name] } : { ...s }
       );
+      // 沒有前一次分數可比對的科目（例如升上新學年後新增的科目），
+      // 標示為「首次成績」，讓使用者了解為什麼沒有進步／衛冕獎金
+      const firstTimeNames = new Set(subjects.filter((s) => !(s.name in prevMap)).map((s) => s.name));
       const result = calcExamRecord(subjectsWithPrev, rules);
       if (punishmentRow) punishmentRow.style.display = result.hasPunishment ? "block" : "none";
       previewEl.innerHTML = `
@@ -467,6 +479,7 @@
             .map(
               (d) => `<div>
                 <span class="badge badge-${d.tierKey}">${d.tierLabel}</span>
+                ${firstTimeNames.has(d.name) ? '<span class="badge badge-first" title="沒有前一次分數可比對，暫不計算進步／衛冕獎金">首次成績</span>' : ""}
                 <div style="font-size:13px; margin-top:6px;">${escapeHtml(d.name)}：${fmtMoney(d.subtotal)}</div>
                 <div class="text-faint" style="font-size:11px;">基礎${fmtMoney(d.baseBonus)}｜進步${fmtMoney(d.progressBonus)}｜衛冕${fmtMoney(d.defenseBonus)}</div>
               </div>`
@@ -550,6 +563,7 @@
     window.__loadRecordIntoForm = function (record) {
       editingRecordId = record.id;
       setFormMode("edit");
+      setDashboardSummaryVisible(false);
 
       document.getElementById("fDate").value = record.date || "";
       const editLevel = detectSchoolLevel(record.semester);
