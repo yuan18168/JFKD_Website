@@ -255,6 +255,21 @@ input:focus, select:focus { outline: none; border-color: var(--brand); }
   gap: 10px;
   align-items: end;
   margin-bottom: 10px;
+  transition: opacity .15s;
+}
+.subject-row.dragging { opacity: 0.35; }
+.drag-handle {
+  cursor: grab;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-faint);
+  padding: 8px 4px;
+  user-select: none;
+}
+.drag-handle:active { cursor: grabbing; }
+.input-error {
+  border-color: var(--bad) !important;
+  background: rgba(255,107,107,0.08);
 }
 
 .section-title {
