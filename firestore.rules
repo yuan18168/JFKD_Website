@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// ⚠️ 這份規則要貼到 Firebase 主控台 → Firestore Database → 規則(Rules) 分頁，
+// 取代預設內容，然後按「發布」。這是真正保護資料的地方（網頁上的白名單只是介面提示）。
+//
+// 請把下面 ALLOWED_EMAILS 陣列改成你們家人的 Google Email，
+// 必須與 js/firebase-config.js 內的 ALLOWED_EMAILS 保持一致。
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isFamilyMember() {
+      return request.auth != null &&
+        request.auth.token.email in [
+          'yuan18168@gmail.com'
+          // , 'your-wife@gmail.com'
+          // , 'your-kid@gmail.com'
+        ];
+    }
+
+    match /{document=**} {
+      allow read, write: if isFamilyMember();
+    }
+  }
+}

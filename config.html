@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>獎懲規則設定｜【JFKD】家規獎懲系統</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">JF</div>
+        <div class="brand-text">
+          <div class="title">JFKD 家規獎懲</div>
+          <div class="subtitle">家庭儀表板</div>
+        </div>
+      </div>
+
+      <a href="index.html" class="nav-link">🏠 總覽</a>
+
+      <div class="nav-section-label">學生</div>
+      <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
+
+      <div class="nav-section-label">管理</div>
+      <a href="config.html" class="nav-link active">⚙️ 獎懲規則設定</a>
+
+      <div class="sidebar-footer">
+        <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
+        <span class="user-email" id="sidebarUserEmail">載入中...</span>
+        <button id="logoutBtn">登出</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>獎懲規則設定</h1>
+          <div class="desc">調整級距獎金、進步獎金、全科加碼與處罰機制，全站即時套用</div>
+        </div>
+      </div>
+
+      <div class="section-title mt-0">學生名單</div>
+      <div class="card">
+        <div id="studentList" class="chip-row" style="margin-bottom:14px;"></div>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="newStudentName" placeholder="輸入學生暱稱，例如：哈哈" style="max-width:260px;" />
+          <button class="btn btn-primary" id="addStudentBtn">新增學生</button>
+        </div>
+      </div>
+
+      <div class="section-title">成績級距與獎金</div>
+      <div class="card" style="padding:0; overflow:hidden;">
+        <table id="tiersTable">
+          <thead>
+            <tr>
+              <th>級距</th><th>分數範圍</th><th class="num">基礎獎金</th><th class="num">衛冕獎金</th><th>需處罰</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="grid grid-cols-2" style="margin-top:18px;">
+        <div class="card">
+          <div class="section-title mt-0">進步獎金</div>
+          <label>每進步 1 分，加發（元）</label>
+          <input type="number" id="progressPerPoint" />
+        </div>
+        <div class="card">
+          <div class="section-title mt-0">處罰機制說明</div>
+          <textarea id="punishmentText" rows="3" style="width:100%; background:var(--bg-elevated); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:9px 11px; font-family:inherit; font-size:13px;"></textarea>
+        </div>
+      </div>
+
+      <div class="section-title">全科加碼獎金</div>
+      <div class="grid grid-cols-2">
+        <div class="card">
+          <div class="section-title mt-0">3 科組合（全部達到同一級距時）</div>
+          <div id="combo3Rows"></div>
+        </div>
+        <div class="card">
+          <div class="section-title mt-0">5 科組合（全部達到同一級距時）</div>
+          <div id="combo5Rows"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:22px; display:flex; gap:10px;">
+        <button class="btn btn-primary" id="saveRulesBtn">儲存規則設定</button>
+        <span id="saveMsg" class="text-faint" style="align-self:center; font-size:12px;"></span>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/config.js"></script>
+</body>
+</html>

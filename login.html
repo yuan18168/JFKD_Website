@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>登入｜【JFKD】家規獎懲系統</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="brand-mark">JFKD</div>
+      <h1>【JFKD】家規獎懲系統</h1>
+      <p>僅限家庭成員登入</p>
+
+      <button class="google-btn" id="googleLoginBtn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" />
+        使用 Google 帳號登入
+      </button>
+
+      <div id="loginMsg" class="login-msg"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msgEl = document.getElementById("loginMsg");
+    if (params.get("denied") === "1") {
+      msgEl.textContent = "這個 Google 帳號不在家庭白名單內，請聯絡管理員（爸爸）新增。";
+      msgEl.className = "login-msg error";
+    }
+
+    // 若已登入且在白名單內，直接導向首頁
+    auth.onAuthStateChanged((user) => {
+      if (user && isAllowedEmail(user.email)) {
+        window.location.href = "index.html";
+      }
+    });
+
+    document.getElementById("googleLoginBtn").addEventListener("click", () => {
+      msgEl.textContent = "登入中...";
+      msgEl.className = "login-msg info";
+      signInWithGoogle()
+        .then((result) => {
+          if (!isAllowedEmail(result.user.email)) {
+            return auth.signOut().then(() => {
+              window.location.href = "login.html?denied=1";
+            });
+          }
+          window.location.href = "index.html";
+        })
+        .catch((err) => {
+          msgEl.textContent = "登入失敗：" + err.message;
+          msgEl.className = "login-msg error";
+        });
+    });
+  </script>
+</body>
+</html>

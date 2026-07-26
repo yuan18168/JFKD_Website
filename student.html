@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>學生紀錄｜【JFKD】家規獎懲系統</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">JF</div>
+        <div class="brand-text">
+          <div class="title">JFKD 家規獎懲</div>
+          <div class="subtitle">家庭儀表板</div>
+        </div>
+      </div>
+
+      <a href="index.html" class="nav-link">🏠 總覽</a>
+
+      <div class="nav-section-label">學生</div>
+      <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
+
+      <div class="nav-section-label">管理</div>
+      <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
+
+      <div class="sidebar-footer">
+        <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
+        <span class="user-email" id="sidebarUserEmail">載入中...</span>
+        <button id="logoutBtn">登出</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 id="studentName">載入中...</h1>
+          <div class="desc" id="studentMeta"></div>
+        </div>
+        <button class="btn btn-primary" id="openFormBtn">＋ 新增考試紀錄</button>
+      </div>
+
+      <div class="grid grid-cols-4" id="studentStats">
+        <div class="card stat-card"><div class="label">累計紀錄</div><div class="value">–</div></div>
+        <div class="card stat-card"><div class="label">累計獎金</div><div class="value">–</div></div>
+        <div class="card stat-card"><div class="label">平均分（近5次）</div><div class="value">–</div></div>
+        <div class="card stat-card"><div class="label">需處罰次數</div><div class="value">–</div></div>
+      </div>
+
+      <div class="section-title">獎金趨勢</div>
+      <div class="card">
+        <canvas id="trendChart" height="80"></canvas>
+      </div>
+
+      <!-- 新增紀錄表單（預設隱藏） -->
+      <div class="card" id="recordForm" style="display:none; margin-top:18px;">
+        <div class="section-title mt-0">新增考試紀錄</div>
+        <div class="grid grid-cols-3">
+          <div>
+            <label>日期</label>
+            <input type="date" id="fDate" />
+          </div>
+          <div>
+            <label>學期（例：一下 / 四下）</label>
+            <input type="text" id="fSemester" placeholder="例如：一下" />
+          </div>
+          <div>
+            <label>考試類型</label>
+            <select id="fExamType">
+              <option>期中</option>
+              <option>期末</option>
+              <option>小考</option>
+              <option>其他</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">科目與分數</div>
+        <div id="subjectRows"></div>
+        <button class="btn btn-sm" id="addSubjectBtn" type="button">＋ 新增科目</button>
+
+        <div class="divider"></div>
+
+        <div id="calcPreview" class="text-dim" style="font-size:13px;"></div>
+
+        <div class="grid grid-cols-2" style="margin-top:16px;">
+          <div>
+            <label>手動覆寫總額（選填，留空則自動計算）</label>
+            <input type="number" id="fOverride" placeholder="例如：500" />
+          </div>
+          <div>
+            <label>備註（選填）</label>
+            <input type="text" id="fNote" placeholder="例如：已發放獎金" />
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button class="btn btn-primary" id="saveRecordBtn">儲存紀錄</button>
+          <button class="btn" id="cancelFormBtn" type="button">取消</button>
+        </div>
+      </div>
+
+      <div class="section-title">歷史紀錄</div>
+      <div class="card" style="padding:0; overflow:hidden;">
+        <table id="recordsTable">
+          <thead>
+            <tr>
+              <th>日期</th><th>學期</th><th>考試</th><th>科目明細</th>
+              <th class="num">平均分</th><th class="num">總獎金</th><th>狀態</th><th></th>
+            </tr>
+          </thead>
+          <tbody><tr><td colspan="8" class="empty-state">載入中...</td></tr></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>
