@@ -289,15 +289,26 @@ input[readonly] { background: var(--bg-card); color: var(--text-dim); cursor: de
 .btn-block { width: 100%; justify-content: center; }
 .btn-sm { padding: 6px 10px; font-size: 12px; }
 
-.subject-row {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr auto;
-  gap: 10px;
-  align-items: end;
-  margin-bottom: 10px;
-  transition: opacity .15s;
+/* ---------- 考試紀錄表單：科目與計算合併表格 ---------- */
+#subjectsCalcTable td:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
 }
-.subject-row.dragging { opacity: 0.35; }
+.subject-badges { display: inline-flex; align-items: center; gap: 4px; }
+.subject-badges:empty { display: none; }
+.subj-label { font-size: 13px; font-weight: 600; }
+#subjectsCalcTable .f-subject-score {
+  max-width: 84px;
+  margin-left: auto;
+  text-align: right;
+}
+#subjectsCalcTable td.num { white-space: nowrap; }
+#subjectsCalcTable td[data-cell="subtotal"] { font-weight: 700; color: var(--text); }
+#subjectsCalcTable tr.row-punishment { background: rgba(255,107,107,0.06); }
+#subjectsBlockedMsg { padding: 32px 24px; }
+
 .drag-handle {
   cursor: grab;
   font-size: 18px;
