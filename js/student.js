@@ -45,14 +45,33 @@
     const avgRecent = recent5.length
       ? Math.round((recent5.reduce((a, r) => a + r.result.avgScore, 0) / recent5.length) * 10) / 10
       : "-";
-    const punishCount = rows.filter((r) => r.result.hasPunishment && r.punishmentStatus !== "done").length;
+    // 累計處罰次數：歷史全部觸發處罰的次數（不論後來是否已執行完畢）
+    const punishCount = rows.filter((r) => r.result.hasPunishment).length;
+    // 累計進步次數：所有紀錄中，各科目相較上次分數有進步（progressBonus > 0）的總次數
+    const progressCount = rows.reduce(
+      (acc, r) => acc + (r.result.detail || []).filter((d) => d.progressBonus > 0).length,
+      0
+    );
+    // 累計衛冕次數：所有紀錄中，各科目守住上次高分級距（defenseBonus > 0）的總次數
+    const defenseCount = rows.reduce(
+      (acc, r) => acc + (r.result.detail || []).filter((d) => d.defenseBonus > 0).length,
+      0
+    );
+    // 連續正常紀錄：從最新一筆往回算，連續多少筆沒有觸發處罰（rows 為新到舊排序）
+    let streak = 0;
+    for (const r of rows) {
+      if (r.result.hasPunishment) break;
+      streak++;
+    }
 
     const el = document.getElementById("studentStats");
     el.innerHTML = `
-      <div class="card stat-card"><div class="label">累計紀錄</div><div class="value">${rows.length}</div></div>
       <div class="card stat-card"><div class="label">累計獎金</div><div class="value">${fmtMoney(totalBonus)}</div></div>
       <div class="card stat-card"><div class="label">平均分（近5次）</div><div class="value">${avgRecent}</div></div>
-      <div class="card stat-card"><div class="label">需處罰次數</div><div class="value">${punishCount}</div>${punishCount ? '<div class="delta down">需留意</div>' : ""}</div>
+      <div class="card stat-card"><div class="label">累計處罰次數</div><div class="value">${punishCount}</div></div>
+      <div class="card stat-card"><div class="label">累計進步次數</div><div class="value">${progressCount}</div>${progressCount ? '<div class="delta up">持續進步中</div>' : ""}</div>
+      <div class="card stat-card"><div class="label">累計衛冕次數</div><div class="value">${defenseCount}</div>${defenseCount ? '<div class="delta up">穩定發揮</div>' : ""}</div>
+      <div class="card stat-card"><div class="label">連續正常紀錄</div><div class="value">${streak}</div>${streak ? '<div class="delta up">連續達標中</div>' : ""}</div>
     `;
   }
 
@@ -80,8 +99,9 @@
     function addMiniChart(title, color, scores, isAverage) {
       const validScores = scores.filter((v) => typeof v === "number");
       const minScore = validScores.length ? Math.min(...validScores) : 0;
-      // 下限＝歷史最低分再往下 10 分（不低於 0），上限固定 100 分，讓趨勢起伏更明顯
-      const yMin = Math.max(0, Math.floor(minScore) - 10);
+      // 分數區間預設 60~100；只有最低分低於 60 時才下修，且下限仍取 10 分整數
+      // 例：最低 58 分 → 下限 50；最低 32 分 → 下限 30
+      const yMin = minScore < 60 ? Math.max(0, Math.floor(minScore / 10) * 10) : 60;
 
       const card = document.createElement("div");
       card.className = "card mini-chart-card" + (isAverage ? " mini-chart-average" : "");
@@ -90,7 +110,7 @@
           <div class="mini-chart-title"><span class="dot" style="background:${color}"></span>${escapeHtml(title)}</div>
           <div class="mini-chart-range">${yMin} ~ 100</div>
         </div>
-        <canvas height="160"></canvas>
+        <canvas height="${isAverage ? 60 : 160}"></canvas>
       `;
       container.appendChild(card);
 
