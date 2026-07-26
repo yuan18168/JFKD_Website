@@ -40,10 +40,58 @@ async function deleteStudent(id) {
   await db.collection("students").doc(id).delete();
 }
 
-// 同一天可能同時有多筆紀錄（例如同一天補登期中、期末），
-// 用考試類型的先後順序當作次要排序依據，確保「期中一定排在期末之前」，
-// 不會因為 Firestore 回傳順序或建立時間不同而錯亂。
+// ------------------------------------------------------------------
+// 學制順序判斷：確保紀錄一律照「一上 → 一下 → 二上 → 二下 → ... → 六下（國小）
+// → 七/國一 → ... → 九/國三（國中）→ 十/高一 → ... → 十二/高三（高中）」的順序排列，
+// 每個學期內再依「小考 < 期中 < 期末 < 其他」排序。
+// 不管實際登打日期是哪一天、或先後補登哪個階段的成績，畫面顯示順序都會照學制排列，
+// 不會因為日期打錯、或同一天登打多筆而錯亂。
+const GRADE_LEVEL_ALIASES = [
+  ["國三", 9], ["國二", 8], ["國一", 7],
+  ["高三", 12], ["高二", 11], ["高一", 10],
+];
+const GRADE_NUM_ALIASES = [
+  ["十二", 12], ["十一", 11], ["十", 10],
+  ["九", 9], ["八", 8], ["七", 7],
+  ["六", 6], ["五", 5], ["四", 4], ["三", 3], ["二", 2], ["一", 1],
+];
 const EXAM_TYPE_ORDER = { 小考: 0, 期中: 1, 期末: 2, 其他: 3 };
+
+/** 將「一上」「四下」「國一上」「高三下」等學期文字，換算成可比較大小的數字（愈大代表愈後面的學期） */
+function parseSemesterOrdinal(semesterText) {
+  const s = (semesterText || "").trim();
+  if (!s) return null;
+
+  let grade = null;
+  for (const [alias, g] of GRADE_LEVEL_ALIASES) {
+    if (s.startsWith(alias)) {
+      grade = g;
+      break;
+    }
+  }
+  if (grade === null) {
+    for (const [alias, g] of GRADE_NUM_ALIASES) {
+      if (s.startsWith(alias)) {
+        grade = g;
+        break;
+      }
+    }
+  }
+  if (grade === null) return null;
+
+  const half = s.includes("下") ? 1 : s.includes("上") ? 0 : null;
+  if (half === null) return null;
+
+  return grade * 2 + half; // 例：一上=2、一下=3、四下=9、國一上=16...
+}
+
+/** 學期＋考試類型合併成單一排序數字；學期文字看不懂就回傳 null，改用日期排序 */
+function getCurriculumOrdinal(record) {
+  const semOrdinal = parseSemesterOrdinal(record.semester);
+  if (semOrdinal === null) return null;
+  const examOrdinal = EXAM_TYPE_ORDER[record.examType] ?? 1.5; // 未知考試類型排在期中、期末之間
+  return semOrdinal * 10 + examOrdinal;
+}
 
 async function listExamRecords(studentId) {
   let q = db.collection("examRecords").orderBy("date", "desc");
@@ -51,15 +99,15 @@ async function listExamRecords(studentId) {
   const snap = await q.get();
   const rows = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   // studentId 篩選時 Firestore 需另外排序（避免複合索引需求）
-  // 排序結果為「新到舊」：日期新的在前；日期相同時，考試類型較晚的（期末）在前；
-  // 類型也相同時，用建立時間（createdAt）當最後的 tie-breaker。
+  // 排序結果為「新到舊」：優先照學制順序（學期＋考試類型）排列；
+  // 若學期文字無法辨識，才退回用日期排序；日期也相同則用建立時間（createdAt）當最後依據。
   rows.sort((a, b) => {
+    const aOrd = getCurriculumOrdinal(a);
+    const bOrd = getCurriculumOrdinal(b);
+    if (aOrd !== null && bOrd !== null && aOrd !== bOrd) return bOrd - aOrd;
+
     const dateCmp = (b.date || "").localeCompare(a.date || "");
     if (dateCmp !== 0) return dateCmp;
-
-    const aOrder = EXAM_TYPE_ORDER[a.examType] ?? 99;
-    const bOrder = EXAM_TYPE_ORDER[b.examType] ?? 99;
-    if (aOrder !== bOrder) return bOrder - aOrder;
 
     const aTime = a.createdAt && typeof a.createdAt.toMillis === "function" ? a.createdAt.toMillis() : 0;
     const bTime = b.createdAt && typeof b.createdAt.toMillis === "function" ? b.createdAt.toMillis() : 0;
