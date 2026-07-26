@@ -1,10 +1,15 @@
 /*
   data.js — Firestore 資料存取共用函式
   Collections:
-    config/rules        單一文件，獎懲規則設定
-    students/{id}        { name, color, order }
-    examRecords/{id}      { studentId, semester, examType, date, subjects:[{name,score,prevScore}],
-                             manualOverrideTotal (可選), note, createdAt, createdBy }
+    config/rules          （舊版，已遷移）單一文件的獎懲規則設定
+    config/settings        { defaultProfileId }：家庭目前的預設設定檔
+    ruleProfiles/{id}       { name, tiers, progressBonusPerPoint, comboBonus3, comboBonus5, punishmentText, createdAt }
+    students/{id}           { name, color, order }
+    examRecords/{id}        { studentId, semester, examType, date, subjects:[{name,score,prevScore}],
+                               ruleProfileId（套用的設定檔）, note,
+                               punishmentStatus（'pending'|'done'，只有觸發處罰時才存在),
+                               bonusStatus（'pending'|'done'，只有總獎金>0時才存在),
+                               createdAt, createdBy, updatedAt, updatedBy }
 */
 
 const AVATAR_COLORS = ["#4f7cff", "#4fd1c5", "#ffb454", "#ff6b9d", "#a78bfa"];
@@ -17,6 +22,81 @@ async function getRules() {
 
 async function saveRules(rules) {
   await db.collection("config").doc("rules").set(rules, { merge: false });
+}
+
+// ------------------------------------------------------------------
+// 成績級距與獎金：多設定檔（ruleProfiles）
+// 每個設定檔是一份完整的規則（級距/進步獎金/全科加碼/處罰說明），
+// 家裡有一個共用的「預設設定檔」（config/settings.defaultProfileId），
+// 新增考試紀錄時記住這個預設檔；每一筆考試紀錄實際套用的設定檔
+// 記錄在 examRecords/{id}.ruleProfileId，之後即使更換預設檔或新增其他設定檔，
+// 這筆紀錄仍會沿用當初套用的那一份，不會被連動改變
+// （除非使用者自己在編輯畫面手動更換，或直接修改該設定檔本身的數值）。
+async function listRuleProfiles() {
+  const snap = await db.collection("ruleProfiles").orderBy("createdAt", "asc").get();
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+async function getRuleProfile(id) {
+  if (!id) return null;
+  const doc = await db.collection("ruleProfiles").doc(id).get();
+  if (!doc.exists) return null;
+  return { id: doc.id, ...doc.data() };
+}
+
+async function addRuleProfile(profile) {
+  return db.collection("ruleProfiles").add({
+    ...defaultRules(),
+    ...profile,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+}
+
+async function updateRuleProfile(id, profile) {
+  await db.collection("ruleProfiles").doc(id).update(profile);
+}
+
+async function deleteRuleProfile(id) {
+  await db.collection("ruleProfiles").doc(id).delete();
+}
+
+async function getSettings() {
+  const doc = await db.collection("config").doc("settings").get();
+  return doc.exists ? doc.data() : {};
+}
+
+async function setDefaultRuleProfileId(id) {
+  await db.collection("config").doc("settings").set({ defaultProfileId: id }, { merge: true });
+}
+
+/**
+ * 從已載入的設定檔清單中，找出某一筆考試紀錄「實際要套用」的規則物件。
+ * 優先用紀錄自己存的 ruleProfileId；如果沒有存、或存的那個設定檔已被刪除，
+ * 才退回目前的家庭預設設定檔；萬一預設檔也找不到，最後才退回程式內建的 defaultRules()。
+ */
+function pickRulesForRecord(record, profiles, defaultProfileId) {
+  const byId = Object.fromEntries((profiles || []).map((p) => [p.id, p]));
+  const chosen =
+    (record && record.ruleProfileId && byId[record.ruleProfileId]) ||
+    byId[defaultProfileId] ||
+    (profiles && profiles[0]) ||
+    null;
+  return chosen ? { ...defaultRules(), ...chosen } : defaultRules();
+}
+
+/**
+ * 一次性遷移：把舊版單一 config/rules 文件轉成第一個設定檔「預設方案」，
+ * 並設為家庭預設設定檔。已經有設定檔存在時不會重複執行。
+ */
+async function migrateLegacyRulesToProfile() {
+  const existingProfiles = await listRuleProfiles();
+  if (existingProfiles.length) return existingProfiles[0].id;
+
+  const legacyDoc = await db.collection("config").doc("rules").get();
+  const legacyRules = legacyDoc.exists ? legacyDoc.data() : {};
+  const ref = await addRuleProfile({ name: "預設方案", ...legacyRules });
+  await setDefaultRuleProfileId(ref.id);
+  return ref.id;
 }
 
 // ------------------------------------------------------------------
@@ -51,6 +131,14 @@ async function addStudent(name) {
 
 async function deleteStudent(id) {
   await db.collection("students").doc(id).delete();
+}
+
+/** 刪除學生時，一併刪除這位學生所有的歷史考試紀錄。回傳實際刪除的紀錄筆數。 */
+async function deleteStudentCascade(id) {
+  const records = await listExamRecords(id);
+  await Promise.all(records.map((r) => deleteExamRecord(r.id)));
+  await deleteStudent(id);
+  return records.length;
 }
 
 // ------------------------------------------------------------------

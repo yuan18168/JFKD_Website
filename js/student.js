@@ -10,13 +10,15 @@
     return;
   }
 
-  const [student, students, rules, records, subjectPresets] = await Promise.all([
+  const [student, students, profiles, settings, records, subjectPresets] = await Promise.all([
     getStudent(studentId),
     listStudents(),
-    getRules(),
+    listRuleProfiles(),
+    getSettings(),
     listExamRecords(studentId),
     getSubjectPresets(),
   ]);
+  const defaultProfileId = settings.defaultProfileId || profiles[0]?.id || null;
 
   renderStudentNav(students, studentId);
 
@@ -28,16 +30,17 @@
   document.getElementById("studentName").textContent = student.name;
   document.getElementById("studentMeta").textContent = `${records.length} 筆歷史紀錄`;
 
+  // 每一筆紀錄都用「當初套用的設定檔」（沒存過就退回目前的家庭預設檔）來計算，
+  // 這樣新增/切換設定檔不會改變舊紀錄已經算出來的結果。
   const enriched = records.map((r) => {
-    const result = calcExamRecord(r.subjects || [], rules);
-    const total = typeof r.manualOverrideTotal === "number" ? r.manualOverrideTotal : result.total;
-    return { ...r, result, total };
+    const result = calcExamRecord(r.subjects || [], pickRulesForRecord(r, profiles, defaultProfileId));
+    return { ...r, result, total: result.total };
   });
 
   renderStats(enriched);
   renderChart(enriched);
   renderTable(enriched);
-  setupForm(rules, student);
+  setupForm(profiles, defaultProfileId, student);
 
   // ------------------------------------------------------------------
   function renderStats(rows) {
@@ -166,10 +169,26 @@
     return s ? "國小" : "-";
   }
 
+  // 處罰狀態徽章：不需處罰／尚未執行處罰／已執行處罰
+  function punishmentBadge(r) {
+    if (!r.result.hasPunishment) return '<span class="badge badge-normal">不需處罰</span>';
+    return r.punishmentStatus === "done"
+      ? '<span class="badge badge-done">已執行處罰</span>'
+      : '<span class="badge badge-penalty">尚未執行處罰</span>';
+  }
+
+  // 獎金狀態徽章：無獎金／尚未發放獎金／已發放獎金
+  function bonusBadge(r) {
+    if (!(r.total > 0)) return '<span class="badge badge-normal">無獎金</span>';
+    return r.bonusStatus === "done"
+      ? '<span class="badge badge-done">已發放獎金</span>'
+      : '<span class="badge badge-warn">尚未發放獎金</span>';
+  }
+
   function renderTable(rows) {
     const tbody = document.querySelector("#recordsTable tbody");
     if (!rows.length) {
-      tbody.innerHTML = `<tr><td colspan="9" class="empty-state">還沒有任何紀錄，點右上角「新增考試紀錄」開始記錄吧！</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" class="empty-state">還沒有任何紀錄，點右上角「新增考試紀錄」開始記錄吧！</td></tr>`;
       return;
     }
     tbody.innerHTML = rows
@@ -185,13 +204,8 @@
           <td class="text-dim">${subjectsText}</td>
           <td class="num">${r.result.avgScore}</td>
           <td class="num">${fmtMoney(r.total)}</td>
-          <td>${
-            r.result.hasPunishment
-              ? r.punishmentStatus === "done"
-                ? '<span class="badge badge-done">已執行處罰</span>'
-                : '<span class="badge badge-penalty">需處罰</span>'
-              : '<span class="badge badge-normal">正常</span>'
-          }</td>
+          <td>${punishmentBadge(r)}</td>
+          <td>${bonusBadge(r)}</td>
           <td style="white-space:nowrap;">
             <button class="btn btn-sm" data-edit-id="${r.id}">編輯</button>
             <button class="btn btn-sm btn-danger" data-del-id="${r.id}">刪除</button>
@@ -216,12 +230,38 @@
     });
   }
 
+  function fmtDateTime(ts) {
+    if (!ts || typeof ts.toDate !== "function") return null;
+    return ts.toDate().toLocaleString("zh-Hant-TW", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
   // ------------------------------------------------------------------
-  function setupForm(rules, student) {
+  function setupForm(profiles, defaultProfileId, student) {
     const formEl = document.getElementById("recordForm");
     const formTitleEl = document.getElementById("recordFormTitle");
     const saveBtn = document.getElementById("saveRecordBtn");
     let editingRecordId = null;
+
+    // 目前表單正在使用的設定檔內容（依 #fRuleProfile 選單即時切換）
+    const profileSelectEl = document.getElementById("fRuleProfile");
+    profileSelectEl.innerHTML = profiles
+      .map((p) => `<option value="${p.id}">${escapeHtml(p.name || "未命名設定檔")}${p.id === defaultProfileId ? "（預設）" : ""}</option>`)
+      .join("");
+    let rules = defaultRules();
+    function refreshRulesFromSelectedProfile() {
+      const profile = profiles.find((p) => p.id === profileSelectEl.value);
+      rules = profile ? { ...defaultRules(), ...profile } : defaultRules();
+    }
+    profileSelectEl.addEventListener("change", () => {
+      refreshRulesFromSelectedProfile();
+      updatePreview();
+    });
 
     function setFormMode(mode) {
       // mode: "create" | "edit"
@@ -297,8 +337,10 @@
       if (blocked) {
         const previewEl = document.getElementById("calcPreview");
         const punishmentRow = document.getElementById("punishmentStatusRow");
+        const bonusRow = document.getElementById("bonusStatusRow");
         if (previewEl) previewEl.innerHTML = "";
         if (punishmentRow) punishmentRow.style.display = "none";
+        if (bonusRow) bonusRow.style.display = "none";
       }
     }
 
@@ -321,16 +363,24 @@
       if (dashboardSummaryEl) dashboardSummaryEl.style.display = visible ? "" : "none";
     }
 
+    const recordMetaInfoEl = document.getElementById("recordMetaInfo");
+
     document.getElementById("openFormBtn").addEventListener("click", () => {
       editingRecordId = null;
       setFormMode("create");
       setDashboardSummaryVisible(false);
       document.getElementById("fDate").valueAsDate = new Date();
       document.getElementById("fExamType").value = "期中";
-      document.getElementById("fOverride").value = "";
       document.getElementById("fNote").value = "";
       const punishmentSelectReset = document.getElementById("fPunishmentStatus");
       if (punishmentSelectReset) punishmentSelectReset.value = "pending";
+      const bonusSelectReset = document.getElementById("fBonusStatus");
+      if (bonusSelectReset) bonusSelectReset.value = "pending";
+      if (recordMetaInfoEl) recordMetaInfoEl.style.display = "none";
+
+      // 新增紀錄一律先套用目前的家庭預設設定檔，可在下拉選單改用其他設定檔
+      profileSelectEl.value = defaultProfileId || (profiles[0] && profiles[0].id) || "";
+      refreshRulesFromSelectedProfile();
 
       const lastRecord = records[0]; // records 已依學制排序新到舊排序（外層 IIFE 抓取）
       // 預設學制/學期沿用最近一筆紀錄，若無歷史紀錄則預設國小一上
@@ -379,8 +429,10 @@
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>
-          <span class="subject-badges"></span>
-          <span class="subj-label">${escapeHtml(name)}</span>
+          <span class="subject-name-cell">
+            <span class="subject-badges"></span>
+            <span class="subj-label">${escapeHtml(name)}</span>
+          </span>
           <input type="hidden" class="f-subject-name" value="${escapeHtml(name)}" />
         </td>
         <td class="num"><input type="number" class="f-subject-score" min="0" max="100" value="${score}" /></td>
@@ -431,15 +483,18 @@
     function updatePreview() {
       const previewEl = document.getElementById("calcPreview");
       const punishmentRow = document.getElementById("punishmentStatusRow");
+      const bonusRow = document.getElementById("bonusStatusRow");
       if (subjectsBlocked) {
         previewEl.innerHTML = "";
         if (punishmentRow) punishmentRow.style.display = "none";
+        if (bonusRow) bonusRow.style.display = "none";
         return;
       }
       const subjects = collectSubjects();
       if (!subjects.length) {
         previewEl.innerHTML = "請至少輸入一科分數";
         if (punishmentRow) punishmentRow.style.display = "none";
+        if (bonusRow) bonusRow.style.display = "none";
         return;
       }
       const currentMeta = {
@@ -456,6 +511,7 @@
       const firstTimeNames = new Set(subjects.filter((s) => !(s.name in prevMap)).map((s) => s.name));
       const result = calcExamRecord(subjectsWithPrev, rules);
       if (punishmentRow) punishmentRow.style.display = result.hasPunishment ? "block" : "none";
+      if (bonusRow) bonusRow.style.display = result.total > 0 ? "block" : "none";
 
       // 直接把每科的級距/首次成績徽章與基礎/進步/衛冕/小計數字，填回同一張表格對應的列，
       // 不重新產生分數輸入框，避免使用者輸入到一半游標被打斷。
@@ -514,7 +570,6 @@
         s.name in prevMap ? { ...s, prevScore: prevMap[s.name] } : { ...s }
       );
 
-      const overrideVal = document.getElementById("fOverride").value;
       const record = {
         studentId,
         date,
@@ -522,17 +577,25 @@
         examType: examTypeVal,
         subjects: subjectsWithPrev,
         note: document.getElementById("fNote").value.trim(),
+        ruleProfileId: profileSelectEl.value || defaultProfileId || null,
       };
-      if (overrideVal !== "") record.manualOverrideTotal = Number(overrideVal);
 
       const isEdit = !!editingRecordId;
       const calcResult = calcExamRecord(subjectsWithPrev, rules);
+
       if (calcResult.hasPunishment) {
         const statusSelect = document.getElementById("fPunishmentStatus");
         record.punishmentStatus = statusSelect ? statusSelect.value : "pending";
       } else if (isEdit) {
         // 分數已修正到不再需要處罰，若編輯時清掉了先前的處罰狀態欄位
         record.punishmentStatus = firebase.firestore.FieldValue.delete();
+      }
+
+      if (calcResult.total > 0) {
+        const bonusSelect = document.getElementById("fBonusStatus");
+        record.bonusStatus = bonusSelect ? bonusSelect.value : "pending";
+      } else if (isEdit) {
+        record.bonusStatus = firebase.firestore.FieldValue.delete();
       }
 
       saveBtn.disabled = true;
@@ -562,11 +625,28 @@
       schoolLevelEl.value = editLevel;
       populateSemesterOptions(editLevel, record.semester);
       document.getElementById("fExamType").value = record.examType || "期中";
-      document.getElementById("fOverride").value =
-        typeof record.manualOverrideTotal === "number" ? record.manualOverrideTotal : "";
       document.getElementById("fNote").value = record.note || "";
       const punishmentSelectLoad = document.getElementById("fPunishmentStatus");
       if (punishmentSelectLoad) punishmentSelectLoad.value = record.punishmentStatus === "done" ? "done" : "pending";
+      const bonusSelectLoad = document.getElementById("fBonusStatus");
+      if (bonusSelectLoad) bonusSelectLoad.value = record.bonusStatus === "done" ? "done" : "pending";
+
+      // 這筆紀錄套用的設定檔（沒存過就用目前的家庭預設檔），可在此更換
+      profileSelectEl.value = (record.ruleProfileId && profiles.some((p) => p.id === record.ruleProfileId))
+        ? record.ruleProfileId
+        : defaultProfileId || (profiles[0] && profiles[0].id) || "";
+      refreshRulesFromSelectedProfile();
+
+      // 建立/修改時間僅作為記錄顯示在編輯畫面，不出現在任何列表欄位中
+      const createdText = fmtDateTime(record.createdAt);
+      const updatedText = fmtDateTime(record.updatedAt);
+      if (recordMetaInfoEl) {
+        const parts = [];
+        if (createdText) parts.push(`建立於 ${createdText}`);
+        if (updatedText) parts.push(`最後修改於 ${updatedText}`);
+        recordMetaInfoEl.textContent = parts.join("　");
+        recordMetaInfoEl.style.display = parts.length ? "block" : "none";
+      }
 
       // 編輯既有紀錄時，一律顯示這筆紀錄「實際儲存」的科目（尊重歷史資料），
       // 不因為目前的對照表設定而擋住編輯——既然資料已經存在，就是可以編輯的。

@@ -24,6 +24,14 @@
     高一: [], 高二: [], 高三: [],
   };
 
+  // 依序展開成一維陣列，讓「帶入上一年級科目」可以跨學制邊界找到真正的「上一個年級」
+  // （例如國一的上一個年級是國小六年級，高一的上一個年級是國中三年級）
+  const FLAT_GRADES = GRADE_GROUPS.flatMap((g) => g.grades);
+  function previousGradeOf(grade) {
+    const idx = FLAT_GRADES.indexOf(grade);
+    return idx > 0 ? FLAT_GRADES[idx - 1] : null;
+  }
+
   const [students, savedPresets] = await Promise.all([listStudents(), getSubjectPresets()]);
   renderStudentNav(students, null);
 
@@ -45,7 +53,14 @@
         .map(
           (grade) => `
         <div class="grade-preset-row" data-grade="${grade}" style="margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--border);">
-          <div style="font-size:13px; font-weight:700; margin-bottom:8px;">${GRADE_LABELS[grade]}</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+            <div style="font-size:13px; font-weight:700;">${GRADE_LABELS[grade]}</div>
+            ${
+              previousGradeOf(grade)
+                ? `<button type="button" class="btn btn-sm" data-copy-prev="${grade}">⬇ 帶入上一年級科目（${GRADE_LABELS[previousGradeOf(grade)]}）</button>`
+                : ""
+            }
+          </div>
           <div class="chip-row subject-chip-list" data-grade-chips="${grade}"></div>
           <div style="display:flex; gap:8px; margin-top:10px;">
             <input type="text" class="subject-add-input" data-grade-input="${grade}" placeholder="輸入科目名稱，按 Enter 新增" style="max-width:220px;" />
@@ -119,6 +134,22 @@
   }
 
   GRADE_GROUPS.forEach((g) => g.grades.forEach((grade) => renderChips(grade)));
+
+  container.querySelectorAll("[data-copy-prev]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const grade = btn.dataset.copyPrev;
+      const prevGrade = previousGradeOf(grade);
+      if (!prevGrade) return;
+      if (
+        presets[grade].length &&
+        !confirm(`${GRADE_LABELS[grade]}目前已經有科目設定，確定要用「${GRADE_LABELS[prevGrade]}」的科目清單覆蓋嗎？（尚未按下方「儲存科目對照表」前都可以再調整或還原）`)
+      ) {
+        return;
+      }
+      presets[grade] = [...presets[prevGrade]];
+      renderChips(grade);
+    });
+  });
 
   container.querySelectorAll(".subject-add-input").forEach((input) => {
     input.addEventListener("keydown", (e) => {
