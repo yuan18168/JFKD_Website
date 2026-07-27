@@ -193,7 +193,7 @@ a { color: inherit; text-decoration: none; }
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 16px;
 }
-.mini-chart-card { padding: 16px 18px 10px; }
+.mini-chart-card { padding: 16px 18px 10px; position: relative; overflow: hidden; }
 .mini-chart-average {
   grid-column: 1 / -1;
   padding: 12px 18px 6px;
@@ -926,3 +926,119 @@ body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; 
 }
 .theme-swatches { display: flex; gap: 8px; }
 .theme-swatch { width: 28px; height: 28px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); }
+
+/* ==========================================================================
+   科目趨勢圖卡片華麗特效：依「進步／衛冕／滿分」判斷，桌面 hover、觸控裝置點一下
+   即可在該科目卡片上播放對應等級的慶祝動畫（見 js/student.js 的 bindSubjectCardEffect）。
+   ========================================================================== */
+
+/* 特效一／二：卡片正中央彈出一個大 emoji，約佔卡片一半大小 */
+.subject-effect-emoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 6;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.45));
+}
+.subject-effect-emoji.pop-effect {
+  animation: subject-pop 2s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+.subject-effect-emoji.spin-effect {
+  animation: subject-spin 2s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes subject-pop {
+  0% { transform: scale(0); opacity: 0; }
+  15% { transform: scale(1.25); opacity: 1; }
+  25% { transform: scale(1); opacity: 1; }
+  85% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.7); opacity: 0; }
+}
+@keyframes subject-spin {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  15% { transform: scale(1.2) rotate(20deg); opacity: 1; }
+  25% { transform: scale(1) rotate(0deg); opacity: 1; }
+  60% { transform: scale(1.05) rotate(360deg); opacity: 1; }
+  85% { transform: scale(1) rotate(720deg); opacity: 1; }
+  100% { transform: scale(0.7) rotate(760deg); opacity: 0; }
+}
+
+/* 特效三：進步＋衛冕，卡片滿版煙火秀（canvas-confetti 的畫布，見 playCardFireworks） */
+.subject-effect-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* 特效四：全能挑戰（進步＋衛冕＋滿分100），全頁彈出約 2/3 版面大小的動物派對嘉年華賀卡 */
+.animal-party-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(5,8,16,0.55);
+  backdrop-filter: blur(2px);
+  animation: animal-party-fade-in .3s ease;
+}
+.animal-party-overlay.fading-out { animation: animal-party-fade-out .4s ease forwards; }
+@keyframes animal-party-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes animal-party-fade-out { from { opacity: 1; } to { opacity: 0; } }
+.animal-party-box {
+  width: min(66vw, 720px);
+  min-height: min(66vh, 420px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 40px 32px;
+  border-radius: 28px;
+  text-align: center;
+  background: linear-gradient(150deg, #1b1040 0%, #3a1560 45%, #5a1a5c 100%);
+  border: 3px solid #ffd54a;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,213,74,0.3), inset 0 0 60px rgba(255,213,74,0.08);
+  animation: animal-party-pop .45s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes animal-party-pop {
+  from { transform: scale(.75); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.animal-party-title {
+  font-size: clamp(18px, 2.4vw, 28px);
+  font-weight: 800;
+  color: #fff8e1;
+  text-shadow: 0 0 16px rgba(255,213,74,0.6);
+}
+.animal-party-sub {
+  font-size: clamp(12px, 1.4vw, 15px);
+  color: #e7d9ff;
+  opacity: .9;
+}
+.animal-party-animals {
+  font-size: clamp(32px, 5vw, 56px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 10px;
+}
+.animal-party-animals span {
+  display: inline-block;
+  animation: animal-bounce 1s ease-in-out infinite;
+}
+@keyframes animal-bounce {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-16px) rotate(6deg); }
+}
+@media (max-width: 640px) {
+  .animal-party-box { width: 88vw; min-height: 60vh; padding: 28px 20px; }
+}
