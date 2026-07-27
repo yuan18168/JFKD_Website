@@ -7,6 +7,37 @@
   // （宣告放在檔案最前面，避免 renderChart 內的卡片在頁面載入當下就先執行到這個常數，導致還沒初始化就被讀取而出錯）
   const IS_TOUCH_DEVICE = !window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
+  // ---- 特效播放中，「點擊在其它地方」要立即中止（只有點擊才中止，滑鼠移開不中止）----
+  // activeCardEffects：Map<卡片元素, 中止函式>，每張卡片同時最多一個播放中的特效；
+  // activeFullpage：{ overlay, dispose } 或 null，全頁特效（動物派對）目前只會有一個。
+  // 用 capture 階段監聽，確保「觸發特效的那次點擊」不會在特效剛註冊前就被誤判成別處點擊。
+  const activeCardEffects = new Map();
+  let activeFullpage = null;
+
+  function registerCardEffect(card, dispose) {
+    const prev = activeCardEffects.get(card);
+    if (prev) prev();
+    activeCardEffects.set(card, dispose);
+  }
+
+  function registerFullpageEffect(overlay, dispose) {
+    if (activeFullpage) activeFullpage.dispose();
+    activeFullpage = { overlay, dispose };
+  }
+
+  document.addEventListener(
+    "click",
+    (e) => {
+      activeCardEffects.forEach((dispose, card) => {
+        if (!card.contains(e.target)) dispose();
+      });
+      if (activeFullpage && e.target === activeFullpage.overlay) {
+        activeFullpage.dispose();
+      }
+    },
+    true
+  );
+
   const params = new URLSearchParams(window.location.search);
   const studentId = params.get("id");
 
@@ -15,7 +46,7 @@
     return;
   }
 
-  const [student, students, profiles, settings, records, subjectPresets, globalChartSettings] = await Promise.all([
+  const [student, students, profiles, settings, records, subjectPresets, globalChartSettings, effectSettings] = await Promise.all([
     getStudent(studentId),
     listStudents(),
     listRuleProfiles(),
@@ -23,6 +54,7 @@
     listExamRecords(studentId),
     getSubjectPresets(),
     getChartSettings(),
+    getEffectSettings(),
   ]);
   const defaultProfileId = settings.defaultProfileId || profiles[0]?.id || null;
   const chartSettings = resolveChartSettings(student, globalChartSettings);
@@ -589,30 +621,28 @@
     const yMin = chartSettings.yMin;
     const yMax = chartSettings.yMax;
 
-    // ---- 科目卡片華麗特效：依「最近一次紀錄」該科目的進步/衛冕/滿分狀況，判斷 hover 要播哪一級特效 ----
-    // 判斷邏輯完全沿用 calc.js 既有的獎金計算欄位（progressBonus/defenseBonus/tierKey），
-    // 跟獎金算法保持一致，不另外設計新的比對規則：
-    //   1級 進步：progressBonus > 0
-    //   2級 衛冕：defenseBonus > 0
-    //   3級 進步+衛冕：兩者都 > 0
-    //   4級 進步+衛冕+滿分：兩者都 > 0 且 tierKey === "A"（100分）
-    function getSubjectEffectTier(name) {
+    // ---- 科目卡片華麗特效：依「最近一次紀錄」該科目的進步/衛冕/滿分狀況，判斷要播哪一條規則的特效 ----
+    // 判斷邏輯沿用 calc.js 既有的獎金計算欄位（progressBonus/defenseBonus/tierKey），
+    // 跟獎金算法保持一致。四條規則彼此互斥，判斷優先順序：
+    //   final100（最新一次滿分100，獨立判斷，不需要同時進步或衛冕）
+    //   > both（進步＋衛冕）> defense（衛冕）> progress（進步）
+    function getSubjectRuleKey(name) {
       for (let i = ordered.length - 1; i >= 0; i--) {
         const d = (ordered[i].result?.detail || []).find((x) => x.name === name);
         if (!d) continue;
         const isProgress = d.progressBonus > 0;
         const isDefense = d.defenseBonus > 0;
         const isHundred = d.tierKey === "A";
-        if (isProgress && isDefense && isHundred) return 4;
-        if (isProgress && isDefense) return 3;
-        if (isDefense) return 2;
-        if (isProgress) return 1;
-        return 0;
+        if (isHundred) return "final100";
+        if (isProgress && isDefense) return "both";
+        if (isDefense) return "defense";
+        if (isProgress) return "progress";
+        return null;
       }
-      return 0;
+      return null;
     }
 
-    function addMiniChart(title, color, scores, isAverage, effectTier) {
+    function addMiniChart(title, color, scores, isAverage, ruleKey) {
       const card = document.createElement("div");
       card.className = "card mini-chart-card" + (isAverage ? " mini-chart-average" : "");
       card.innerHTML = `
@@ -623,7 +653,7 @@
         <canvas height="${isAverage ? 60 : 160}"></canvas>
       `;
       container.appendChild(card);
-      if (!isAverage && effectTier > 0) bindSubjectCardEffect(card, effectTier);
+      if (!isAverage && ruleKey) bindSubjectCardEffect(card, ruleKey, effectSettings, student.name);
 
       const chart = new Chart(card.querySelector("canvas"), {
         type: "line",
@@ -667,45 +697,112 @@
         const s = (r.subjects || []).find((x) => x.name === name);
         return s ? s.score : null;
       });
-      addMiniChart(name, color, scores, false, getSubjectEffectTier(name));
+      addMiniChart(name, color, scores, false, getSubjectRuleKey(name));
     });
   }
 
-  function bindSubjectCardEffect(card, tier) {
-    const trigger = () => playSubjectEffect(card, tier);
-    if (IS_TOUCH_DEVICE) {
+  // 依「規則設定」決定觸發方式：trigger="click"／"hover" 為管理者強制指定，
+  // "auto"（預設）則沿用裝置判斷（桌面 hover、觸控點一下）。
+  function bindSubjectCardEffect(card, ruleKey, effectSettings, studentName) {
+    const rule = effectSettings && effectSettings[ruleKey];
+    if (!rule || !rule.enabled) return;
+    const useClick = rule.trigger === "click" || (rule.trigger !== "hover" && IS_TOUCH_DEVICE);
+    const trigger = () => playEffectById(rule.effect, card, rule.duration, studentName);
+    if (useClick) {
       card.addEventListener("click", trigger);
     } else {
       card.addEventListener("mouseenter", trigger);
     }
   }
 
-  function playSubjectEffect(card, tier) {
-    if (tier === 1) playCardEmojiEffect(card, "👍", 2000, "pop-effect");
-    else if (tier === 2) playCardEmojiEffect(card, "👑", 2000, "spin-effect");
-    else if (tier === 3) playCardFireworks(card, 5000);
-    else if (tier === 4) playAnimalParty(student.name, 10000);
+  // 特效總開關：依素材庫 id 分派到對應的播放函式
+  function playEffectById(effectId, card, duration, studentName) {
+    const dur = typeof duration === "number" && duration > 0 ? duration : 2000;
+    if (effectId === "thumbsUp") playCardEmojiEffect(card, "👍", dur, "pop-effect");
+    else if (effectId === "crownSpin") playCardEmojiEffect(card, "👑", dur, "spin-effect");
+    else if (effectId === "rocketChart") playCardRocketChart(card, dur);
+    else if (effectId === "starburst") playCardStarburst(card, dur);
+    else if (effectId === "cardConfetti") playCardConfetti(card, dur);
+    else if (effectId === "animalParty") playAnimalParty(studentName, dur);
   }
 
-  // 特效一／二：卡片內彈出一個大 emoji（約佔卡片一半大小），播完自動淡出移除
+  // 比讚／皇冠衛冕：卡片內彈出一個大 emoji（約佔卡片一半大小），播完自動淡出移除。
+  // CSS 動畫時長會依實際 duration 動態調整，確保不管在管理頁把秒數調長或調短，視覺節奏都對得上。
   function playCardEmojiEffect(card, emoji, duration, animClass) {
     const el = document.createElement("div");
     el.className = "subject-effect-emoji " + animClass;
+    el.style.animationDuration = duration / 1000 + "s";
     el.textContent = emoji;
     card.appendChild(el);
-    setTimeout(() => el.remove(), duration);
+    const timer = setTimeout(finish, duration);
+    function finish() {
+      clearTimeout(timer);
+      el.remove();
+      activeCardEffects.delete(card);
+    }
+    registerCardEffect(card, finish);
   }
 
-  // 特效三：進步＋衛冕，卡片滿版煙火秀。用 canvas-confetti 把畫布侷限在這張卡片自己的範圍內施放，
-  // 不會噴到卡片外面，也不會跟其他科目卡片的煙火互相干擾。
-  function playCardFireworks(card, duration) {
+  // 火箭＋折線圖成長：一條由左下往右上延伸的成長曲線，配一枚火箭沿著同樣的走勢往上衝，象徵「趨勢往上」。
+  function playCardRocketChart(card, duration) {
+    const wrap = document.createElement("div");
+    wrap.className = "subject-effect-rocket";
+    wrap.innerHTML = `
+      <svg class="rocket-trail-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path class="rocket-path" d="M6,92 L50,45 L92,10" />
+      </svg>
+      <div class="rocket-emoji">🚀</div>
+    `;
+    card.appendChild(wrap);
+    const durSec = Math.max(duration / 1000, 0.4);
+    wrap.querySelector(".rocket-path").style.animationDuration = durSec * 0.75 + "s";
+    wrap.querySelector(".rocket-emoji").style.animationDuration = durSec + "s";
+    const timer = setTimeout(finish, duration);
+    function finish() {
+      clearTimeout(timer);
+      wrap.remove();
+      activeCardEffects.delete(card);
+    }
+    registerCardEffect(card, finish);
+  }
+
+  // 星光閃耀＋放射光芒：中央一顆大星星彈出，搭配旋轉放射光暈與向外飛散的星芒碎片。
+  function playCardStarburst(card, duration) {
+    const wrap = document.createElement("div");
+    wrap.className = "subject-effect-starburst";
+    const sparkCount = 10;
+    let sparksHtml = "";
+    for (let i = 0; i < sparkCount; i++) {
+      sparksHtml += `<div class="starburst-spark" style="--a:${(360 / sparkCount) * i}deg"></div>`;
+    }
+    wrap.innerHTML = `<div class="starburst-rays"></div><div class="starburst-core">⭐</div>${sparksHtml}`;
+    card.appendChild(wrap);
+    const durSec = Math.max(duration / 1000, 0.4);
+    wrap.querySelectorAll(".starburst-rays, .starburst-core, .starburst-spark").forEach((el) => {
+      el.style.animationDuration = durSec + "s";
+    });
+    const timer = setTimeout(finish, duration);
+    function finish() {
+      clearTimeout(timer);
+      wrap.remove();
+      activeCardEffects.delete(card);
+    }
+    registerCardEffect(card, finish);
+  }
+
+  // 卡片內灑花：用 canvas-confetti 把畫布侷限在這張卡片自己的範圍內施放，
+  // 不會噴到卡片外面，也不會跟其他科目卡片的效果互相干擾。
+  function playCardConfetti(card, duration) {
     if (typeof confetti === "undefined") return;
     const canvas = document.createElement("canvas");
     canvas.className = "subject-effect-canvas";
     card.appendChild(canvas);
     const myConfetti = confetti.create(canvas, { resize: true, useWorker: false });
     const end = Date.now() + duration;
+    let rafId = null;
+    let stopped = false;
     (function frame() {
+      if (stopped) return;
       myConfetti({
         particleCount: 6,
         startVelocity: 24,
@@ -716,24 +813,31 @@
         colors: ["#ffd54a", "#4fd1c5", "#63b3ff", "#ff8fa3", "#ffffff"],
       });
       if (Date.now() < end) {
-        requestAnimationFrame(frame);
+        rafId = requestAnimationFrame(frame);
       } else {
-        setTimeout(() => canvas.remove(), 400);
+        finish();
       }
     })();
+    function finish() {
+      if (stopped) return;
+      stopped = true;
+      if (rafId) cancelAnimationFrame(rafId);
+      canvas.remove();
+      activeCardEffects.delete(card);
+    }
+    registerCardEffect(card, finish);
   }
 
-  // 特效四：全能挑戰（進步＋衛冕＋滿分100），整個頁面彈出約 2/3 版面大小的動物派對嘉年華賀卡，
-  // 搭配全螢幕 confetti 禮炮效果，播 10 秒後自動淡出收掉。全部使用通用動物 emoji，
-  // 沒有使用任何官方角色圖或真人肖像。
+  // 動物派對嘉年華：整個頁面彈出約 2/3 版面大小的動物派對賀卡，搭配全螢幕 confetti 禮炮效果，
+  // 播完（或使用者點擊卡片以外的地方）就淡出收掉。全部使用通用動物 emoji，沒有使用任何官方角色圖或真人肖像。
   function playAnimalParty(studentName, duration) {
     const overlay = document.createElement("div");
     overlay.className = "animal-party-overlay";
     const animals = ["🐶", "🐱", "🐰", "🦊", "🐼", "🦁", "🐯", "🐨", "🐸", "🐵"];
     overlay.innerHTML = `
       <div class="animal-party-box">
-        <div class="animal-party-title">🎉 全能挑戰達成！${escapeHtml(studentName || "")} 太厲害了！🎉</div>
-        <div class="animal-party-sub">進步＋衛冕＋滿分 100，三項全中，超級全能！</div>
+        <div class="animal-party-title">🎉 恭喜滿分 100！${escapeHtml(studentName || "")} 太厲害了！🎉</div>
+        <div class="animal-party-sub">這一科最新一次直接考了滿分，超級全能！</div>
         <div class="animal-party-animals">
           ${animals.map((a, i) => `<span style="animation-delay:${(i % 5) * 0.15}s;">${a}</span>`).join("")}
         </div>
@@ -752,11 +856,18 @@
         });
       }, 350);
     }
-    setTimeout(() => {
+    let disposed = false;
+    const timer = setTimeout(finish, duration);
+    function finish() {
+      if (disposed) return;
+      disposed = true;
+      clearTimeout(timer);
       if (burstTimer) clearInterval(burstTimer);
       overlay.classList.add("fading-out");
       setTimeout(() => overlay.remove(), 400);
-    }, duration);
+      activeFullpage = null;
+    }
+    registerFullpageEffect(overlay, finish);
   }
 
   // 依學期文字（例如「四下」「國一上」「高三下」）判斷屬於哪個學制，轉成表格顯示用文字

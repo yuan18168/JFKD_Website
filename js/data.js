@@ -4,6 +4,7 @@
     config/rules          （舊版，已遷移）單一文件的獎懲規則設定
     config/settings        { defaultProfileId, dashboardTitle（總覽頁可編輯標題） }：家庭共用設定
     config/chartSettings    { yMin, yMax, xCount（0=全部）, showPointLabels, fontSize }：全域圖表顯示預設值
+    config/effectSettings   { progress, defense, both, final100 }：科目卡片特效規則設定，每項 { enabled, effect, duration, trigger }
     ruleProfiles/{id}       { name, tiers, progressBonusPerPoint, comboBonus3, comboBonus5, punishmentText, createdAt }
     students/{id}           { name, color, order,
                                chartOverride（可選，覆寫全域圖表顯示設定，欄位同 config/chartSettings）,
@@ -348,6 +349,53 @@ function themeIconSvg(themeId) {
       </svg>`;
   }
   return "";
+}
+
+// ------------------------------------------------------------------
+// 科目卡片特效：素材庫（6種，供4條觸發規則自由搭配）＋規則設定（config/effectSettings）
+// 每條規則＝一種觸發條件（progress進步／defense衛冕／both進步+衛冕／final100最新一次100分），
+// final100 為「獨立判斷」：只看該科目最新一次紀錄是不是100分，不再要求同時滿足進步或衛冕；
+// 4條規則彼此判斷互斥，優先順序 final100 > both > defense > progress（同時符合多項時，取最高等級的規則）。
+// 每條規則可各自設定：enabled（開關）、effect（素材庫id）、duration（播放毫秒數）、
+// trigger（"auto"=依裝置自動判斷桌機hover／觸控點擊，"hover"=強制滑鼠移入，"click"=強制點擊）。
+const EFFECT_CATALOG = [
+  { id: "thumbsUp", label: "👍 比讚", scope: "card" },
+  { id: "crownSpin", label: "👑 皇冠衛冕", scope: "card" },
+  { id: "rocketChart", label: "🚀 火箭＋折線圖成長", scope: "card" },
+  { id: "starburst", label: "✨ 星光閃耀＋放射光芒", scope: "card" },
+  { id: "cardConfetti", label: "🎊 卡片內灑花", scope: "card" },
+  { id: "animalParty", label: "🎉 動物派對嘉年華（全頁）", scope: "fullpage" },
+];
+
+const EFFECT_RULE_LABELS = {
+  progress: "進步",
+  defense: "衛冕",
+  both: "進步＋衛冕",
+  final100: "最新一次滿分100",
+};
+
+function defaultEffectSettings() {
+  return {
+    progress: { enabled: true, effect: "rocketChart", duration: 2000, trigger: "auto" },
+    defense: { enabled: true, effect: "crownSpin", duration: 2000, trigger: "auto" },
+    both: { enabled: true, effect: "starburst", duration: 5000, trigger: "auto" },
+    final100: { enabled: true, effect: "animalParty", duration: 10000, trigger: "auto" },
+  };
+}
+
+async function getEffectSettings() {
+  const doc = await db.collection("config").doc("effectSettings").get();
+  const saved = doc.exists ? doc.data() : {};
+  const base = defaultEffectSettings();
+  const merged = {};
+  for (const key of Object.keys(base)) {
+    merged[key] = { ...base[key], ...(saved[key] || {}) };
+  }
+  return merged;
+}
+
+async function saveEffectSettings(settings) {
+  await db.collection("config").doc("effectSettings").set(settings, { merge: true });
 }
 
 /** 組出主題橫幅 HTML（student.html 套用主題時放在內容區最上方）
