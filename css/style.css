@@ -256,6 +256,38 @@ a { color: inherit; text-decoration: none; }
 .target-goal-card { margin-top: -6px; }
 .wishlist-card { margin-bottom: 0; }
 
+/* ---------- 願望清單：達成狀態卡片（進行中／達成／未達成三態）---------- */
+.wishlist-status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.wishlist-status-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.wishlist-redeem-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.wishlist-sorry-msg {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+.wishlist-card.wishlist-achieved {
+  border-color: var(--good);
+  background: linear-gradient(135deg, rgba(52,211,153,0.10), var(--bg-card) 70%);
+  box-shadow: 0 0 0 1px rgba(52,211,153,0.15);
+}
+.wishlist-card.wishlist-not-achieved {
+  opacity: .55;
+  filter: grayscale(.55);
+}
+
 /* ---------- 成就徽章 ---------- */
 .badge-chip-row {
   display: flex;
