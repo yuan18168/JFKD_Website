@@ -29,13 +29,16 @@
       <div class="nav-section-label">學生</div>
       <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
 
-      <div class="nav-section-label">管理</div>
-      <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
+      <div class="nav-section-label">學生管理</div>
+      <a href="wishlist.html" class="nav-link">🎁 願望清單</a>
+      <a href="themes.html" class="nav-link active">🎨 主題造型</a>
+
+      <div class="nav-section-label">父母管理</div>
       <a href="students.html" class="nav-link">👤 學生名單</a>
+      <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
-      <a href="simulate.html" class="nav-link">🧮 試算表</a>
       <a href="chart-settings.html" class="nav-link">📈 圖表顯示設定</a>
-      <a href="themes.html" class="nav-link active">🎨 學生主題造型</a>
+      <a href="simulate.html" class="nav-link">🧮 試算表</a>
 
       <div class="sidebar-footer">
         <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
@@ -51,15 +54,16 @@
           <div class="desc">
             每套主題都是原創致敬風格插畫（配色＋圖騰＋版面），並非官方角色圖或真人肖像。
             套用後只會改變該學生「自己的學生紀錄頁」，其他頁面維持標準樣式。
-            請到「學生名單」為每位學生選擇要套用哪一套。
           </div>
         </div>
       </div>
 
+      <div class="section-title mt-0">主題預覽</div>
       <div class="grid grid-cols-2" id="themeGallery"></div>
 
-      <div class="section-title">目前套用狀態</div>
-      <div id="currentAssignments" class="card">載入中...</div>
+      <div class="section-title">套用與標題設定</div>
+      <div class="student-tab-row" id="themeStudentTabs"></div>
+      <div id="themeEditor"></div>
     </main>
   </div>
 
