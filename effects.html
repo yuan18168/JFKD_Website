@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>科目對照表｜【JFKD】成績記錄表</title>
+<title>特效設定｜【JFKD】成績記錄表</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="manifest" href="manifest.json" />
@@ -36,9 +36,9 @@
       <div class="nav-section-label">父母管理</div>
       <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
-      <a href="subjects.html" class="nav-link active">📚 科目對照表</a>
+      <a href="subjects.html" class="nav-link">📚 科目對照表</a>
       <a href="chart-settings.html" class="nav-link">📈 圖表顯示設定</a>
-      <a href="effects.html" class="nav-link">✨ 特效設定</a>
+      <a href="effects.html" class="nav-link active">✨ 特效設定</a>
       <a href="simulate.html" class="nav-link">🧮 試算表</a>
 
       <div class="sidebar-footer">
@@ -51,18 +51,22 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>科目對照表</h1>
+          <h1>特效設定</h1>
           <div class="desc">
-            設定每個年級固定會考的科目與順序（上下學期共用同一份）。新增考試紀錄時，選定學制／學期後會自動帶出這裡設定的科目，只需要回填分數；沒有設定的年級仍維持自由輸入科目的方式。
+            設定學生紀錄頁「科目成績趨勢」卡片的華麗特效。四條規則彼此互斥，判斷優先順序：
+            最新一次滿分100 ＞ 進步＋衛冕 ＞ 衛冕 ＞ 進步（同時符合多項時，只播最高優先的那一條）。
+            每條規則可各自選用素材庫裡的任一種特效、設定播放秒數、以及要用滑鼠移入還是點擊來觸發。
+            播放中若使用者點擊畫面其它地方，特效會立即中止（只是把滑鼠移開不會中止）。
           </div>
         </div>
       </div>
 
-      <div id="presetGroups"></div>
+      <div class="section-title mt-0">四條觸發規則</div>
+      <div id="ruleCards"></div>
 
-      <div style="margin-top:22px; display:flex; gap:10px; align-items:center;">
-        <button class="btn btn-primary" id="saveSubjectPresetsBtn">儲存科目對照表</button>
-        <span id="saveSubjectMsg" class="text-faint" style="font-size:12px;"></span>
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" id="saveEffectsBtn">儲存特效設定</button>
+        <span id="effectsSaveMsg" class="text-faint" style="margin-left:10px; font-size:12px;"></span>
       </div>
     </main>
   </div>
@@ -75,6 +79,6 @@
   <script src="js/calc.js?v=20260729a"></script>
   <script src="js/data.js?v=20260729a"></script>
   <script src="js/nav.js?v=20260729a"></script>
-  <script src="js/subjects.js?v=20260729a"></script>
+  <script src="js/effects.js?v=20260729a"></script>
 </body>
 </html>
