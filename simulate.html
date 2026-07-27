@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>試算表｜【JFKD】成績記錄表</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">JF</div>
+        <div class="brand-text">
+          <div class="title">JFKD 成績記錄表</div>
+          <div class="subtitle">家庭儀表板</div>
+        </div>
+      </div>
+
+      <a href="index.html" class="nav-link">🏠 總覽</a>
+
+      <div class="nav-section-label">學生</div>
+      <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
+
+      <div class="nav-section-label">管理</div>
+      <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
+      <a href="students.html" class="nav-link">👤 學生名單</a>
+      <a href="subjects.html" class="nav-link">📚 科目對照表</a>
+      <a href="simulate.html" class="nav-link active">🧮 試算表</a>
+
+      <div class="sidebar-footer">
+        <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
+        <span class="user-email" id="sidebarUserEmail">載入中...</span>
+        <button id="logoutBtn">登出</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>試算表</h1>
+          <div class="desc">
+            挑選任一位學生某一次的成績當作「上次分數」，填入下次預測分數，立即看到預估獎金／處罰結果。
+            僅供試算，不會存檔，也不會影響任何歷史紀錄。
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3" style="margin-bottom:18px;">
+        <div>
+          <label>學生</label>
+          <select id="simStudent">
+            <option value="">請選擇學生</option>
+          </select>
+        </div>
+        <div>
+          <label>選一次成績當作「上次分數」</label>
+          <select id="simRecord">
+            <option value="">請先選擇學生</option>
+          </select>
+        </div>
+        <div>
+          <label>套用設定檔</label>
+          <select id="simProfile"></select>
+        </div>
+      </div>
+
+      <div id="simEmptyMsg" class="card empty-state">請先選擇學生與一次成績，即可開始試算下次預測分數</div>
+
+      <div class="card" style="padding:0; overflow-x:auto; display:none;" id="simTableWrap">
+        <table id="simTable">
+          <thead>
+            <tr>
+              <th>科目</th>
+              <th class="num">上次分數</th>
+              <th class="num">下次預測分數</th>
+              <th class="num">基礎</th>
+              <th class="num">進步</th>
+              <th class="num">衛冕</th>
+              <th class="num">小計</th>
+            </tr>
+          </thead>
+          <tbody id="simRows"></tbody>
+        </table>
+      </div>
+
+      <div class="divider" id="simDivider" style="display:none;"></div>
+
+      <div id="simPreview" class="text-dim" style="font-size:13px;"></div>
+
+      <div style="margin-top:16px; display:none;" id="simResetWrap">
+        <button class="btn" id="simResetBtn" type="button">重設為上次分數</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/simulate.js"></script>
+</body>
+</html>
