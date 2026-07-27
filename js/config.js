@@ -99,7 +99,11 @@
     }
     const profile = profiles.find((p) => p.id === selectedProfileId);
     const wasDefault = profile && profile.id === settings.defaultProfileId;
-    if (!confirm(`確定要刪除設定檔「${profile ? profile.name : ""}」嗎？已套用這個設定檔的歷史紀錄不會被刪除，會自動改用家庭預設設定檔的數值。此動作無法復原。`)) {
+    const ok = await confirmDialog(
+      `確定要刪除設定檔「${profile ? profile.name : ""}」嗎？已套用這個設定檔的歷史紀錄不會被刪除，會自動改用家庭預設設定檔的數值。此動作無法復原。`,
+      { title: "刪除設定檔", confirmText: "刪除" }
+    );
+    if (!ok) {
       return;
     }
     await deleteRuleProfile(selectedProfileId);
@@ -179,14 +183,21 @@
     const btn = document.getElementById("saveRulesBtn");
     const msg = document.getElementById("saveMsg");
     btn.disabled = true;
+    msg.style.color = "";
     msg.textContent = "儲存中...";
     try {
       await updateRuleProfile(selectedProfileId, updated);
       profiles = await listRuleProfiles();
       rules = { ...rules, ...updated };
+      flashButtonSuccess(btn);
+      msg.style.color = "var(--good)";
       msg.textContent = "已儲存 ✓";
-      setTimeout(() => (msg.textContent = ""), 2500);
+      setTimeout(() => {
+        msg.textContent = "";
+        msg.style.color = "";
+      }, 2500);
     } catch (err) {
+      msg.style.color = "var(--bad)";
       msg.textContent = "儲存失敗：" + err.message;
     } finally {
       btn.disabled = false;

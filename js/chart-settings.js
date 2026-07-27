@@ -48,13 +48,20 @@
     btn.textContent = "儲存中...";
     try {
       await saveChartSettings(readForm(globalEls));
-      msg.textContent = "已儲存！";
-      setTimeout(() => (msg.textContent = ""), 2500);
+      msg.style.color = "var(--good)";
+      msg.textContent = "已儲存 ✓";
+      btn.textContent = "儲存全域預設";
+      flashButtonSuccess(btn);
+      setTimeout(() => {
+        msg.textContent = "";
+        msg.style.color = "";
+      }, 2500);
     } catch (err) {
-      alert("儲存失敗：" + err.message);
+      msg.style.color = "var(--bad)";
+      msg.textContent = "儲存失敗：" + err.message;
+      btn.textContent = "儲存全域預設";
     } finally {
       btn.disabled = false;
-      btn.textContent = "儲存全域預設";
     }
   });
 
@@ -153,13 +160,20 @@
         } else {
           await updateStudent(s.id, { chartOverride: firebase.firestore.FieldValue.delete() });
         }
-        msg.textContent = "已儲存！";
-        setTimeout(() => (msg.textContent = ""), 2500);
+        saveBtn.textContent = "儲存這位學生的設定";
+        flashButtonSuccess(saveBtn);
+        msg.style.color = "var(--good)";
+        msg.textContent = "已儲存 ✓";
+        setTimeout(() => {
+          msg.textContent = "";
+          msg.style.color = "";
+        }, 2500);
       } catch (err) {
-        alert("儲存失敗：" + err.message);
+        msg.style.color = "var(--bad)";
+        msg.textContent = "儲存失敗：" + err.message;
+        saveBtn.textContent = "儲存這位學生的設定";
       } finally {
         saveBtn.disabled = false;
-        saveBtn.textContent = "儲存這位學生的設定";
       }
     });
   });

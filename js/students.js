@@ -44,8 +44,9 @@
         const id = btn.dataset.del;
         const student = students.find((s) => s.id === id);
         const records = await listExamRecords(id);
-        const ok = confirm(
-          `確定要刪除學生「${student ? student.name : ""}」嗎？這會一併刪除他的 ${records.length} 筆歷史考試紀錄，此動作無法復原。`
+        const ok = await confirmDialog(
+          `確定要刪除學生「${student ? student.name : ""}」嗎？這會一併刪除他的 ${records.length} 筆歷史考試紀錄，此動作無法復原。`,
+          { title: "刪除學生", confirmText: "刪除" }
         );
         if (!ok) return;
         btn.textContent = "刪除中...";
@@ -67,6 +68,7 @@
             await updateStudent(id, { themeId: firebase.firestore.FieldValue.delete() });
           }
           students = await listStudents();
+          flashSelectSuccess(select);
         } catch (err) {
           alert("更新主題失敗：" + err.message);
         } finally {
@@ -76,14 +78,24 @@
     });
   }
 
+  // 主題下拉選單儲存成功時，邊框短暫變綠色提示「已儲存」
+  function flashSelectSuccess(select) {
+    select.classList.add("select-flash-success");
+    setTimeout(() => select.classList.remove("select-flash-success"), 1200);
+  }
+
   document.getElementById("addStudentBtn").addEventListener("click", async () => {
     const input = document.getElementById("newStudentName");
+    const btn = document.getElementById("addStudentBtn");
     const name = input.value.trim();
     if (!name) return;
+    btn.disabled = true;
     await addStudent(name);
     input.value = "";
     students = await listStudents();
     renderList();
     renderStudentNav(students, null);
+    btn.disabled = false;
+    flashButtonSuccess(btn, "已新增 ✓");
   });
 })();

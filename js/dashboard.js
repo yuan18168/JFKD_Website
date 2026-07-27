@@ -175,15 +175,17 @@
             <span style="width:20px;height:20px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#08122e;">${(s.name || "?").slice(0, 1)}</span>
             <span style="font-weight:700; font-size:13px;">${escapeHtml(s.name)}</span>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>日期</th><th>學制</th><th>學期</th><th>考試</th><th>科目明細</th>
-                <th class="num">平均分數</th><th class="num">總獎金</th><th>處罰狀態</th><th>獎金狀態</th>
-              </tr>
-            </thead>
-            <tbody>${rowHtml}</tbody>
-          </table>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th><th>學制</th><th>學期</th><th>考試</th><th>科目明細</th>
+                  <th class="num">平均分數</th><th class="num">總獎金</th><th>處罰狀態</th><th>獎金狀態</th>
+                </tr>
+              </thead>
+              <tbody>${rowHtml}</tbody>
+            </table>
+          </div>
         </div>`;
       })
       .join("");
@@ -218,6 +220,7 @@
         if (newTitle !== currentTitle) {
           try {
             await saveDashboardTitle(newTitle);
+            showToast("已儲存 ✓");
           } catch (err) {
             alert("標題儲存失敗：" + err.message);
           }

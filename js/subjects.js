@@ -136,15 +136,16 @@
   GRADE_GROUPS.forEach((g) => g.grades.forEach((grade) => renderChips(grade)));
 
   container.querySelectorAll("[data-copy-prev]").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const grade = btn.dataset.copyPrev;
       const prevGrade = previousGradeOf(grade);
       if (!prevGrade) return;
-      if (
-        presets[grade].length &&
-        !confirm(`${GRADE_LABELS[grade]}目前已經有科目設定，確定要用「${GRADE_LABELS[prevGrade]}」的科目清單覆蓋嗎？（尚未按下方「儲存科目對照表」前都可以再調整或還原）`)
-      ) {
-        return;
+      if (presets[grade].length) {
+        const ok = await confirmDialog(
+          `${GRADE_LABELS[grade]}目前已經有科目設定，確定要用「${GRADE_LABELS[prevGrade]}」的科目清單覆蓋嗎？（尚未按下方「儲存科目對照表」前都可以再調整或還原）`,
+          { title: "覆蓋科目設定", confirmText: "覆蓋", danger: false }
+        );
+        if (!ok) return;
       }
       presets[grade] = [...presets[prevGrade]];
       renderChips(grade);
@@ -171,12 +172,19 @@
     const btn = document.getElementById("saveSubjectPresetsBtn");
     const msg = document.getElementById("saveSubjectMsg");
     btn.disabled = true;
+    msg.style.color = "";
     msg.textContent = "儲存中...";
     try {
       await saveSubjectPresets(presets);
+      flashButtonSuccess(btn);
+      msg.style.color = "var(--good)";
       msg.textContent = "已儲存 ✓";
-      setTimeout(() => (msg.textContent = ""), 2500);
+      setTimeout(() => {
+        msg.textContent = "";
+        msg.style.color = "";
+      }, 2500);
     } catch (err) {
+      msg.style.color = "var(--bad)";
       msg.textContent = "儲存失敗：" + err.message;
     } finally {
       btn.disabled = false;

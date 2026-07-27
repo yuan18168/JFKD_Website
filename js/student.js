@@ -48,9 +48,90 @@
   });
 
   renderStats(enriched);
+  renderScoreProgress(enriched[0]);
   renderChart(enriched);
-  renderTable(enriched);
+  setupRecordFilters(enriched);
+
+  // ---- 距離下一個獎金級距還差幾分（用最新一筆紀錄當時套用的設定檔門檻）----
+  function renderScoreProgress(latestRow) {
+    const el = document.getElementById("scoreProgress");
+    if (!el) return;
+    if (!latestRow) {
+      el.innerHTML = "";
+      return;
+    }
+    const rulesForLatest = pickRulesForRecord(latestRow, profiles, defaultProfileId);
+    const avg = latestRow.result.avgScore;
+    const sorted = [...rulesForLatest.tiers].sort((a, b) => a.min - b.min);
+    const nextTier = sorted.find((t) => t.min > avg);
+
+    if (!nextTier) {
+      el.innerHTML = `
+        <div class="card score-progress-card">
+          <div class="score-progress-head">
+            <span>🏆 已經達到最高級距了，太棒了！</span>
+            <span class="text-faint">最新平均 ${avg} 分</span>
+          </div>
+        </div>`;
+      return;
+    }
+
+    const prevTier = [...sorted].reverse().find((t) => t.min <= avg) || sorted[0];
+    const rangeStart = prevTier.min;
+    const rangeEnd = nextTier.min;
+    const pct = Math.max(4, Math.min(100, ((avg - rangeStart) / (rangeEnd - rangeStart)) * 100));
+    const diff = Math.round((rangeEnd - avg) * 10) / 10;
+
+    el.innerHTML = `
+      <div class="card score-progress-card">
+        <div class="score-progress-head">
+          <span>距離「${escapeHtml(nextTier.label)}」級距還差 <strong>${diff}</strong> 分</span>
+          <span class="text-faint">最新平均 ${avg} 分</span>
+        </div>
+        <div class="score-progress-track">
+          <div class="score-progress-fill" style="width:${pct}%;"></div>
+        </div>
+      </div>`;
+  }
   setupForm(profiles, defaultProfileId, student);
+
+  // ---- 歷史紀錄篩選（依學制／學期）----
+  function setupRecordFilters(rows) {
+    const levelEl = document.getElementById("recordLevelFilter");
+    const semesterEl = document.getElementById("recordSemesterFilter");
+    if (!levelEl || !semesterEl) {
+      renderTable(rows);
+      return;
+    }
+    const levels = [...new Set(rows.map((r) => schoolLevelLabel(r.semester)))].filter((l) => l && l !== "-");
+    levelEl.innerHTML = '<option value="">全部學制</option>' + levels.map((l) => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join("");
+
+    function refreshSemesterOptions() {
+      const level = levelEl.value;
+      const pool = level ? rows.filter((r) => schoolLevelLabel(r.semester) === level) : rows;
+      const semesters = [...new Set(pool.map((r) => r.semester).filter(Boolean))];
+      const current = semesterEl.value;
+      semesterEl.innerHTML = '<option value="">全部學期</option>' + semesters.map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+      if (semesters.includes(current)) semesterEl.value = current;
+    }
+
+    function applyFilters() {
+      const level = levelEl.value;
+      const semester = semesterEl.value;
+      let filtered = rows;
+      if (level) filtered = filtered.filter((r) => schoolLevelLabel(r.semester) === level);
+      if (semester) filtered = filtered.filter((r) => r.semester === semester);
+      renderTable(filtered);
+    }
+
+    refreshSemesterOptions();
+    levelEl.addEventListener("change", () => {
+      refreshSemesterOptions();
+      applyFilters();
+    });
+    semesterEl.addEventListener("change", applyFilters);
+    applyFilters();
+  }
 
   // ------------------------------------------------------------------
   function renderStats(rows) {
@@ -87,6 +168,60 @@
       <div class="card stat-card"><div class="label">累計衛冕次數</div><div class="value">${defenseCount}</div>${defenseCount ? '<div class="delta up">穩定發揮</div>' : ""}</div>
       <div class="card stat-card"><div class="label">連續正常紀錄</div><div class="value">${streak}</div>${streak ? '<div class="delta up">連續達標中</div>' : ""}</div>
     `;
+
+    renderBadges({ rows, progressCount, defenseCount, streak, punishCount });
+  }
+
+  // ---- 成就徽章：把累計數字包裝成可解鎖的徽章，達成前顯示「還差幾次解鎖」增加動力 ----
+  function renderBadges({ rows, progressCount, defenseCount, streak, punishCount }) {
+    const el = document.getElementById("achievementBadges");
+    if (!el) return;
+    const hasPerfectScore = rows.some((r) => (r.result.detail || []).some((d) => d.tierKey === "A"));
+    const neverPunished = rows.length > 0 && punishCount === 0;
+
+    const badges = [
+      {
+        icon: "🔥",
+        label: "進步達人",
+        unlocked: progressCount >= 5,
+        hint: progressCount >= 5 ? null : `再進步 ${5 - progressCount} 次解鎖`,
+      },
+      {
+        icon: "🏆",
+        label: "衛冕高手",
+        unlocked: defenseCount >= 5,
+        hint: defenseCount >= 5 ? null : `再衛冕 ${5 - defenseCount} 次解鎖`,
+      },
+      {
+        icon: "🎯",
+        label: "連續達標",
+        unlocked: streak >= 3,
+        hint: streak >= 3 ? null : `連續 ${3 - streak > 0 ? 3 - streak : 3} 次不處罰即可解鎖`,
+      },
+      {
+        icon: "💯",
+        label: "滿分紀錄",
+        unlocked: hasPerfectScore,
+        hint: hasPerfectScore ? null : "考到 100 分即可解鎖",
+      },
+      {
+        icon: "🛡️",
+        label: "零處罰紀錄",
+        unlocked: neverPunished,
+        hint: neverPunished ? null : "尚未達成",
+      },
+    ];
+
+    el.innerHTML = badges
+      .map(
+        (b) => `
+      <div class="badge-chip ${b.unlocked ? "unlocked" : "locked"}" title="${b.unlocked ? "已解鎖！" : b.hint}">
+        <span class="badge-chip-icon">${b.icon}</span>
+        <span class="badge-chip-label">${b.label}</span>
+        ${b.hint ? `<span class="badge-chip-hint">${escapeHtml(b.hint)}</span>` : ""}
+      </div>`
+      )
+      .join("");
   }
 
   function renderChart(rows) {
@@ -228,7 +363,8 @@
 
     tbody.querySelectorAll("button[data-del-id]").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!confirm("確定要刪除這筆紀錄嗎？此動作無法復原。")) return;
+        const ok = await confirmDialog("確定要刪除這筆紀錄嗎？此動作無法復原。", { title: "刪除紀錄", confirmText: "刪除" });
+        if (!ok) return;
         await deleteExamRecord(btn.dataset.delId);
         window.location.reload();
       });
@@ -615,10 +751,21 @@
       try {
         if (isEdit) {
           await updateExamRecord(editingRecordId, record);
+          showToast("已更新 ✓");
+          setTimeout(() => window.location.reload(), 900);
         } else {
           await addExamRecord(record);
+          const improvedCount = calcResult.detail.filter((d) => d.progressBonus > 0).length;
+          if (calcResult.total > 0) {
+            const parts = [`本次獎金 ${fmtMoney(calcResult.total)}`];
+            if (improvedCount > 0) parts.push(`${improvedCount} 科進步了`);
+            celebrate("🎉 新增成功！", parts.join("，"));
+            setTimeout(() => window.location.reload(), 1900);
+          } else {
+            showToast("已新增紀錄");
+            setTimeout(() => window.location.reload(), 900);
+          }
         }
-        window.location.reload();
       } catch (err) {
         alert((isEdit ? "更新失敗：" : "儲存失敗：") + err.message);
         saveBtn.disabled = false;
