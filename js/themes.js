@@ -46,15 +46,25 @@
     assignEl.innerHTML = '<div class="empty-state">尚未新增學生，請至「學生名單」新增</div>';
     return;
   }
+  // 每套主題自己的徽章配色，讓「目前套用狀態」的名稱顏色跟該主題本身一致，而不是全部統一綠色
+  const THEME_BADGE_COLORS = {
+    zoro: { bg: "rgba(0,230,118,0.20)", color: "#00e676" },
+    babymonster: { bg: "rgba(255,23,68,0.20)", color: "#ff5570" },
+  };
+
   assignEl.innerHTML = students
     .map((s) => {
       const theme = getStudentTheme(s.themeId);
+      const badgeColors = theme ? THEME_BADGE_COLORS[theme.id] : null;
+      const badgeStyle = badgeColors
+        ? `background:${badgeColors.bg}; color:${badgeColors.color};`
+        : "";
       return `<div class="flex-between" style="padding:10px 0; border-bottom:1px solid var(--border);">
         <div style="display:flex; align-items:center; gap:10px;">
           <span style="width:20px;height:20px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#08122e;">${(s.name || "?").slice(0, 1)}</span>
           <span>${escapeHtml(s.name)}</span>
         </div>
-        <span class="badge ${theme ? "badge-done" : "badge-normal"}">${theme ? escapeHtml(theme.name) : "無主題（標準樣式）"}</span>
+        <span class="badge ${theme ? "" : "badge-normal"}" style="${badgeStyle}">${theme ? escapeHtml(theme.name) : "無主題（標準樣式）"}</span>
       </div>`;
     })
     .join("");

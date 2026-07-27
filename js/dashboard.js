@@ -114,6 +114,8 @@
           maintainAspectRatio: false,
           interaction: { mode: "index", intersect: false },
           plugins: { legend: { display: false }, tooltip: { enabled: true } },
+          // 開啟點位分數顯示時，在圖表最上方預留空間，讓分數標籤永遠畫在點的上方，不會被裁切或蓋住
+          layout: { padding: { top: chartSettings.showPointLabels ? fontPx + 14 : 4 } },
           scales: {
             y: { display: false, min: chartSettings.yMin, max: chartSettings.yMax },
             x: { display: false },

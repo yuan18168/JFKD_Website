@@ -131,8 +131,9 @@ function chartFontSizePx(fontSize) {
 }
 
 // 一律顯示分數的自訂 Chart.js 外掛（平常靠 tooltip 顯示，開啟此設定才會把數字直接畫在點位旁邊）
-// 會依點位所在位置自動避開邊界：太靠左/右會改成靠左/靠右對齊（避免疊到 Y 軸文字或被裁切），
-// 太靠近圖表頂端（例如剛好 100 分）會改畫在點的下方，避免數字被裁掉一半。
+// 統一畫在點的正上方；圖表建立時會依字體大小預留頂端留白（見 layout.padding.top），
+// 所以就算是最高分（例如剛好 100 分）的點，數字也不會被裁切或蓋到 UI。
+// 水平方向仍會自動避開左右邊界，避免疊到 Y 軸文字或被裁切。
 if (typeof Chart !== "undefined") {
   Chart.register({
     id: "jfkdPointLabels",
@@ -166,11 +167,8 @@ if (typeof Chart !== "undefined") {
             }
           }
 
-          // 垂直：預設畫在點的上方；太靠近圖表頂端（會被裁切）就改畫在點的下方
-          let y = point.y - 8;
-          if (chartArea && y - fontSize < chartArea.top) {
-            y = point.y + fontSize + 4;
-          }
+          // 垂直：一律畫在點的正上方（圖表已預留足夠頂端空間，不會被裁切）
+          const y = point.y - 8;
 
           ctx.textAlign = align;
           ctx.fillText(text, x, y);
