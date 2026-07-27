@@ -35,6 +35,29 @@
               .join("")}
           </select>
         </div>
+        <div style="margin-top:16px; max-width:420px;">
+          <label>🎁 願望清單（累計獎金達到金額即可兌換，會顯示在該生的紀錄頁）</label>
+          <div data-wishlist-list="${s.id}">
+            ${
+              (s.wishlist || []).length
+                ? s.wishlist
+                    .map(
+                      (item) => `
+              <div class="flex-between" style="padding:6px 0; border-bottom:1px solid var(--border); font-size:13px;">
+                <span>${escapeHtml(item.name)} <span class="text-faint">（${fmtMoney(item.amount)}）</span></span>
+                <span data-wishlist-del="${s.id}" data-item-id="${item.id}" style="cursor:pointer; color:var(--bad); font-size:12px;">刪除</span>
+              </div>`
+                    )
+                    .join("")
+                : '<div class="text-faint" style="font-size:12px; padding:4px 0;">尚未新增任何項目</div>'
+            }
+          </div>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <input type="text" placeholder="項目名稱" data-wishlist-name="${s.id}" style="flex:2;" />
+            <input type="number" placeholder="金額" min="0" data-wishlist-amount="${s.id}" style="flex:1;" />
+            <button class="btn btn-sm" data-wishlist-add="${s.id}">新增</button>
+          </div>
+        </div>
       </div>`
       )
       .join("");
@@ -73,6 +96,56 @@
           alert("更新主題失敗：" + err.message);
         } finally {
           select.disabled = false;
+        }
+      });
+    });
+
+    // ---- 願望清單：新增項目 ----
+    el.querySelectorAll("[data-wishlist-add]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.wishlistAdd;
+        const nameInput = el.querySelector(`[data-wishlist-name="${id}"]`);
+        const amountInput = el.querySelector(`[data-wishlist-amount="${id}"]`);
+        const name = nameInput.value.trim();
+        const amount = Number(amountInput.value);
+        if (!name) {
+          alert("請輸入項目名稱");
+          return;
+        }
+        if (!amount || amount <= 0) {
+          alert("請輸入大於 0 的金額");
+          return;
+        }
+        const student = students.find((s) => s.id === id);
+        const newItem = { id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())), name, amount };
+        const wishlist = [...(student.wishlist || []), newItem];
+        btn.disabled = true;
+        try {
+          await updateStudent(id, { wishlist });
+          students = await listStudents();
+          renderList();
+        } catch (err) {
+          alert("新增失敗：" + err.message);
+          btn.disabled = false;
+        }
+      });
+    });
+
+    // ---- 願望清單：刪除項目 ----
+    el.querySelectorAll("[data-wishlist-del]").forEach((link) => {
+      link.addEventListener("click", async () => {
+        const id = link.dataset.wishlistDel;
+        const itemId = link.dataset.itemId;
+        const student = students.find((s) => s.id === id);
+        const ok = await confirmDialog("確定要從願望清單移除這個項目嗎？", { title: "移除願望項目", confirmText: "移除" });
+        if (!ok) return;
+        const wishlist = (student.wishlist || []).filter((item) => item.id !== itemId);
+        try {
+          await updateStudent(id, { wishlist });
+          students = await listStudents();
+          renderList();
+        } catch (err) {
+          alert("移除失敗：" + err.message);
         }
       });
     });

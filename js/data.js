@@ -7,7 +7,9 @@
     ruleProfiles/{id}       { name, tiers, progressBonusPerPoint, comboBonus3, comboBonus5, punishmentText, createdAt }
     students/{id}           { name, color, order,
                                chartOverride（可選，覆寫全域圖表顯示設定，欄位同 config/chartSettings）,
-                               themeId（可選，'zoro'|'babymonster'，套用學生主題造型）}
+                               themeId（可選，'zoro'|'babymonster'，套用學生主題造型）,
+                               targetAvgScore（可選，數字，下次考試的目標平均分）,
+                               wishlist（可選，陣列 [{id,name,amount}]，兌換願望清單項目）}
     examRecords/{id}        { studentId, semester, examType, date, subjects:[{name,score,prevScore}],
                                ruleProfileId（套用的設定檔）, note,
                                punishmentStatus（'pending'|'done'，只有觸發處罰時才存在),
