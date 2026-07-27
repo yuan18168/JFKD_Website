@@ -4,6 +4,7 @@
 
   let students = await listStudents();
   renderStudentNav(students, null);
+  let editingWishlistItemId = null; // 目前正在編輯的願望項目 id（同時間只能編輯一筆）
   renderList();
 
   function renderList() {
@@ -36,13 +37,15 @@
           </select>
         </div>
         <div style="margin-top:16px; max-width:520px;">
-          <label>🎁 願望清單（累計獎金達到金額即可兌換，會顯示在該生的紀錄頁）</label>
+          <label>🎁 願望清單（項目、金額、達成條件在這裡管理；達成/未達成/兌現狀態請到該生的「紀錄頁」直接標記）</label>
           <div data-wishlist-list="${s.id}">
             ${
               (s.wishlist || []).length
                 ? s.wishlist
                     .map((item) => {
+                      if (item.id === editingWishlistItemId) return wishlistEditFormHtml(s.id, item);
                       const totalAmt = wishlistItemTotal(item);
+                      const status = item.status || "progress";
                       return `
               <div style="padding:8px 0; border-bottom:1px solid var(--border); font-size:13px;">
                 <div class="flex-between" style="align-items:flex-start;">
@@ -54,12 +57,12 @@
                       ${item.amountParent > 0 ? `<span class="badge badge-normal">父母加碼 ${fmtMoney(item.amountParent)}</span>` : ""}
                       ${item.amountOther > 0 ? `<span class="badge badge-normal">其他人加碼 ${fmtMoney(item.amountOther)}</span>` : ""}
                     </div>
-                    <div style="font-size:12px; margin-top:6px; ${item.redeemedDate ? "color:var(--good);" : ""}" class="${item.redeemedDate ? "" : "text-faint"}">
-                      ${item.redeemedDate ? `🎉 已於 ${escapeHtml(item.redeemedDate)} 兌現完成` : "尚未兌現"}
+                    <div class="text-faint" style="font-size:12px; margin-top:6px;">
+                      目前狀態：${wishlistStatusLabel(status)}${item.redeemedDate ? `（已於 ${escapeHtml(item.redeemedDate)} 兌現）` : ""}
                     </div>
                   </div>
                   <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end; margin-left:10px;">
-                    <span data-wishlist-redeem="${s.id}" data-item-id="${item.id}" style="cursor:pointer; color:var(--brand); font-size:12px; white-space:nowrap;">${item.redeemedDate ? "取消兌換標記" : "標記已兌換"}</span>
+                    <span data-wishlist-edit="${s.id}" data-item-id="${item.id}" style="cursor:pointer; color:var(--brand); font-size:12px;">編輯</span>
                     <span data-wishlist-del="${s.id}" data-item-id="${item.id}" style="cursor:pointer; color:var(--bad); font-size:12px;">刪除</span>
                   </div>
                 </div>
@@ -185,57 +188,79 @@
       });
     });
 
-    // ---- 願望清單：標記／取消標記已兌換（單一合併日期＝解鎖達成並兌現完成的日期）----
-    el.querySelectorAll("[data-wishlist-redeem]").forEach((link) => {
-      link.addEventListener("click", async () => {
-        const id = link.dataset.wishlistRedeem;
-        const itemId = link.dataset.itemId;
-        const student = students.find((s) => s.id === id);
-        const item = (student.wishlist || []).find((it) => it.id === itemId);
-        if (!item) return;
-        let redeemedDate;
-        if (item.redeemedDate) {
-          const ok = await confirmDialog("確定要取消這個項目的「已兌換」標記嗎？", {
-            title: "取消兌換標記",
-            confirmText: "取消標記",
-          });
-          if (!ok) return;
-          redeemedDate = null;
-        } else {
-          const today = new Date().toISOString().slice(0, 10);
-          const input = await promptDateDialog("請選擇兌現完成日期：", today, { title: "標記已兌換" });
-          if (input === null) return;
-          redeemedDate = input || today;
+    // ---- 願望清單：進入編輯模式（名稱／達成條件／三種金額來源，達成狀態與兌現日期請到紀錄頁操作）----
+    el.querySelectorAll("[data-wishlist-edit]").forEach((link) => {
+      link.addEventListener("click", () => {
+        editingWishlistItemId = link.dataset.itemId;
+        renderList();
+      });
+    });
+
+    // ---- 願望清單：儲存編輯 ----
+    el.querySelectorAll("[data-wishlist-edit-save]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.wishlistEditSave;
+        const itemId = btn.dataset.itemId;
+        const nameInput = el.querySelector(`[data-wishlist-edit-name="${itemId}"]`);
+        const conditionInput = el.querySelector(`[data-wishlist-edit-condition="${itemId}"]`);
+        const selfInput = el.querySelector(`[data-wishlist-edit-self="${itemId}"]`);
+        const parentInput = el.querySelector(`[data-wishlist-edit-parent="${itemId}"]`);
+        const otherInput = el.querySelector(`[data-wishlist-edit-other="${itemId}"]`);
+        const name = nameInput.value.trim();
+        const condition = conditionInput.value.trim();
+        const amountSelf = Number(selfInput.value) || 0;
+        const amountParent = Number(parentInput.value) || 0;
+        const amountOther = Number(otherInput.value) || 0;
+        if (!name) {
+          alert("請輸入項目名稱");
+          return;
         }
-        // Firestore 陣列元素無法對單一欄位用 FieldValue.delete()，改用手動組出新物件、
-        // 直接不帶 redeemedDate 欄位的方式來處理「取消標記」。
-        const cleanedWishlist = (student.wishlist || []).map((it) => {
-          if (it.id !== itemId) return it;
-          const clone = { ...it };
-          if (!redeemedDate) {
-            delete clone.redeemedDate;
-          } else {
-            clone.redeemedDate = redeemedDate;
-          }
-          return clone;
-        });
+        if (amountSelf <= 0 && amountParent <= 0 && amountOther <= 0) {
+          alert("請至少輸入一項大於 0 的金額（自付／父母加碼／其他人加碼）");
+          return;
+        }
+        const student = students.find((s) => s.id === id);
+        const wishlist = (student.wishlist || []).map((it) =>
+          it.id === itemId ? { ...it, name, condition, amountSelf, amountParent, amountOther } : it
+        );
+        btn.disabled = true;
         try {
-          await updateStudent(id, { wishlist: cleanedWishlist });
+          await updateStudent(id, { wishlist });
           students = await listStudents();
+          editingWishlistItemId = null;
           renderList();
         } catch (err) {
-          alert("更新失敗：" + err.message);
+          alert("儲存失敗：" + err.message);
+          btn.disabled = false;
         }
+      });
+    });
+
+    // ---- 願望清單：取消編輯 ----
+    el.querySelectorAll("[data-wishlist-edit-cancel]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        editingWishlistItemId = null;
+        renderList();
       });
     });
   }
 
-  // 願望項目合計金額（自付＋父母加碼＋其他人加碼）；相容舊資料的單一 amount 欄位
-  function wishlistItemTotal(item) {
-    if (typeof item.amountSelf === "number" || typeof item.amountParent === "number" || typeof item.amountOther === "number") {
-      return (item.amountSelf || 0) + (item.amountParent || 0) + (item.amountOther || 0);
-    }
-    return item.amount || 0;
+  // 願望項目編輯表單（就地取代顯示列，欄位跟新增表單一致，但預先帶入現有資料）
+  function wishlistEditFormHtml(studentId, item) {
+    return `
+      <div style="display:flex; flex-direction:column; gap:8px; padding:10px 0; border-bottom:1px solid var(--border);">
+        <input type="text" placeholder="項目名稱" data-wishlist-edit-name="${item.id}" value="${escapeHtml(item.name || "")}" />
+        <input type="text" placeholder="達成所需的特殊條件（選填）" data-wishlist-edit-condition="${item.id}" value="${escapeHtml(item.condition || "")}" />
+        <div style="display:flex; gap:8px;">
+          <input type="number" placeholder="自付金額" min="0" data-wishlist-edit-self="${item.id}" style="flex:1;" value="${item.amountSelf || ""}" />
+          <input type="number" placeholder="父母加碼" min="0" data-wishlist-edit-parent="${item.id}" style="flex:1;" value="${item.amountParent || ""}" />
+          <input type="number" placeholder="其他人加碼" min="0" data-wishlist-edit-other="${item.id}" style="flex:1;" value="${item.amountOther || ""}" />
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-sm btn-primary" data-wishlist-edit-save="${studentId}" data-item-id="${item.id}">儲存</button>
+          <button class="btn btn-sm" data-wishlist-edit-cancel="${item.id}">取消</button>
+        </div>
+      </div>`;
   }
 
   // 主題下拉選單儲存成功時，邊框短暫變綠色提示「已儲存」

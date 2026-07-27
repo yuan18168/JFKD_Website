@@ -70,6 +70,22 @@ function confirmDialog(message, opts = {}) {
   });
 }
 
+/* ---------- 願望清單共用小工具（學生名單頁 + 學生紀錄頁都會用到）---------- */
+// 願望項目合計金額（自付＋父母加碼＋其他人加碼）；相容舊資料的單一 amount 欄位
+function wishlistItemTotal(item) {
+  if (typeof item.amountSelf === "number" || typeof item.amountParent === "number" || typeof item.amountOther === "number") {
+    return (item.amountSelf || 0) + (item.amountParent || 0) + (item.amountOther || 0);
+  }
+  return item.amount || 0;
+}
+
+// 達成狀態文字（"progress"｜"achieved"｜"notAchieved"，缺欄位一律視為 "progress"）
+function wishlistStatusLabel(status) {
+  if (status === "achieved") return "達成";
+  if (status === "notAchieved") return "未達成";
+  return "進行中";
+}
+
 /* ---------- 自訂日期輸入彈窗（共用，取代原生 prompt()）---------- */
 // 原生 prompt() 在部分自動化/嵌入環境會卡住整個頁面，且視覺風格跟全站不一致，
 // 所以跟 confirmDialog 一樣，改用自訂彈窗＋<input type="date">。

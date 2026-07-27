@@ -180,18 +180,13 @@
     draw();
   }
 
-  // 願望項目合計金額（自付＋父母加碼＋其他人加碼）；相容舊資料的單一 amount 欄位
-  function wishlistItemTotal(item) {
-    if (typeof item.amountSelf === "number" || typeof item.amountParent === "number" || typeof item.amountOther === "number") {
-      return (item.amountSelf || 0) + (item.amountParent || 0) + (item.amountOther || 0);
-    }
-    return item.amount || 0;
-  }
-
-  // ---- 願望清單：顯示每個願望項目的達成條件、金額來源拆分、距離累計獎金還差多少（項目本身在「學生名單」頁管理）----
-  // 設計說明：進度條是拿「累計獎金」跟「自付部分」比較，而不是跟「合計金額」比較——
-  // 因為父母加碼／其他人加碼的部分不需要小朋友自己存，只有「自付」才是小朋友要靠獎金達成的目標，
-  // 這樣進度條才會反映小朋友真正需要努力的部分。若沒有自付金額（全部都是加碼），視為已達成該部分。
+  // ---- 願望清單：顯示每個願望項目的達成條件、金額來源拆分、達成/兌現狀態（項目本身在「學生名單」頁管理，
+  // 但達成狀態／兌現狀態這裡就能直接編輯，讓小朋友和家長都能在紀錄頁上直接操作）----
+  // 設計說明（依家長確認）：
+  // ①移除進度條，改成「進行中／達成／未達成」三種手動標記的狀態，三者可以隨時自由切換，
+  //   即使標成「未達成」也不是永久判死刑，之後隨時可以再挑戰一次改回「進行中」或「達成」。
+  // ②只有「達成」狀態才能標記兌現日期；狀態離開「達成」時，會自動清除先前登記的兌現日期。
+  // ③「未達成」的卡片會整張變灰＋顯示鼓勵字樣，當作一個溫和的紀錄，而不是責備。
   function renderWishlist(studentDoc, totalBonus) {
     const el = document.getElementById("wishlistSection");
     if (!el) return;
@@ -206,15 +201,14 @@
         ${sorted
           .map((item) => {
             const total = wishlistItemTotal(item);
-            const selfTarget = item.amountSelf != null ? item.amountSelf : total;
-            const selfReached = selfTarget <= 0 || totalBonus >= selfTarget;
-            const pct = selfTarget > 0 ? Math.max(4, Math.min(100, (totalBonus / selfTarget) * 100)) : 100;
-            const remain = Math.max(0, selfTarget - totalBonus);
+            const status = item.status || "progress";
             const redeemed = !!item.redeemedDate;
+            const cardStateClass = status === "notAchieved" ? "wishlist-not-achieved" : status === "achieved" ? "wishlist-achieved" : "";
+            const icon = status === "notAchieved" ? "😅" : redeemed ? "🎉" : "🎁";
             return `
-            <div class="card score-progress-card wishlist-card">
+            <div class="card wishlist-card ${cardStateClass}" data-wishlist-item="${item.id}">
               <div class="score-progress-head">
-                <span>${redeemed ? "🎉" : selfReached ? "🎁" : "🎁"} ${escapeHtml(item.name)}</span>
+                <span>${icon} ${escapeHtml(item.name)}</span>
                 <span class="text-faint">合計 ${fmtMoney(total)}</span>
               </div>
               ${item.condition ? `<div class="text-faint" style="font-size:12px; margin:-4px 0 8px;">🔖 達成條件：${escapeHtml(item.condition)}</div>` : ""}
@@ -223,22 +217,107 @@
                 ${item.amountParent > 0 ? `<span class="badge badge-normal">父母加碼 ${fmtMoney(item.amountParent)}</span>` : ""}
                 ${item.amountOther > 0 ? `<span class="badge badge-normal">其他人加碼 ${fmtMoney(item.amountOther)}</span>` : ""}
               </div>
-              <div class="score-progress-track">
-                <div class="score-progress-fill ${selfReached ? "goal-reached" : ""}" style="width:${pct}%;"></div>
+
+              <div class="wishlist-status-row">
+                <span class="text-faint" style="font-size:12px;">達成狀態：</span>
+                <div class="wishlist-status-btns">
+                  <button type="button" class="btn btn-sm ${status === "progress" ? "btn-primary" : ""}" data-wishlist-status="${item.id}" data-status="progress">進行中</button>
+                  <button type="button" class="btn btn-sm ${status === "achieved" ? "btn-primary" : ""}" data-wishlist-status="${item.id}" data-status="achieved">達成</button>
+                  <button type="button" class="btn btn-sm ${status === "notAchieved" ? "btn-primary" : ""}" data-wishlist-status="${item.id}" data-status="notAchieved">未達成</button>
+                </div>
               </div>
-              <div class="text-faint" style="font-size:12px; margin-top:6px;">
-                ${
-                  redeemed
-                    ? `已於 ${escapeHtml(item.redeemedDate)} 兌現完成`
-                    : selfReached
-                    ? "自付部分已經存夠了，可以請爸媽一起兌換囉！"
-                    : `自付部分還差 ${fmtMoney(remain)}`
-                }
-              </div>
+
+              ${status === "notAchieved" ? `<div class="wishlist-sorry-msg">殘念，這次差一點點！下次再挑戰 💪</div>` : ""}
+
+              ${
+                status === "achieved"
+                  ? `<div class="wishlist-redeem-row">
+                      ${
+                        redeemed
+                          ? `<span style="font-size:12px; color:var(--good);">🎉 已於 ${escapeHtml(item.redeemedDate)} 兌現完成</span>
+                             <span data-wishlist-unredeem="${item.id}" style="cursor:pointer; color:var(--brand); font-size:12px;">取消兌換標記</span>`
+                          : `<button type="button" class="btn btn-sm btn-primary" data-wishlist-redeem="${item.id}">標記已兌換</button>`
+                      }
+                    </div>`
+                  : ""
+              }
             </div>`;
           })
           .join("")}
       </div>`;
+
+    // ---- 達成狀態切換：進行中／達成／未達成，三者可自由互相切換 ----
+    el.querySelectorAll("[data-wishlist-status]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const itemId = btn.dataset.wishlistStatus;
+        const newStatus = btn.dataset.status;
+        const wishlist = studentDoc.wishlist || [];
+        const item = wishlist.find((it) => it.id === itemId);
+        if (!item || (item.status || "progress") === newStatus) return;
+        const updatedWishlist = wishlist.map((it) => {
+          if (it.id !== itemId) return it;
+          const clone = { ...it, status: newStatus };
+          // 離開「達成」狀態時，自動清除先前登記的兌現日期，避免狀態與日期兜不起來
+          if (newStatus !== "achieved") delete clone.redeemedDate;
+          return clone;
+        });
+        btn.disabled = true;
+        try {
+          await updateStudent(studentDoc.id, { wishlist: updatedWishlist });
+          studentDoc.wishlist = updatedWishlist;
+          renderWishlist(studentDoc, totalBonus);
+        } catch (err) {
+          alert("更新失敗：" + err.message);
+          btn.disabled = false;
+        }
+      });
+    });
+
+    // ---- 標記已兌換：用自訂日期彈窗（見 nav.js promptDateDialog），只有「達成」狀態才會出現這顆按鈕 ----
+    el.querySelectorAll("[data-wishlist-redeem]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const itemId = btn.dataset.wishlistRedeem;
+        const today = new Date().toISOString().slice(0, 10);
+        const input = await promptDateDialog("請選擇兌現完成日期：", today, { title: "標記已兌換" });
+        if (input === null) return;
+        const redeemedDate = input || today;
+        const wishlist = studentDoc.wishlist || [];
+        const updatedWishlist = wishlist.map((it) => (it.id === itemId ? { ...it, redeemedDate } : it));
+        try {
+          await updateStudent(studentDoc.id, { wishlist: updatedWishlist });
+          studentDoc.wishlist = updatedWishlist;
+          renderWishlist(studentDoc, totalBonus);
+        } catch (err) {
+          alert("更新失敗：" + err.message);
+        }
+      });
+    });
+
+    // ---- 取消兌換標記 ----
+    el.querySelectorAll("[data-wishlist-unredeem]").forEach((link) => {
+      link.addEventListener("click", async () => {
+        const itemId = link.dataset.wishlistUnredeem;
+        const ok = await confirmDialog("確定要取消這個項目的「已兌換」標記嗎？", {
+          title: "取消兌換標記",
+          confirmText: "取消標記",
+        });
+        if (!ok) return;
+        const wishlist = studentDoc.wishlist || [];
+        const updatedWishlist = wishlist.map((it) => {
+          if (it.id !== itemId) return it;
+          const clone = { ...it };
+          delete clone.redeemedDate;
+          return clone;
+        });
+        try {
+          await updateStudent(studentDoc.id, { wishlist: updatedWishlist });
+          studentDoc.wishlist = updatedWishlist;
+          renderWishlist(studentDoc, totalBonus);
+        } catch (err) {
+          alert("更新失敗：" + err.message);
+        }
+      });
+    });
   }
 
   setupForm(profiles, defaultProfileId, student);
