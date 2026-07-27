@@ -306,8 +306,8 @@ const STUDENT_THEMES = {
   },
   babymonster: {
     id: "babymonster",
-    name: "舞台女孩・閃耀應援",
-    tagline: "致敬 K-POP 女孩團體風格，粉彩螢光＋應援手燈配色",
+    name: "猛獸舞台・酷紅戰帖",
+    tagline: "致敬 K-POP 女孩團體舞台氣勢，黑×紅×白×銀金屬酷酸配色",
     bodyClass: "theme-babymonster",
   },
 };
@@ -332,13 +332,17 @@ function themeIconSvg(themeId) {
       </svg>`;
   }
   if (themeId === "babymonster") {
-    // 星形＋應援手燈剪影，致敬演唱會應援氛圍
+    // 三道爪痕剪影，致敬「MONSTER」猛獸意象；紅色光暈＋白色刃芯，右上角銀框紅星徽章呼應舞台戰袍配件
     return `
-      <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M26 6 L30 20 L44 20 L33 29 L37 43 L26 34 L15 43 L19 29 L8 20 L22 20 Z" fill="#ffd6f2"/>
-        <circle cx="26" cy="26" r="3" fill="#ff6fb5"/>
-        <rect x="24" y="34" width="4" height="12" rx="2" fill="#a78bfa"/>
-        <circle cx="26" cy="34" r="6" fill="#ff9de2" opacity="0.85"/>
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="8" y1="12" x2="22" y2="52" stroke="#ff1744" stroke-width="7" stroke-linecap="round" opacity="0.4"/>
+        <line x1="23" y1="8" x2="33" y2="52" stroke="#ff1744" stroke-width="7" stroke-linecap="round" opacity="0.4"/>
+        <line x1="38" y1="12" x2="46" y2="50" stroke="#ff1744" stroke-width="7" stroke-linecap="round" opacity="0.4"/>
+        <line x1="8" y1="12" x2="22" y2="52" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="23" y1="8" x2="33" y2="52" stroke="#f4f4f6" stroke-width="3" stroke-linecap="round"/>
+        <line x1="38" y1="12" x2="46" y2="50" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="45" cy="15" r="8" fill="#111114" stroke="#d8dbe2" stroke-width="2"/>
+        <path d="M45 10.5 L46.6 13.8 L50.2 14.3 L47.6 16.8 L48.3 20.3 L45 18.6 L41.7 20.3 L42.4 16.8 L39.8 14.3 L43.4 13.8 Z" fill="#ff1744"/>
       </svg>`;
   }
   return "";
