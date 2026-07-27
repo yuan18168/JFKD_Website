@@ -155,7 +155,23 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 640px) {
   .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
   .app-shell { flex-direction: column; }
-  .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding: 10px 16px;
+    gap: 6px;
+  }
+  .sidebar .brand,
+  .sidebar .nav-link,
+  .sidebar .sidebar-footer,
+  .sidebar .nav-section-label {
+    flex-shrink: 0;
+  }
+  .sidebar .nav-section-label { padding: 10px 8px 4px 4px; }
+  .sidebar .sidebar-footer { border-top: none; border-left: 1px solid var(--border); padding: 0 0 0 12px; margin-top: 0; }
   .main { padding: 18px; }
 }
 
@@ -210,6 +226,62 @@ a { color: inherit; text-decoration: none; }
 .delta.up { color: var(--good); }
 .delta.down { color: var(--bad); }
 
+/* ---------- 距離下一級距的分數進度條 ---------- */
+.score-progress-card { margin-top: 18px; margin-bottom: 22px; }
+.score-progress-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.score-progress-head strong { color: var(--brand); font-family: var(--mono); font-size: 15px; }
+.score-progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.score-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand), #7ea0ff);
+  transition: width .4s ease;
+}
+
+/* ---------- 成就徽章 ---------- */
+.badge-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.badge-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 700;
+}
+.badge-chip-icon { font-size: 16px; }
+.badge-chip-label { color: var(--text); }
+.badge-chip-hint { color: var(--text-faint); font-weight: 500; font-size: 11px; }
+.badge-chip.locked { opacity: .45; filter: grayscale(.6); }
+.badge-chip.unlocked {
+  border-color: var(--brand);
+  background: linear-gradient(135deg, rgba(79,124,255,0.14), var(--bg-card) 70%);
+  box-shadow: 0 0 0 1px rgba(79,124,255,0.15);
+}
+.badge-chip.unlocked .badge-chip-label { color: #cddcff; }
+
 .student-card {
   display: flex;
   flex-direction: column;
@@ -235,6 +307,13 @@ th { color: var(--text-faint); font-weight: 600; text-transform: uppercase; font
 tr:last-child td { border-bottom: none; }
 td.num { font-family: var(--mono); text-align: right; }
 th.num { text-align: right; }
+
+/* 表格外層捲動容器：手機版欄位太多時可橫向滑動查看，不會擠壓變形或撐破版面 */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-wrap table { min-width: 640px; }
+@media (max-width: 640px) {
+  .table-wrap table { min-width: 720px; }
+}
 
 .badge {
   display: inline-flex;
@@ -268,6 +347,13 @@ input, select {
 input:focus, select:focus { outline: none; border-color: var(--brand); }
 input[readonly] { background: var(--bg-card); color: var(--text-dim); cursor: default; }
 
+/* 下拉選單自動儲存成功時的短暫綠色邊框提示（見 students.js flashSelectSuccess） */
+.select-flash-success {
+  border-color: var(--good) !important;
+  box-shadow: 0 0 0 2px rgba(52,211,153,0.25);
+  transition: border-color .15s, box-shadow .15s;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -287,6 +373,113 @@ input[readonly] { background: var(--bg-card); color: var(--text-dim); cursor: de
 .btn-primary:hover { background: #3d68e6; }
 .btn-danger { color: var(--bad); }
 .btn-danger:hover { border-color: var(--bad); }
+
+/* 儲存成功時暫時顯示的綠色高亮狀態（見 nav.js flashButtonSuccess） */
+.btn-flash-success {
+  background: var(--good) !important;
+  border-color: var(--good) !important;
+  color: #06251d !important;
+  transition: background .15s, border-color .15s, color .15s;
+}
+
+/* 鍵盤操作可見焦點框（滑鼠點擊不顯示，Tab 鍵導覽才顯示） */
+.btn:focus-visible,
+.nav-link:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* ---------- 自訂確認彈窗（取代原生 confirm()）---------- */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(5,8,16,0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: confirm-fade .15s ease;
+}
+.confirm-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  animation: celebrate-pop .2s cubic-bezier(.34,1.56,.64,1);
+}
+.confirm-title { font-size: 16px; font-weight: 800; margin-bottom: 10px; color: var(--text); }
+.confirm-message { font-size: 13px; color: var(--text-dim); line-height: 1.65; white-space: pre-line; }
+.confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+.btn-danger-solid { background: var(--bad); border-color: var(--bad); color: #2a0a0a; font-weight: 700; }
+.btn-danger-solid:hover { background: #ff8080; }
+@keyframes confirm-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- 輕量提示 Toast ---------- */
+.toast-msg {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  z-index: 9999;
+  animation: toast-in .25s ease;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---------- 進步／獎金慶祝動畫 ---------- */
+.celebrate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+.celebrate-card {
+  background: var(--bg-card);
+  border: 1px solid var(--brand);
+  border-radius: 18px;
+  padding: 26px 34px;
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(79,124,255,0.2);
+  animation: celebrate-pop .35s cubic-bezier(.34,1.56,.64,1);
+  max-width: 320px;
+}
+.celebrate-card .big { font-size: 21px; font-weight: 800; color: var(--text); }
+.celebrate-card .sub { font-size: 13px; color: var(--text-dim); margin-top: 6px; }
+@keyframes celebrate-pop {
+  from { transform: scale(.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.confetti-piece {
+  position: absolute;
+  top: -16px;
+  border-radius: 2px;
+  animation-name: confetti-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes confetti-fall {
+  to { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+}
 .btn-block { width: 100%; justify-content: center; }
 .btn-sm { padding: 6px 10px; font-size: 12px; }
 
@@ -532,6 +725,14 @@ body.theme-zoro .mini-chart-average { border-color: #00e676; background: linear-
 body.theme-zoro .badge-done { background: rgba(0,230,118,0.20); color: #00e676; }
 body.theme-zoro .badge-warn { background: rgba(255,210,0,0.20); color: #ffd200; }
 body.theme-zoro .total { color: #00e676; text-shadow: 0 0 8px rgba(0,230,118,0.4); }
+body.theme-zoro .score-progress-fill { background: linear-gradient(90deg, #00c853, #00e676); }
+body.theme-zoro .score-progress-head strong { color: #00e676; }
+body.theme-zoro .badge-chip.unlocked {
+  border-color: #00e676;
+  background: linear-gradient(135deg, rgba(0,230,118,0.16), var(--bg-card) 70%);
+  box-shadow: 0 0 0 1px rgba(0,230,118,0.2);
+}
+body.theme-zoro .badge-chip.unlocked .badge-chip-label { color: #baffd8; }
 
 /* ---- Babymonster/Asa・猛獸舞台主題（ㄎㄎ）：黑×紅×白×銀酷酸風 ---- */
 body.theme-babymonster {
@@ -591,6 +792,14 @@ body.theme-babymonster .mini-chart-average { border-color: #ff1744; background: 
 body.theme-babymonster .badge-done { background: rgba(255,23,68,0.20); color: #ff5570; }
 body.theme-babymonster .badge-warn { background: rgba(216,219,226,0.20); color: #d8dbe2; }
 body.theme-babymonster .total { color: #ff1744; text-shadow: 0 0 8px rgba(255,23,68,0.4); }
+body.theme-babymonster .score-progress-fill { background: linear-gradient(90deg, #b3001f, #ff1744); }
+body.theme-babymonster .score-progress-head strong { color: #ff1744; }
+body.theme-babymonster .badge-chip.unlocked {
+  border-color: #ff1744;
+  background: linear-gradient(135deg, rgba(255,23,68,0.16), var(--bg-card) 70%);
+  box-shadow: 0 0 0 1px rgba(255,23,68,0.2);
+}
+body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; }
 
 /* 主題造型頁的預覽小卡片 */
 .theme-gallery-card { display: flex; flex-direction: column; gap: 14px; }
