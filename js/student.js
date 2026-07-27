@@ -2,6 +2,11 @@
 (async function () {
   await requireGuard();
 
+  // ---- 觸發方式：桌面滑鼠有 hover 就用 hover，觸控裝置（手機/平板）沒有 hover 就改成點一下 ----
+  // 每次 hover／點擊都重新播放一次，沒有節流限制，想重看幾次都可以。
+  // （宣告放在檔案最前面，避免 renderChart 內的卡片在頁面載入當下就先執行到這個常數，導致還沒初始化就被讀取而出錯）
+  const IS_TOUCH_DEVICE = !window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
   const params = new URLSearchParams(window.location.search);
   const studentId = params.get("id");
 
@@ -665,10 +670,6 @@
       addMiniChart(name, color, scores, false, getSubjectEffectTier(name));
     });
   }
-
-  // ---- 觸發方式：桌面滑鼠有 hover 就用 hover，觸控裝置（手機/平板）沒有 hover 就改成點一下 ----
-  // 每次 hover／點擊都重新播放一次，沒有節流限制，想重看幾次都可以。
-  const IS_TOUCH_DEVICE = !window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   function bindSubjectCardEffect(card, tier) {
     const trigger = () => playSubjectEffect(card, tier);
