@@ -928,11 +928,13 @@ body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; 
 .theme-swatch { width: 28px; height: 28px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); }
 
 /* ==========================================================================
-   科目趨勢圖卡片華麗特效：依「進步／衛冕／滿分」判斷，桌面 hover、觸控裝置點一下
-   即可在該科目卡片上播放對應等級的慶祝動畫（見 js/student.js 的 bindSubjectCardEffect）。
+   科目趨勢圖卡片華麗特效素材庫：依「進步／衛冕／進步+衛冕／最新一次滿分100」四條規則，
+   桌面 hover、觸控裝置點一下即可在該科目卡片上播放規則對應的特效（見 js/student.js 的
+   bindSubjectCardEffect／playEffectById）。每條規則實際要播哪個素材、播多久、用 hover
+   還是點擊觸發，都可在「特效設定」管理頁（effects.html）調整，不是寫死的。
    ========================================================================== */
 
-/* 特效一／二：卡片正中央彈出一個大 emoji，約佔卡片一半大小 */
+/* 比讚／皇冠衛冕：卡片正中央彈出一個大 emoji，約佔卡片一半大小 */
 .subject-effect-emoji {
   position: absolute;
   inset: 0;
@@ -967,7 +969,7 @@ body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; 
   100% { transform: scale(0.7) rotate(760deg); opacity: 0; }
 }
 
-/* 特效三：進步＋衛冕，卡片滿版煙火秀（canvas-confetti 的畫布，見 playCardFireworks） */
+/* 卡片內灑花：canvas-confetti 的畫布（見 playCardConfetti） */
 .subject-effect-canvas {
   position: absolute;
   inset: 0;
@@ -977,7 +979,120 @@ body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; 
   z-index: 6;
 }
 
-/* 特效四：全能挑戰（進步＋衛冕＋滿分100），全頁彈出約 2/3 版面大小的動物派對嘉年華賀卡 */
+/* 火箭＋折線圖成長：一條由左下往右上延伸的成長曲線，配一枚火箭沿著同樣走勢往上衝 */
+.subject-effect-rocket {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  overflow: hidden;
+}
+.rocket-trail-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.rocket-path {
+  fill: none;
+  stroke: #ffd54a;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 140;
+  stroke-dashoffset: 140;
+  filter: drop-shadow(0 0 4px rgba(255,213,74,0.8));
+  animation-name: rocket-path-draw;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+@keyframes rocket-path-draw {
+  to { stroke-dashoffset: 0; }
+}
+.rocket-emoji {
+  position: absolute;
+  font-size: 30px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(255,138,61,0.9));
+  animation-name: rocket-fly;
+  animation-timing-function: cubic-bezier(.25,.6,.3,1);
+  animation-fill-mode: forwards;
+}
+@keyframes rocket-fly {
+  0% { left: 6%; bottom: 8%; transform: translate(-50%, 50%) rotate(48deg) scale(0.5); opacity: 0; }
+  12% { opacity: 1; }
+  50% { left: 50%; bottom: 55%; transform: translate(-50%, 50%) rotate(38deg) scale(0.95); opacity: 1; }
+  85% { opacity: 1; }
+  100% { left: 92%; bottom: 90%; transform: translate(-50%, 50%) rotate(28deg) scale(1.2); opacity: 0; }
+}
+
+/* 星光閃耀＋放射光芒：中央一顆大星星彈出，搭配旋轉放射光暈與向外飛散的星芒碎片 */
+.subject-effect-starburst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.starburst-rays {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgba(255,213,74,0.55) 0deg 4deg, transparent 4deg 20deg);
+  filter: blur(1px);
+  animation-name: starburst-rays-spin, starburst-rays-fade;
+  animation-timing-function: linear, ease;
+  animation-fill-mode: forwards, forwards;
+}
+@keyframes starburst-rays-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(140deg); }
+}
+@keyframes starburst-rays-fade {
+  0%, 55% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.starburst-core {
+  position: relative;
+  z-index: 2;
+  font-size: 56px;
+  line-height: 1;
+  filter: drop-shadow(0 0 10px rgba(255,213,74,0.9));
+  animation-name: starburst-core-pop;
+  animation-timing-function: cubic-bezier(.25,.8,.3,1);
+  animation-fill-mode: forwards;
+}
+@keyframes starburst-core-pop {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  22% { transform: scale(1.3) rotate(0deg); opacity: 1; }
+  40% { transform: scale(1) rotate(0deg); opacity: 1; }
+  78% { transform: scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(0.7) rotate(10deg); opacity: 0; }
+}
+.starburst-spark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff2b8;
+  box-shadow: 0 0 6px rgba(255,213,74,0.9);
+  animation-name: starburst-spark-fly;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+@keyframes starburst-spark-fly {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--a)) translateX(0) scale(0.5); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--a)) translateX(95px) scale(1); }
+}
+
+/* 全能挑戰（最新一次滿分100），全頁彈出約 2/3 版面大小的動物派對嘉年華賀卡 */
 .animal-party-overlay {
   position: fixed;
   inset: 0;
