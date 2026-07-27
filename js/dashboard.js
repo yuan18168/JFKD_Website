@@ -21,14 +21,18 @@
   const allEnriched = enrichedByStudent.flat();
 
   const totalBonus = sum(allEnriched.map((r) => r.total));
-  const pendingPunishment = allEnriched.filter((r) => r.result.hasPunishment && r.punishmentStatus !== "done").length;
+  // 待處理項目：「尚未執行處罰」與「尚未發放獎金」分開各自累加，
+  // 同一筆紀錄若兩者都尚未處理，算 2 項（因為確實有 2 件事要處理）。
+  const pendingPunishmentCount = allEnriched.filter((r) => r.result.hasPunishment && r.punishmentStatus !== "done").length;
+  const pendingBonusCount = allEnriched.filter((r) => r.total > 0 && r.bonusStatus !== "done").length;
+  const pendingItems = pendingPunishmentCount + pendingBonusCount;
 
   const statCards = document.getElementById("statCards");
   statCards.innerHTML = [
     statCard("學生人數", students.length),
     statCard("累計紀錄數", allEnriched.length),
     statCard("累計獎金", fmtMoney(totalBonus)),
-    statCard("待處理處罰", pendingPunishment, pendingPunishment > 0 ? "down" : ""),
+    statCard("待處理項目", pendingItems, pendingItems > 0 ? "down" : ""),
   ].join("");
 
   renderStudentCards();
@@ -59,6 +63,7 @@
             <div class="text-faint" style="font-size:11px;">累計獎金</div>
             <div class="total">${fmtMoney(total)}</div>
           </div>
+          <div class="text-faint" style="font-size:11px; margin-top:6px;">近5次平均成績趨勢圖</div>
           <div style="height:70px;">
             <canvas data-avg-chart="${s.id}"></canvas>
           </div>
@@ -69,7 +74,8 @@
     students.forEach((s, i) => {
       const canvas = el.querySelector(`canvas[data-avg-chart="${s.id}"]`);
       if (!canvas) return;
-      const ordered = [...enrichedByStudent[i]].reverse(); // 舊到新
+      // 只取最近 5 筆，跟學生頁統計卡片「平均分（近5次）」的口徑一致
+      const ordered = [...enrichedByStudent[i]].slice(0, 5).reverse(); // 舊到新
       if (!ordered.length) return;
       const labels = ordered.map((r) => `${r.semester || ""} ${r.examType || ""}`.trim() || r.date || "");
       const avgScores = ordered.map((r) => (typeof r.result?.avgScore === "number" ? r.result.avgScore : null));
@@ -158,7 +164,7 @@
             <thead>
               <tr>
                 <th>日期</th><th>學制</th><th>學期</th><th>考試</th><th>科目明細</th>
-                <th class="num">平均分</th><th class="num">總獎金</th><th>處罰狀態</th><th>獎金狀態</th>
+                <th class="num">平均分數</th><th class="num">總獎金</th><th>處罰狀態</th><th>獎金狀態</th>
               </tr>
             </thead>
             <tbody>${rowHtml}</tbody>
