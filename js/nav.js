@@ -70,6 +70,52 @@ function confirmDialog(message, opts = {}) {
   });
 }
 
+/* ---------- 自訂日期輸入彈窗（共用，取代原生 prompt()）---------- */
+// 原生 prompt() 在部分自動化/嵌入環境會卡住整個頁面，且視覺風格跟全站不一致，
+// 所以跟 confirmDialog 一樣，改用自訂彈窗＋<input type="date">。
+// 回傳 Promise<string|null>：使用者按下確定 -> "YYYY-MM-DD"，取消／按 Esc／點背景 -> null。
+function promptDateDialog(message, defaultValue, opts = {}) {
+  const { title = "請輸入日期", confirmText = "確定", cancelText = "取消" } = opts;
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.className = "confirm-overlay";
+    overlay.innerHTML = `
+      <div class="confirm-card">
+        <div class="confirm-title"></div>
+        <div class="confirm-message"></div>
+        <input type="date" class="confirm-date-input" style="width:100%; margin-top:10px;" />
+        <div class="confirm-actions">
+          <button class="btn" data-act="cancel"></button>
+          <button class="btn btn-primary" data-act="ok"></button>
+        </div>
+      </div>`;
+    overlay.querySelector(".confirm-title").textContent = title;
+    overlay.querySelector(".confirm-message").textContent = message;
+    overlay.querySelector('[data-act="cancel"]').textContent = cancelText;
+    overlay.querySelector('[data-act="ok"]').textContent = confirmText;
+    const dateInput = overlay.querySelector(".confirm-date-input");
+    dateInput.value = defaultValue || new Date().toISOString().slice(0, 10);
+    document.body.appendChild(overlay);
+
+    function cleanup(result) {
+      overlay.remove();
+      document.removeEventListener("keydown", onKey);
+      resolve(result);
+    }
+    function onKey(e) {
+      if (e.key === "Escape") cleanup(null);
+      if (e.key === "Enter") cleanup(dateInput.value || defaultValue);
+    }
+    document.addEventListener("keydown", onKey);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) cleanup(null);
+    });
+    overlay.querySelector('[data-act="cancel"]').addEventListener("click", () => cleanup(null));
+    overlay.querySelector('[data-act="ok"]').addEventListener("click", () => cleanup(dateInput.value || defaultValue));
+    dateInput.focus();
+  });
+}
+
 /* ---------- 輕量提示 Toast（共用）---------- */
 // 用於沒有慶祝動畫、但仍需要讓使用者知道「動作完成了」的場合（例如編輯紀錄、一般儲存）
 function showToast(text) {

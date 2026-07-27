@@ -203,9 +203,9 @@
           redeemedDate = null;
         } else {
           const today = new Date().toISOString().slice(0, 10);
-          const input = prompt("請輸入兌現完成日期（格式 YYYY-MM-DD）", today);
+          const input = await promptDateDialog("請選擇兌現完成日期：", today, { title: "標記已兌換" });
           if (input === null) return;
-          redeemedDate = input.trim() || today;
+          redeemedDate = input || today;
         }
         // Firestore 陣列元素無法對單一欄位用 FieldValue.delete()，改用手動組出新物件、
         // 直接不帶 redeemedDate 欄位的方式來處理「取消標記」。
