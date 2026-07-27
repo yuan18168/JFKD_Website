@@ -11,16 +11,16 @@
       const bannerClass = theme.bodyClass;
       const swatches =
         theme.id === "zoro"
-          ? ["#0b1f16", "#1b4332", "#2d6a4f", "#74c69d", "#d8f3dc"]
+          ? ["#04160d", "#0d3b24", "#00e676", "#ffd200", "#eafff2"]
           : ["#2a0e3d", "#4a1942", "#ff6fb5", "#a78bfa", "#ffd6f2"];
       return `
       <div class="card theme-gallery-card">
-        <div class="theme-preview-banner ${bannerClass}" style="background:${theme.id === "zoro" ? "linear-gradient(120deg,#0b1f16,#1b4332 45%,#2d6a4f)" : "linear-gradient(120deg,#2a0e3d,#4a1942 45%,#7b3f7a)"};">
+        <div class="theme-preview-banner ${bannerClass}" style="background:${theme.id === "zoro" ? "linear-gradient(120deg,#04160d,#0d3b24 38%,#145c38 68%,#1f7a4d)" : "linear-gradient(120deg,#2a0e3d,#4a1942 45%,#7b3f7a)"}; border:${theme.id === "zoro" ? "2px solid #00e676" : "1px solid transparent"};">
           <div style="display:flex; align-items:center; gap:14px;">
             <div>${themeIconSvg(theme.id)}</div>
             <div>
-              <div style="font-weight:800; font-size:16px; color:${theme.id === "zoro" ? "#d8f3dc" : "#ffe3f6"};">${escapeHtml(theme.name)}</div>
-              <div style="font-size:12px; color:${theme.id === "zoro" ? "#b7e4c7" : "#ffbfe9"};">${escapeHtml(theme.tagline)}</div>
+              <div style="font-weight:800; font-size:16px; color:${theme.id === "zoro" ? "#ffffff" : "#ffe3f6"};">${escapeHtml(theme.name)}</div>
+              <div style="font-size:12px; color:${theme.id === "zoro" ? "#7dffb8" : "#ffbfe9"};">${escapeHtml(theme.tagline)}</div>
             </div>
           </div>
         </div>

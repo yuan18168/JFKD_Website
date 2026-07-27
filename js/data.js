@@ -301,7 +301,7 @@ const STUDENT_THEMES = {
   zoro: {
     id: "zoro",
     name: "綠色劍士・三刀流",
-    tagline: "致敬海賊迷弟哈哈最愛的綠髮劍士，武士刀＋深綠配色",
+    tagline: "致敬海賊迷弟哈哈最愛的綠髮劍士，鮮豔螢光綠＋耀眼金色配色",
     bodyClass: "theme-zoro",
   },
   babymonster: {
@@ -318,13 +318,17 @@ function getStudentTheme(themeId) {
 /** 原創致敬風格小圖示（純幾何線條繪製，非官方角色圖／真人肖像） */
 function themeIconSvg(themeId) {
   if (themeId === "zoro") {
-    // 三把交錯的刀刃剪影，致敬「三刀流」意象
+    // 三把交錯的刀刃剪影，致敬「三刀流」意象；加上鮮綠光暈與金色刀鍔，呈現更鮮豔誇張的視覺效果
     return `
-      <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <line x1="10" y1="42" x2="42" y2="10" stroke="#d8f3dc" stroke-width="3" stroke-linecap="round"/>
-        <line x1="26" y1="44" x2="26" y2="8" stroke="#95d5b2" stroke-width="3" stroke-linecap="round"/>
-        <line x1="42" y1="42" x2="10" y2="10" stroke="#d8f3dc" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="26" cy="26" r="5" fill="#74c69d"/>
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="48" x2="48" y2="10" stroke="#00e676" stroke-width="7" stroke-linecap="round" opacity="0.35"/>
+        <line x1="30" y1="50" x2="30" y2="6" stroke="#00e676" stroke-width="7" stroke-linecap="round" opacity="0.35"/>
+        <line x1="48" y1="48" x2="10" y2="10" stroke="#00e676" stroke-width="7" stroke-linecap="round" opacity="0.35"/>
+        <line x1="10" y1="48" x2="48" y2="10" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="30" y1="50" x2="30" y2="6" stroke="#eafff2" stroke-width="3" stroke-linecap="round"/>
+        <line x1="48" y1="48" x2="10" y2="10" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="30" cy="30" r="7" fill="#ffd200" stroke="#04220f" stroke-width="1.5"/>
+        <circle cx="27" cy="27" r="2" fill="#fff8dc"/>
       </svg>`;
   }
   if (themeId === "babymonster") {
