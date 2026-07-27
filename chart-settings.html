@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>圖表顯示設定｜【JFKD】成績記錄表</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">JF</div>
+        <div class="brand-text">
+          <div class="title">JFKD 成績記錄表</div>
+          <div class="subtitle">家庭儀表板</div>
+        </div>
+      </div>
+
+      <a href="index.html" class="nav-link">🏠 總覽</a>
+
+      <div class="nav-section-label">學生</div>
+      <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
+
+      <div class="nav-section-label">管理</div>
+      <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
+      <a href="students.html" class="nav-link">👤 學生名單</a>
+      <a href="subjects.html" class="nav-link">📚 科目對照表</a>
+      <a href="simulate.html" class="nav-link">🧮 試算表</a>
+      <a href="chart-settings.html" class="nav-link active">📈 圖表顯示設定</a>
+      <a href="themes.html" class="nav-link">🎨 學生主題造型</a>
+
+      <div class="sidebar-footer">
+        <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
+        <span class="user-email" id="sidebarUserEmail">載入中...</span>
+        <button id="logoutBtn">登出</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>圖表顯示設定</h1>
+          <div class="desc">
+            設定所有成績趨勢圖的顯示方式。這裡的設定是「全域預設值」，套用到首頁與每位學生的所有圖表；
+            若某位學生想要不同的顯示方式，可以在下方「個別學生覆寫」單獨調整。
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title mt-0">全域預設</div>
+      <div class="card" id="globalSettingsCard">
+        <div class="grid grid-cols-2">
+          <div>
+            <label>Y 軸最小值</label>
+            <input type="number" id="gYMin" min="0" max="100" />
+          </div>
+          <div>
+            <label>Y 軸最大值</label>
+            <input type="number" id="gYMax" min="0" max="100" />
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label>X 軸顯示筆數：<span id="gXCountLabel" class="text-dim"></span></label>
+          <input type="range" id="gXCount" min="0" max="30" step="1" />
+          <div class="text-faint" style="font-size:11px; margin-top:4px;">拖到最左邊（0）代表顯示全部歷史紀錄</div>
+        </div>
+
+        <div class="grid grid-cols-2" style="margin-top:14px;">
+          <div>
+            <label>點位分數顯示</label>
+            <select id="gShowPointLabels">
+              <option value="false">滑鼠悉停才顯示（預設）</option>
+              <option value="true">一律直接顯示分數</option>
+            </select>
+          </div>
+          <div>
+            <label>字體大小</label>
+            <select id="gFontSize">
+              <option value="sm">小</option>
+              <option value="md">中</option>
+              <option value="lg">大</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <button class="btn btn-primary" id="saveGlobalBtn">儲存全域預設</button>
+          <span id="globalSaveMsg" class="text-faint" style="margin-left:10px; font-size:12px;"></span>
+        </div>
+      </div>
+
+      <div class="section-title">個別學生覆寫</div>
+      <div id="studentOverrides"><div class="empty-state">載入中...</div></div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/chart-settings.js"></script>
+</body>
+</html>

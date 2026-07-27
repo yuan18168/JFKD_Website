@@ -27,6 +27,8 @@
       <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
       <a href="simulate.html" class="nav-link">🧮 試算表</a>
+      <a href="chart-settings.html" class="nav-link">📈 圖表顯示設定</a>
+      <a href="themes.html" class="nav-link">🎨 學生主題造型</a>
 
       <div class="sidebar-footer">
         <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
@@ -38,8 +40,11 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>JFKD Family 成績記錄表</h1>
-          <div class="desc">全家目前的獎懲累計狀態</div>
+          <div class="editable-title-row">
+            <h1 id="dashboardTitle">JFKD Family 成績記錄表</h1>
+            <button type="button" class="title-edit-btn" id="editTitleBtn" title="編輯標題">✏️</button>
+          </div>
+          <div class="desc">獎懲累計狀態總覽</div>
         </div>
       </div>
 
