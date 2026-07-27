@@ -178,7 +178,7 @@
             <span style="font-weight:700; font-size:13px;">${escapeHtml(s.name)}</span>
           </div>
           <div class="table-wrap">
-            <table>
+            <table class="recent-table">
               <thead>
                 <tr>
                   <th>日期</th><th>學制</th><th>學期</th><th>考試</th><th>科目明細</th>
