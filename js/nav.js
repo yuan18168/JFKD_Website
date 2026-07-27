@@ -27,3 +27,34 @@ function escapeHtml(str) {
 function fmtMoney(n) {
   return "NT$" + Math.round(n || 0).toLocaleString("zh-Hant-TW");
 }
+
+/* ---------- 圖表顯示設定共用工具（全域預設 + 每位學生可覆寫）---------- */
+function chartFontSizePx(fontSize) {
+  return { sm: 10, md: 12, lg: 15 }[fontSize] || 12;
+}
+
+// 一律顯示分數的自訂 Chart.js 外掛（平常靠 tooltip 顯示，開啟此設定才會把數字直接畫在點位旁邊）
+if (typeof Chart !== "undefined") {
+  Chart.register({
+    id: "jfkdPointLabels",
+    afterDatasetsDraw(chart) {
+      const opts = chart.config._jfkdPointLabelOpts;
+      if (!opts || !opts.enabled) return;
+      const { ctx } = chart;
+      ctx.save();
+      ctx.font = `700 ${opts.fontSize || 11}px ${getComputedStyle(document.body).fontFamily}`;
+      ctx.fillStyle = opts.color || "#e7ecf7";
+      ctx.textAlign = "center";
+      chart.data.datasets.forEach((dataset, i) => {
+        const meta = chart.getDatasetMeta(i);
+        if (meta.hidden) return;
+        meta.data.forEach((point, index) => {
+          const value = dataset.data[index];
+          if (value === null || value === undefined) return;
+          ctx.fillText(String(value), point.x, point.y - 8);
+        });
+      });
+      ctx.restore();
+    },
+  });
+}

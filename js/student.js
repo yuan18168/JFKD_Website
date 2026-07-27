@@ -10,15 +10,17 @@
     return;
   }
 
-  const [student, students, profiles, settings, records, subjectPresets] = await Promise.all([
+  const [student, students, profiles, settings, records, subjectPresets, globalChartSettings] = await Promise.all([
     getStudent(studentId),
     listStudents(),
     listRuleProfiles(),
     getSettings(),
     listExamRecords(studentId),
     getSubjectPresets(),
+    getChartSettings(),
   ]);
   const defaultProfileId = settings.defaultProfileId || profiles[0]?.id || null;
+  const chartSettings = resolveChartSettings(student, globalChartSettings);
 
   renderStudentNav(students, studentId);
 
@@ -29,6 +31,14 @@
 
   document.getElementById("studentName").textContent = student.name;
   document.getElementById("studentMeta").textContent = `${records.length} 筆歷史紀錄`;
+
+  // 套用學生主題造型（原創致敬風格，只影響這一頁）
+  const studentTheme = getStudentTheme(student.themeId);
+  if (studentTheme) {
+    document.body.classList.add(studentTheme.bodyClass);
+    const bannerSlot = document.getElementById("themeBannerSlot");
+    if (bannerSlot) bannerSlot.innerHTML = themeBannerHtml(student.themeId, student.name);
+  }
 
   // 每一筆紀錄都用「當初套用的設定檔」（沒存過就退回目前的家庭預設檔）來計算，
   // 這樣新增/切換設定檔不會改變舊紀錄已經算出來的結果。
@@ -80,7 +90,11 @@
   }
 
   function renderChart(rows) {
-    const ordered = [...rows].reverse(); // 時間由舊到新
+    let ordered = [...rows].reverse(); // 時間由舊到新
+    // X 軸筆數：0 代表全部，否則只取最近 N 筆（沿用「靠近現在」= 陣列尾端）
+    if (chartSettings.xCount > 0 && ordered.length > chartSettings.xCount) {
+      ordered = ordered.slice(-chartSettings.xCount);
+    }
     const container = document.getElementById("trendCharts");
     container.innerHTML = "";
 
@@ -99,26 +113,23 @@
 
     const palette = ["#4f7cff", "#4fd1c5", "#ffb454", "#ff6b9d", "#a78bfa", "#34d399", "#ffd54a", "#63b3ff"];
     const labels = ordered.map((r) => `${r.semester || ""} ${r.examType || ""}`.trim() || r.date || "");
+    const fontPx = chartFontSizePx(chartSettings.fontSize);
+    const yMin = chartSettings.yMin;
+    const yMax = chartSettings.yMax;
 
     function addMiniChart(title, color, scores, isAverage) {
-      const validScores = scores.filter((v) => typeof v === "number");
-      const minScore = validScores.length ? Math.min(...validScores) : 0;
-      // 分數區間預設 60~100；只有最低分低於 60 時才下修，且下限仍取 10 分整數
-      // 例：最低 58 分 → 下限 50；最低 32 分 → 下限 30
-      const yMin = minScore < 60 ? Math.max(0, Math.floor(minScore / 10) * 10) : 60;
-
       const card = document.createElement("div");
       card.className = "card mini-chart-card" + (isAverage ? " mini-chart-average" : "");
       card.innerHTML = `
         <div class="mini-chart-head">
-          <div class="mini-chart-title"><span class="dot" style="background:${color}"></span>${escapeHtml(title)}</div>
-          <div class="mini-chart-range">${yMin} ~ 100</div>
+          <div class="mini-chart-title" style="font-size:${fontPx + 1}px;"><span class="dot" style="background:${color}"></span>${escapeHtml(title)}</div>
+          <div class="mini-chart-range" style="font-size:${fontPx - 1}px;">${yMin} ~ ${yMax}</div>
         </div>
         <canvas height="${isAverage ? 60 : 160}"></canvas>
       `;
       container.appendChild(card);
 
-      new Chart(card.querySelector("canvas"), {
+      const chart = new Chart(card.querySelector("canvas"), {
         type: "line",
         data: {
           labels,
@@ -140,11 +151,12 @@
           interaction: { mode: "index", intersect: false },
           plugins: { legend: { display: false } },
           scales: {
-            y: { min: yMin, max: 100, ticks: { color: "#93a0c2" }, grid: { color: "#263354" } },
-            x: { ticks: { color: "#93a0c2" }, grid: { color: "#1a2440" } },
+            y: { min: yMin, max: yMax, ticks: { color: "#93a0c2", font: { size: fontPx } }, grid: { color: "#263354" } },
+            x: { ticks: { color: "#93a0c2", font: { size: fontPx } }, grid: { color: "#1a2440" } },
           },
         },
       });
+      chart.config._jfkdPointLabelOpts = { enabled: chartSettings.showPointLabels, fontSize: fontPx, color: color };
     }
 
     // 最上方先放「平均」趨勢圖（取每次紀錄所有科目的平均分）

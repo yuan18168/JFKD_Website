@@ -2,9 +2,12 @@
   data.js — Firestore 資料存取共用函式
   Collections:
     config/rules          （舊版，已遷移）單一文件的獎懲規則設定
-    config/settings        { defaultProfileId }：家庭目前的預設設定檔
+    config/settings        { defaultProfileId, dashboardTitle（總覽頁可編輯標題） }：家庭共用設定
+    config/chartSettings    { yMin, yMax, xCount（0=全部）, showPointLabels, fontSize }：全域圖表顯示預設值
     ruleProfiles/{id}       { name, tiers, progressBonusPerPoint, comboBonus3, comboBonus5, punishmentText, createdAt }
-    students/{id}           { name, color, order }
+    students/{id}           { name, color, order,
+                               chartOverride（可選，覆寫全域圖表顯示設定，欄位同 config/chartSettings）,
+                               themeId（可選，'zoro'|'babymonster'，套用學生主題造型）}
     examRecords/{id}        { studentId, semester, examType, date, subjects:[{name,score,prevScore}],
                                ruleProfileId（套用的設定檔）, note,
                                punishmentStatus（'pending'|'done'，只有觸發處罰時才存在),
@@ -133,6 +136,11 @@ async function deleteStudent(id) {
   await db.collection("students").doc(id).delete();
 }
 
+/** 局部更新學生資料（例如 chartOverride、themeId），只會覆寫傳入的欄位 */
+async function updateStudent(id, fields) {
+  await db.collection("students").doc(id).update(fields);
+}
+
 /** 刪除學生時，一併刪除這位學生所有的歷史考試紀錄。回傳實際刪除的紀錄筆數。 */
 async function deleteStudentCascade(id) {
   const records = await listExamRecords(id);
@@ -252,4 +260,96 @@ async function getLastScoreForSubject(studentId, subjectName, beforeDate) {
     if (s) return s.score;
   }
   return null;
+}
+
+// ------------------------------------------------------------------
+// 圖表顯示設定：全域一份預設值（config/chartSettings），每位學生可在
+// students/{id}.chartOverride 個別覆寫其中任何欄位；沒有覆寫的欄位繼續沿用全域值。
+function defaultChartSettings() {
+  return { yMin: 60, yMax: 100, xCount: 0, showPointLabels: false, fontSize: "md" };
+}
+
+async function getChartSettings() {
+  const doc = await db.collection("config").doc("chartSettings").get();
+  return { ...defaultChartSettings(), ...(doc.exists ? doc.data() : {}) };
+}
+
+async function saveChartSettings(settings) {
+  await db.collection("config").doc("chartSettings").set(settings, { merge: true });
+}
+
+/** 合併全域設定與該學生的個別覆寫，回傳這個學生實際要用的圖表顯示設定 */
+function resolveChartSettings(student, globalSettings) {
+  const base = { ...defaultChartSettings(), ...(globalSettings || {}) };
+  const override = student && student.chartOverride;
+  return override ? { ...base, ...override } : base;
+}
+
+// ------------------------------------------------------------------
+// 總覽頁標題：預設「JFKD Family 成績記錄表」，可在畫面上直接點筆狀圖示編輯，
+// 存在 config/settings.dashboardTitle（與 defaultProfileId 共用同一份文件）。
+const DEFAULT_DASHBOARD_TITLE = "JFKD Family 成績記錄表";
+async function saveDashboardTitle(title) {
+  await db.collection("config").doc("settings").set({ dashboardTitle: title }, { merge: true });
+}
+
+// ------------------------------------------------------------------
+// 學生主題造型：固定的主題庫（原創致敬風格，不使用官方角色圖／真人肖像），
+// 在「學生名單」頁為每位學生選擇要套用哪一套；套用後只會影響該學生自己的
+// 學生紀錄頁（student.html?id=該生），全站其他頁面維持標準樣式。
+const STUDENT_THEMES = {
+  zoro: {
+    id: "zoro",
+    name: "綠色劍士・三刀流",
+    tagline: "致敬海賊迷弟哈哈最愛的綠髮劍士，武士刀＋深綠配色",
+    bodyClass: "theme-zoro",
+  },
+  babymonster: {
+    id: "babymonster",
+    name: "舞台女孩・閃耀應援",
+    tagline: "致敬 K-POP 女孩團體風格，粉彩螢光＋應援手燈配色",
+    bodyClass: "theme-babymonster",
+  },
+};
+function getStudentTheme(themeId) {
+  return STUDENT_THEMES[themeId] || null;
+}
+
+/** 原創致敬風格小圖示（純幾何線條繪製，非官方角色圖／真人肖像） */
+function themeIconSvg(themeId) {
+  if (themeId === "zoro") {
+    // 三把交錯的刀刃剪影，致敬「三刀流」意象
+    return `
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="42" x2="42" y2="10" stroke="#d8f3dc" stroke-width="3" stroke-linecap="round"/>
+        <line x1="26" y1="44" x2="26" y2="8" stroke="#95d5b2" stroke-width="3" stroke-linecap="round"/>
+        <line x1="42" y1="42" x2="10" y2="10" stroke="#d8f3dc" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="26" cy="26" r="5" fill="#74c69d"/>
+      </svg>`;
+  }
+  if (themeId === "babymonster") {
+    // 星形＋應援手燈剪影，致敬演唱會應援氛圍
+    return `
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M26 6 L30 20 L44 20 L33 29 L37 43 L26 34 L15 43 L19 29 L8 20 L22 20 Z" fill="#ffd6f2"/>
+        <circle cx="26" cy="26" r="3" fill="#ff6fb5"/>
+        <rect x="24" y="34" width="4" height="12" rx="2" fill="#a78bfa"/>
+        <circle cx="26" cy="34" r="6" fill="#ff9de2" opacity="0.85"/>
+      </svg>`;
+  }
+  return "";
+}
+
+/** 組出主題橫幅 HTML（student.html 套用主題時放在內容區最上方） */
+function themeBannerHtml(themeId, studentName) {
+  const theme = getStudentTheme(themeId);
+  if (!theme) return "";
+  return `
+    <div class="theme-banner">
+      <div class="theme-banner-icon">${themeIconSvg(theme.id)}</div>
+      <div class="theme-banner-text">
+        <div class="name">${escapeHtml(studentName)} · ${escapeHtml(theme.name)}</div>
+        <div class="tagline">${escapeHtml(theme.tagline)}</div>
+      </div>
+    </div>`;
 }

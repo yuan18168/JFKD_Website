@@ -9,16 +9,36 @@
   function renderList() {
     const el = document.getElementById("studentList");
     if (!students.length) {
-      el.innerHTML = '<span class="text-faint" style="font-size:13px;">尚未新增任何學生</span>';
+      el.innerHTML = '<div class="card empty-state">尚未新增任何學生</div>';
       return;
     }
     el.innerHTML = students
       .map(
-        (s) => `<span class="chip">${escapeHtml(s.name)}
-          <span data-del="${s.id}" style="cursor:pointer; color:var(--bad); margin-left:6px;">✕</span>
-        </span>`
+        (s) => `
+      <div class="card" style="margin-bottom:12px;">
+        <div class="flex-between">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="width:26px;height:26px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#08122e;">${(s.name || "?").slice(0, 1)}</span>
+            <span style="font-weight:700; font-size:15px;">${escapeHtml(s.name)}</span>
+          </div>
+          <span data-del="${s.id}" style="cursor:pointer; color:var(--bad); font-size:13px;">刪除</span>
+        </div>
+        <div style="margin-top:12px; max-width:280px;">
+          <label>專屬主題造型</label>
+          <select data-theme-select="${s.id}">
+            <option value="">無主題（標準樣式）</option>
+            ${Object.values(STUDENT_THEMES)
+              .map(
+                (t) =>
+                  `<option value="${t.id}" ${s.themeId === t.id ? "selected" : ""}>${escapeHtml(t.name)}</option>`
+              )
+              .join("")}
+          </select>
+        </div>
+      </div>`
       )
       .join("");
+
     el.querySelectorAll("[data-del]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const id = btn.dataset.del;
@@ -33,6 +53,25 @@
         students = await listStudents();
         renderList();
         renderStudentNav(students, null);
+      });
+    });
+
+    el.querySelectorAll("[data-theme-select]").forEach((select) => {
+      select.addEventListener("change", async () => {
+        const id = select.dataset.themeSelect;
+        select.disabled = true;
+        try {
+          if (select.value) {
+            await updateStudent(id, { themeId: select.value });
+          } else {
+            await updateStudent(id, { themeId: firebase.firestore.FieldValue.delete() });
+          }
+          students = await listStudents();
+        } catch (err) {
+          alert("更新主題失敗：" + err.message);
+        } finally {
+          select.disabled = false;
+        }
       });
     });
   }

@@ -2,8 +2,15 @@
 (async function () {
   await requireGuard();
 
-  const [students, profiles, settings] = await Promise.all([listStudents(), listRuleProfiles(), getSettings()]);
+  const [students, profiles, settings, globalChartSettings] = await Promise.all([
+    listStudents(),
+    listRuleProfiles(),
+    getSettings(),
+    getChartSettings(),
+  ]);
   const defaultProfileId = settings.defaultProfileId || profiles[0]?.id || null;
+
+  renderDashboardTitle(settings);
 
   renderStudentNav(students, null);
 
@@ -50,6 +57,8 @@
         const records = enrichedByStudent[i];
         const total = sum(records.map((r) => r.total));
         const latest = records[0];
+        const chartSettings = resolveChartSettings(s, globalChartSettings);
+        const chartCaption = chartSettings.xCount > 0 ? `近${chartSettings.xCount}次平均成績趨勢圖` : "全部歷史平均成績趨勢圖";
         return `
         <a class="card student-card" href="student.html?id=${s.id}">
           <div class="head">
@@ -63,7 +72,7 @@
             <div class="text-faint" style="font-size:11px;">累計獎金</div>
             <div class="total">${fmtMoney(total)}</div>
           </div>
-          <div class="text-faint" style="font-size:11px; margin-top:6px;">近5次平均成績趨勢圖</div>
+          <div class="text-faint" style="font-size:11px; margin-top:6px;">${chartCaption}</div>
           <div style="height:70px;">
             <canvas data-avg-chart="${s.id}"></canvas>
           </div>
@@ -74,12 +83,17 @@
     students.forEach((s, i) => {
       const canvas = el.querySelector(`canvas[data-avg-chart="${s.id}"]`);
       if (!canvas) return;
-      // 只取最近 5 筆，跟學生頁統計卡片「平均分（近5次）」的口徑一致
-      const ordered = [...enrichedByStudent[i]].slice(0, 5).reverse(); // 舊到新
+      const chartSettings = resolveChartSettings(s, globalChartSettings);
+      // 依圖表顯示設定的 X 軸筆數（0=全部）決定要取幾筆
+      let ordered = [...enrichedByStudent[i]].reverse(); // 舊到新
+      if (chartSettings.xCount > 0 && ordered.length > chartSettings.xCount) {
+        ordered = ordered.slice(-chartSettings.xCount);
+      }
       if (!ordered.length) return;
       const labels = ordered.map((r) => `${r.semester || ""} ${r.examType || ""}`.trim() || r.date || "");
       const avgScores = ordered.map((r) => (typeof r.result?.avgScore === "number" ? r.result.avgScore : null));
-      new Chart(canvas, {
+      const fontPx = chartFontSizePx(chartSettings.fontSize);
+      const chart = new Chart(canvas, {
         type: "line",
         data: {
           labels,
@@ -101,11 +115,12 @@
           interaction: { mode: "index", intersect: false },
           plugins: { legend: { display: false }, tooltip: { enabled: true } },
           scales: {
-            y: { display: false },
+            y: { display: false, min: chartSettings.yMin, max: chartSettings.yMax },
             x: { display: false },
           },
         },
       });
+      chart.config._jfkdPointLabelOpts = { enabled: chartSettings.showPointLabels, fontSize: fontPx, color: "#e7ecf7" };
     });
   }
 
@@ -172,6 +187,51 @@
         </div>`;
       })
       .join("");
+  }
+
+  // ---- 總覽標題可編輯：點筆狀圖示就地變成輸入框，Enter 或移開焦點即儲存 ----
+  function renderDashboardTitle(settingsDoc) {
+    const titleEl = document.getElementById("dashboardTitle");
+    const editBtn = document.getElementById("editTitleBtn");
+    if (!titleEl || !editBtn) return;
+    const currentTitle = settingsDoc.dashboardTitle || DEFAULT_DASHBOARD_TITLE;
+    titleEl.textContent = currentTitle;
+
+    editBtn.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.id = "dashboardTitleInput";
+      input.value = titleEl.textContent;
+      titleEl.replaceWith(input);
+      editBtn.style.display = "none";
+      input.focus();
+      input.select();
+
+      let saved = false;
+      async function commit() {
+        if (saved) return;
+        saved = true;
+        const newTitle = input.value.trim() || DEFAULT_DASHBOARD_TITLE;
+        input.replaceWith(titleEl);
+        titleEl.textContent = newTitle;
+        editBtn.style.display = "";
+        if (newTitle !== currentTitle) {
+          try {
+            await saveDashboardTitle(newTitle);
+          } catch (err) {
+            alert("標題儲存失敗：" + err.message);
+          }
+        }
+      }
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") input.blur();
+        if (e.key === "Escape") {
+          input.value = currentTitle;
+          input.blur();
+        }
+      });
+      input.addEventListener("blur", commit);
+    });
   }
 
   function statCard(label, value, deltaClass) {
