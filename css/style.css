@@ -376,6 +376,21 @@ th.num { text-align: right; }
   .table-wrap table { min-width: 720px; }
 }
 
+/* ---------- 總覽頁「最新紀錄」：每位學生各自一張獨立表格，
+   若不固定欄寬，瀏覽器會依「各自表格自己的內容」分別計算欄寬，導致丂丂／哈哈兩張表格的欄位對不齊。
+   改成 table-layout: fixed 並統一每欄的百分比寬度，讓所有學生的表格欄寬永遠一致。 ---------- */
+.recent-table { table-layout: fixed; }
+.recent-table th:nth-child(1), .recent-table td:nth-child(1) { width: 10%; } /* 日期 */
+.recent-table th:nth-child(2), .recent-table td:nth-child(2) { width: 7%; }  /* 學制 */
+.recent-table th:nth-child(3), .recent-table td:nth-child(3) { width: 7%; }  /* 學期 */
+.recent-table th:nth-child(4), .recent-table td:nth-child(4) { width: 8%; }  /* 考試 */
+.recent-table th:nth-child(5), .recent-table td:nth-child(5) { width: 32%; } /* 科目明細 */
+.recent-table th:nth-child(6), .recent-table td:nth-child(6) { width: 9%; }  /* 平均分數 */
+.recent-table th:nth-child(7), .recent-table td:nth-child(7) { width: 9%; }  /* 總獎金 */
+.recent-table th:nth-child(8), .recent-table td:nth-child(8) { width: 9%; }  /* 處罰狀態 */
+.recent-table th:nth-child(9), .recent-table td:nth-child(9) { width: 9%; }  /* 獎金狀態 */
+.recent-table td.text-dim { overflow-wrap: break-word; }
+
 .badge {
   display: inline-flex;
   align-items: center;
