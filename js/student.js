@@ -236,8 +236,7 @@
                   ? `<div class="wishlist-redeem-row">
                       ${
                         redeemed
-                          ? `<span style="font-size:12px; color:var(--good);">🎉 已於 ${escapeHtml(item.redeemedDate)} 兌現完成</span>
-                             <span data-wishlist-unredeem="${item.id}" style="cursor:pointer; color:var(--brand); font-size:12px;">取消兌換標記</span>`
+                          ? `<span style="font-size:12px; color:var(--good);">🎉 已於 ${escapeHtml(item.redeemedDate)} 兌現完成</span>`
                           : `<button type="button" class="btn btn-sm btn-primary" data-wishlist-redeem="${item.id}">標記已兌換</button>`
                       }
                     </div>`
@@ -295,31 +294,8 @@
       });
     });
 
-    // ---- 取消兌換標記 ----
-    el.querySelectorAll("[data-wishlist-unredeem]").forEach((link) => {
-      link.addEventListener("click", async () => {
-        const itemId = link.dataset.wishlistUnredeem;
-        const ok = await confirmDialog("確定要取消這個項目的「已兌換」標記嗎？", {
-          title: "取消兌換標記",
-          confirmText: "取消標記",
-        });
-        if (!ok) return;
-        const wishlist = studentDoc.wishlist || [];
-        const updatedWishlist = wishlist.map((it) => {
-          if (it.id !== itemId) return it;
-          const clone = { ...it };
-          delete clone.redeemedDate;
-          return clone;
-        });
-        try {
-          await updateStudent(studentDoc.id, { wishlist: updatedWishlist });
-          studentDoc.wishlist = updatedWishlist;
-          renderWishlist(studentDoc, totalBonus);
-        } catch (err) {
-          alert("更新失敗：" + err.message);
-        }
-      });
-    });
+    // 註：不需要「取消兌換標記」按鈕——想取消兌換時，直接點上方的「進行中」或「未達成」即可，
+    // 那兩個按鈕本來就會自動清除兌現日期，不用額外重複一個功能相同的操作。
   }
 
   setupForm(profiles, defaultProfileId, student);
