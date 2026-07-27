@@ -201,8 +201,10 @@
         ${sorted
           .map((item) => {
             const total = wishlistItemTotal(item);
-            const status = item.status || "progress";
-            const redeemed = !!item.redeemedDate;
+            // 相容舊資料：舊版只有 redeemedDate、沒有 status 欄位時，代表當初已經手動標記過兌換，
+            // 直接視為「達成」狀態，而不是預設「進行中」卻又附著一個兌現日期造成矛盾顯示。
+            const status = item.status || (item.redeemedDate ? "achieved" : "progress");
+            const redeemed = status === "achieved" && !!item.redeemedDate;
             const cardStateClass = status === "notAchieved" ? "wishlist-not-achieved" : status === "achieved" ? "wishlist-achieved" : "";
             const icon = status === "notAchieved" ? "😅" : redeemed ? "🎉" : "🎁";
             return `

@@ -45,7 +45,8 @@
                     .map((item) => {
                       if (item.id === editingWishlistItemId) return wishlistEditFormHtml(s.id, item);
                       const totalAmt = wishlistItemTotal(item);
-                      const status = item.status || "progress";
+                      // 相容舊資料：舊版只有 redeemedDate、沒有 status 欄位時，視為「達成」而非「進行中」
+                      const status = item.status || (item.redeemedDate ? "achieved" : "progress");
                       return `
               <div style="padding:8px 0; border-bottom:1px solid var(--border); font-size:13px;">
                 <div class="flex-between" style="align-items:flex-start;">
