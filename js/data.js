@@ -350,16 +350,20 @@ function themeIconSvg(themeId) {
   return "";
 }
 
-/** 組出主題橫幅 HTML（student.html 套用主題時放在內容區最上方） */
-function themeBannerHtml(themeId, studentName) {
+/** 組出主題橫幅 HTML（student.html 套用主題時放在內容區最上方）
+ * overrideTitle／overrideTagline：在「學生主題造型」頁可個別覆寫的大標題／小標題文字，
+ * 沒有覆寫時就退回預設值（學生名稱＋主題名稱／主題原本的 tagline）。 */
+function themeBannerHtml(themeId, studentName, overrideTitle, overrideTagline) {
   const theme = getStudentTheme(themeId);
   if (!theme) return "";
+  const title = overrideTitle || `${studentName} · ${theme.name}`;
+  const tagline = overrideTagline || theme.tagline;
   return `
     <div class="theme-banner">
       <div class="theme-banner-icon">${themeIconSvg(theme.id)}</div>
       <div class="theme-banner-text">
-        <div class="name">${escapeHtml(studentName)} · ${escapeHtml(theme.name)}</div>
-        <div class="tagline">${escapeHtml(theme.tagline)}</div>
+        <div class="name">${escapeHtml(title)}</div>
+        <div class="tagline">${escapeHtml(tagline)}</div>
       </div>
     </div>`;
 }

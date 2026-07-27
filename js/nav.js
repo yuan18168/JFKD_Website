@@ -86,6 +86,57 @@ function wishlistStatusLabel(status) {
   return "進行中";
 }
 
+/* ---------- 拖曳排序共用工具（願望清單用；Trello 風格：拖到哪張卡就插進哪，其餘自動往後推）---------- */
+// containerEl：卡片們共同的父層容器（例如 .wishlist-grid）
+// cardSelector：每張可拖曳卡片的 CSS class（例如 ".wishlist-card"），卡片本身需加上 draggable="true" 與 data-drag-id="項目id"
+// onReorder(newIdOrder)：使用者放開滑鼠、順序確定改變後才會呼叫，帶入新的 id 順序陣列，由呼叫端自行寫回 Firestore
+function attachDragReorder(containerEl, cardSelector, onReorder) {
+  if (!containerEl) return;
+  let draggedEl = null;
+
+  containerEl.querySelectorAll(cardSelector).forEach((card) => {
+    card.addEventListener("dragstart", (e) => {
+      draggedEl = card;
+      card.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      try {
+        e.dataTransfer.setData("text/plain", card.dataset.dragId || "");
+      } catch (err) {
+        /* 部分瀏覽器對 setData 較嚴格，失敗也不影響拖曳排序本身 */
+      }
+    });
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+      containerEl.querySelectorAll(cardSelector).forEach((c) => c.classList.remove("drag-over"));
+      draggedEl = null;
+    });
+    card.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      if (!draggedEl || draggedEl === card) return;
+      e.dataTransfer.dropEffect = "move";
+      card.classList.add("drag-over");
+    });
+    card.addEventListener("dragleave", () => {
+      card.classList.remove("drag-over");
+    });
+    card.addEventListener("drop", (e) => {
+      e.preventDefault();
+      card.classList.remove("drag-over");
+      if (!draggedEl || draggedEl === card) return;
+      // 依放開滑鼠時位在目標卡片的左半邊或右半邊，決定插入到目標「之前」還是「之後」
+      const rect = card.getBoundingClientRect();
+      const insertAfter = e.clientX - rect.left > rect.width / 2;
+      if (insertAfter) {
+        card.after(draggedEl);
+      } else {
+        card.before(draggedEl);
+      }
+      const newOrder = Array.from(containerEl.querySelectorAll(cardSelector)).map((c) => c.dataset.dragId);
+      if (typeof onReorder === "function") onReorder(newOrder);
+    });
+  });
+}
+
 /* ---------- 自訂日期輸入彈窗（共用，取代原生 prompt()）---------- */
 // 原生 prompt() 在部分自動化/嵌入環境會卡住整個頁面，且視覺風格跟全站不一致，
 // 所以跟 confirmDialog 一樣，改用自訂彈窗＋<input type="date">。

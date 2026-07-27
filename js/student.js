@@ -37,7 +37,7 @@
   if (studentTheme) {
     document.body.classList.add(studentTheme.bodyClass);
     const bannerSlot = document.getElementById("themeBannerSlot");
-    if (bannerSlot) bannerSlot.innerHTML = themeBannerHtml(student.themeId, student.name);
+    if (bannerSlot) bannerSlot.innerHTML = themeBannerHtml(student.themeId, student.name, student.bannerTitle, student.bannerTagline);
   }
 
   // 每一筆紀錄都用「當初套用的設定檔」（沒存過就退回目前的家庭預設檔）來計算，
@@ -187,17 +187,34 @@
   //   即使標成「未達成」也不是永久判死刑，之後隨時可以再挑戰一次改回「進行中」或「達成」。
   // ②只有「達成」狀態才能標記兌現日期；狀態離開「達成」時，會自動清除先前登記的兌現日期。
   // ③「未達成」的卡片會整張變灰＋顯示鼓勵字樣，當作一個溫和的紀錄，而不是責備。
+  // 學生紀錄頁只需要看「還在努力中」跟「最近的結果」，完整清單改到獨立的「願望清單」管理頁查看，
+  // 所以這裡只顯示：①全部「進行中」的項目、②最近才變成「達成」或「未達成」的 3 筆（依 statusUpdatedAt 排序）。
+  function pickVisibleWishlistItems(items) {
+    const withStatus = items.map((item) => ({
+      item,
+      status: item.status || (item.redeemedDate ? "achieved" : "progress"),
+    }));
+    const inProgress = withStatus.filter((x) => x.status === "progress").map((x) => x.item);
+    const decided = withStatus
+      .filter((x) => x.status !== "progress")
+      .sort((a, b) => new Date(b.item.statusUpdatedAt || 0) - new Date(a.item.statusUpdatedAt || 0))
+      .slice(0, 3)
+      .map((x) => x.item);
+    return { visible: [...inProgress, ...decided], hiddenCount: items.length - inProgress.length - decided.length };
+  }
+
   function renderWishlist(studentDoc, totalBonus) {
     const el = document.getElementById("wishlistSection");
     if (!el) return;
     const items = studentDoc.wishlist || [];
     if (!items.length) {
-      el.innerHTML = `<div class="card empty-state">尚未設定願望清單，請至「學生名單」新增想兌換的項目</div>`;
+      el.innerHTML = `<div class="card empty-state">尚未設定願望清單，請至「願望清單」管理頁新增想兌換的項目</div>`;
       return;
     }
-    const sorted = [...items].sort((a, b) => wishlistItemTotal(a) - wishlistItemTotal(b));
+    const { visible, hiddenCount } = pickVisibleWishlistItems(items);
+    const sorted = [...visible].sort((a, b) => wishlistItemTotal(a) - wishlistItemTotal(b));
     el.innerHTML = `
-      <div class="grid grid-cols-2">
+      <div class="grid grid-cols-3 wishlist-grid">
         ${sorted
           .map((item) => {
             const total = wishlistItemTotal(item);
@@ -245,7 +262,12 @@
             </div>`;
           })
           .join("")}
-      </div>`;
+      </div>
+      ${
+        hiddenCount > 0
+          ? `<div class="text-faint" style="font-size:12px; margin-top:10px;">還有 ${hiddenCount} 個較早的願望項目沒有顯示，<a href="wishlist.html?id=${studentDoc.id}">前往「願望清單」管理頁查看完整清單 →</a></div>`
+          : `<div class="text-faint" style="font-size:12px; margin-top:10px;"><a href="wishlist.html?id=${studentDoc.id}">前往「願望清單」管理頁新增／編輯／排序 →</a></div>`
+      }`;
 
     // ---- 達成狀態切換：進行中／達成／未達成，三者可自由互相切換 ----
     el.querySelectorAll("[data-wishlist-status]").forEach((btn) => {
@@ -260,6 +282,12 @@
           const clone = { ...it, status: newStatus };
           // 離開「達成」狀態時，自動清除先前登記的兌現日期，避免狀態與日期兜不起來
           if (newStatus !== "achieved") delete clone.redeemedDate;
+          // 記錄「狀態改變的時間」，讓學生紀錄頁能挑出「最近的 3 筆達成/未達成」來顯示
+          if (newStatus === "achieved" || newStatus === "notAchieved") {
+            clone.statusUpdatedAt = new Date().toISOString();
+          } else {
+            delete clone.statusUpdatedAt;
+          }
           return clone;
         });
         btn.disabled = true;
@@ -489,33 +517,37 @@
       return hasProgress && hasDefense && r.result.comboBonus > 0;
     });
 
+    // 每個徽章都有兩種文字：
+    // ・hint：只有「未解鎖」時顯示在徽章下方的小字，會動態倒數還差幾次／幾分（給還沒達成的人看的進度提示）
+    // ・desc：不管解鎖與否，滑鼠移上去（title tooltip）永遠顯示的「解鎖條件」固定說明，
+    //         這樣已經解鎖的徽章也能讓小朋友知道自己「為什麼」拿到這個徽章，而不是只顯示「已解鎖！」
     const badges = [
-      { icon: "🔥", label: "進步達人", unlocked: progressCount >= 5, hint: `再進步 ${Math.max(0, 5 - progressCount)} 次解鎖` },
-      { icon: "🏆", label: "衛冕高手", unlocked: defenseCount >= 5, hint: `再衛冕 ${Math.max(0, 5 - defenseCount)} 次解鎖` },
-      { icon: "🎯", label: "連續達標", unlocked: streak >= 3, hint: `連續 3 次沒有處罰即可解鎖（目前連續 ${streak} 次）` },
-      { icon: "💯", label: "滿分紀錄", unlocked: hasPerfectScore, hint: "任一科目考到最高級距即可解鎖" },
-      { icon: "📈", label: "分數新高", unlocked: hasNewHigh, hint: "刷新個人歷史最高平均分即可解鎖" },
-      { icon: "🚀", label: "大躍進", unlocked: hasBigJump, hint: "單科單次進步達 10 分以上即可解鎖" },
-      { icon: "🌟", label: "全科同框", unlocked: hasAllSubjects90, hint: "同一次紀錄所有科目都達 90 分以上即可解鎖" },
-      { icon: "🎖️", label: "連續衛冕", unlocked: hasConsecutiveDefense, hint: "連續兩次紀錄都有科目衛冕成功即可解鎖" },
-      { icon: "🧗", label: "谷底翻身", unlocked: hasComeback80, hint: "任一科目從 80 分以下進步到 80 分以上即可解鎖" },
-      { icon: "🔁", label: "五連勝", unlocked: hasFiveStreak90, hint: "連續 5 次紀錄平均分都達 90 分以上即可解鎖" },
-      { icon: "📚", label: "全勤紀錄", unlocked: rows.length >= 10, hint: `再新增 ${Math.max(0, 10 - rows.length)} 筆紀錄即可解鎖` },
-      { icon: "🌈", label: "全科進步", unlocked: hasAllImproved, hint: "同一次紀錄中，有比較對象的科目全部都要進步即可解鎖" },
-      { icon: "🥇", label: "常勝軍", unlocked: comboCount >= 3, hint: `再達成 ${Math.max(0, 3 - comboCount)} 次全科加碼即可解鎖` },
-      { icon: "🕰️", label: "持之以恆", unlocked: longHaulDays >= 182, hint: "記錄時間橫跨半年（182天）以上即可解鎖" },
-      { icon: "💰", label: "小富翁", unlocked: totalBonus >= 5000, hint: `累計獎金再達 ${fmtMoney(Math.max(0, 5000 - totalBonus))} 即可解鎖` },
-      { icon: "🎓", label: "科科精通", unlocked: masterCount >= 3, hint: `再有 ${Math.max(0, 3 - masterCount)} 個不同科目考到 100 分即可解鎖` },
-      { icon: "🦸", label: "逆風翻盤", unlocked: hasComebackAfterPunishment, hint: "處罰後，下一次紀錄恢復正常即可解鎖" },
-      { icon: "🌻", label: "穩健成長", unlocked: hasSteadyGrowth, hint: "最近 5 次紀錄要比 5 次之前更好即可解鎖" },
-      { icon: "🎁", label: "願望達成", unlocked: wishlistRedeemed, hint: "完成兌換任一願望清單項目即可解鎖" },
-      { icon: "🧩", label: "全能挑戰", unlocked: hasAllInOne, hint: "同一次紀錄同時有進步獎金、衛冕獎金、全科加碼即可解鎖" },
+      { icon: "🔥", label: "進步達人", unlocked: progressCount >= 5, desc: "累計進步達 5 次即可解鎖", hint: `再進步 ${Math.max(0, 5 - progressCount)} 次解鎖` },
+      { icon: "🏆", label: "衛冕高手", unlocked: defenseCount >= 5, desc: "累計衛冕達 5 次即可解鎖", hint: `再衛冕 ${Math.max(0, 5 - defenseCount)} 次解鎖` },
+      { icon: "🎯", label: "連續達標", unlocked: streak >= 3, desc: "連續 3 次紀錄都沒有處罰即可解鎖", hint: `連續 3 次沒有處罰即可解鎖（目前連續 ${streak} 次）` },
+      { icon: "💯", label: "滿分紀錄", unlocked: hasPerfectScore, desc: "任一科目考到最高級距即可解鎖", hint: "任一科目考到最高級距即可解鎖" },
+      { icon: "📈", label: "分數新高", unlocked: hasNewHigh, desc: "刷新個人歷史最高平均分即可解鎖", hint: "刷新個人歷史最高平均分即可解鎖" },
+      { icon: "🚀", label: "大躍進", unlocked: hasBigJump, desc: "單科單次進步達 10 分以上即可解鎖", hint: "單科單次進步達 10 分以上即可解鎖" },
+      { icon: "🌟", label: "全科同框", unlocked: hasAllSubjects90, desc: "同一次紀錄所有科目都達 90 分以上即可解鎖", hint: "同一次紀錄所有科目都達 90 分以上即可解鎖" },
+      { icon: "🎖️", label: "連續衛冕", unlocked: hasConsecutiveDefense, desc: "連續兩次紀錄都有科目衛冕成功即可解鎖", hint: "連續兩次紀錄都有科目衛冕成功即可解鎖" },
+      { icon: "🧗", label: "谷底翻身", unlocked: hasComeback80, desc: "任一科目從 80 分以下進步到 80 分以上即可解鎖", hint: "任一科目從 80 分以下進步到 80 分以上即可解鎖" },
+      { icon: "🔁", label: "五連勝", unlocked: hasFiveStreak90, desc: "連續 5 次紀錄平均分都達 90 分以上即可解鎖", hint: "連續 5 次紀錄平均分都達 90 分以上即可解鎖" },
+      { icon: "📚", label: "全勤紀錄", unlocked: rows.length >= 10, desc: "累計紀錄達 10 筆即可解鎖", hint: `再新增 ${Math.max(0, 10 - rows.length)} 筆紀錄即可解鎖` },
+      { icon: "🌈", label: "全科進步", unlocked: hasAllImproved, desc: "同一次紀錄中，有比較對象的科目全部都要進步即可解鎖", hint: "同一次紀錄中，有比較對象的科目全部都要進步即可解鎖" },
+      { icon: "🥇", label: "常勝軍", unlocked: comboCount >= 3, desc: "累計 3 次全科加碼即可解鎖", hint: `再達成 ${Math.max(0, 3 - comboCount)} 次全科加碼即可解鎖` },
+      { icon: "🕰️", label: "持之以恆", unlocked: longHaulDays >= 182, desc: "記錄時間橫跨半年（182天）以上即可解鎖", hint: "記錄時間橫跨半年（182天）以上即可解鎖" },
+      { icon: "💰", label: "小富翁", unlocked: totalBonus >= 5000, desc: "累計獎金達 NT$5,000 即可解鎖", hint: `累計獎金再達 ${fmtMoney(Math.max(0, 5000 - totalBonus))} 即可解鎖` },
+      { icon: "🎓", label: "科科精通", unlocked: masterCount >= 3, desc: "3 個不同科目都考到 100 分即可解鎖", hint: `再有 ${Math.max(0, 3 - masterCount)} 個不同科目考到 100 分即可解鎖` },
+      { icon: "🦸", label: "逆風翻盤", unlocked: hasComebackAfterPunishment, desc: "處罰後，下一次紀錄恢復正常即可解鎖", hint: "處罰後，下一次紀錄恢復正常即可解鎖" },
+      { icon: "🌻", label: "穩健成長", unlocked: hasSteadyGrowth, desc: "最近 5 次紀錄要比 5 次之前更好即可解鎖", hint: "最近 5 次紀錄要比 5 次之前更好即可解鎖" },
+      { icon: "🎁", label: "願望達成", unlocked: wishlistRedeemed, desc: "完成兌換任一願望清單項目即可解鎖", hint: "完成兌換任一願望清單項目即可解鎖" },
+      { icon: "🧩", label: "全能挑戰", unlocked: hasAllInOne, desc: "同一次紀錄同時有進步獎金、衛冕獎金、全科加碼即可解鎖", hint: "同一次紀錄同時有進步獎金、衛冕獎金、全科加碼即可解鎖" },
     ];
 
     el.innerHTML = badges
       .map(
         (b) => `
-      <div class="badge-chip ${b.unlocked ? "unlocked" : "locked"}" title="${b.unlocked ? "已解鎖！" : b.hint}">
+      <div class="badge-chip ${b.unlocked ? "unlocked" : "locked"}" title="${escapeHtml(b.desc)}">
         <span class="badge-chip-icon">${b.icon}</span>
         <span class="badge-chip-label">${b.label}</span>
         ${!b.unlocked ? `<span class="badge-chip-hint">${escapeHtml(b.hint)}</span>` : ""}
