@@ -425,3 +425,111 @@ input[readonly] { background: var(--bg-card); color: var(--text-dim); cursor: de
 .mt-0 { margin-top: 0; }
 .flex-between { display: flex; align-items: center; justify-content: space-between; }
 .gap-8 { gap: 8px; }
+
+/* ---------- 總覽頁標題可編輯 ---------- */
+.editable-title-row { display: flex; align-items: center; gap: 8px; }
+.title-edit-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-faint); font-size: 15px; padding: 4px;
+  border-radius: 6px; line-height: 1;
+}
+.title-edit-btn:hover { color: var(--brand); background: rgba(255,255,255,0.05); }
+#dashboardTitleInput {
+  font-size: 22px; font-weight: 700; padding: 4px 8px;
+  max-width: 480px;
+}
+
+/* ==========================================================================
+   學生主題造型：原創致敬風格（不使用官方角色圖／真人肖像），
+   只在該學生自己的 student.html 生效，透過 <body class="theme-zoro|theme-babymonster">切換
+   ========================================================================== */
+
+.theme-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow);
+}
+.theme-banner .theme-banner-icon { flex-shrink: 0; }
+.theme-banner .theme-banner-text .name { font-size: 19px; font-weight: 800; }
+.theme-banner .theme-banner-text .tagline { font-size: 12px; opacity: .85; margin-top: 2px; }
+
+/* ---- 索隆・綠色劍士主題（哈哈） ---- */
+body.theme-zoro {
+  --brand: #52b788;
+  --brand-dim: #1b4332;
+  --good: #74c69d;
+  background-image:
+    repeating-linear-gradient(115deg, rgba(82,183,136,0.05) 0px, rgba(82,183,136,0.05) 2px, transparent 2px, transparent 40px),
+    radial-gradient(circle at 10% 0%, rgba(82,183,136,0.14), transparent 45%);
+}
+body.theme-zoro .sidebar { border-right-color: #1b4332; }
+body.theme-zoro .sidebar .brand-mark { background: linear-gradient(135deg, #2d6a4f, #74c69d); }
+body.theme-zoro .nav-link.active { background: #1b4332; color: #d8f3dc; }
+body.theme-zoro .card { border-color: #2d6a4f; }
+body.theme-zoro .student-card:hover { border-color: #74c69d; }
+body.theme-zoro .theme-banner {
+  background: linear-gradient(120deg, #0b1f16 0%, #1b4332 45%, #2d6a4f 100%);
+  border: 1px solid #40916c;
+  color: #d8f3dc;
+}
+body.theme-zoro .theme-banner::after {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(105deg, transparent 40%, rgba(216,243,220,0.10) 41%, rgba(216,243,220,0.10) 43%, transparent 44%),
+    linear-gradient(105deg, transparent 55%, rgba(216,243,220,0.10) 56%, rgba(216,243,220,0.10) 58%, transparent 59%),
+    linear-gradient(105deg, transparent 70%, rgba(216,243,220,0.10) 71%, rgba(216,243,220,0.10) 73%, transparent 74%);
+  pointer-events: none;
+}
+body.theme-zoro .theme-banner-text .tagline { color: #b7e4c7; }
+body.theme-zoro .stat-card .value { color: #d8f3dc; }
+body.theme-zoro .badge-done { background: rgba(116,198,157,0.18); color: #74c69d; }
+
+/* ---- Babymonster/Asa・舞台女孩主題（ㄎㄎ） ---- */
+body.theme-babymonster {
+  --brand: #ff6fb5;
+  --brand-dim: #4a1942;
+  --good: #ff9de2;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(255,111,181,0.16), transparent 40%),
+    radial-gradient(circle at 88% 15%, rgba(167,139,250,0.14), transparent 45%),
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2px 2px at 70% 60%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(2px 2px at 40% 80%, rgba(255,255,255,0.4), transparent);
+}
+body.theme-babymonster .sidebar { border-right-color: #4a1942; }
+body.theme-babymonster .sidebar .brand-mark { background: linear-gradient(135deg, #ff6fb5, #a78bfa); }
+body.theme-babymonster .nav-link.active { background: #4a1942; color: #ffd6f2; }
+body.theme-babymonster .card { border-color: #6a2c62; }
+body.theme-babymonster .student-card:hover { border-color: #ff6fb5; }
+body.theme-babymonster .theme-banner {
+  background: linear-gradient(120deg, #2a0e3d 0%, #4a1942 45%, #7b3f7a 100%);
+  border: 1px solid #a366a3;
+  color: #ffe3f6;
+}
+body.theme-babymonster .theme-banner::after {
+  content: "✦ ✧ ✦ ✧ ✦ ✧ ✦";
+  position: absolute; right: 18px; top: 8px;
+  font-size: 13px; letter-spacing: 10px; color: rgba(255,214,242,0.35);
+  pointer-events: none;
+}
+body.theme-babymonster .theme-banner-text .tagline { color: #ffbfe9; }
+body.theme-babymonster .stat-card .value { color: #ffd6f2; }
+body.theme-babymonster .badge-done { background: rgba(255,157,226,0.18); color: #ff9de2; }
+
+/* 主題造型頁的預覽小卡片 */
+.theme-gallery-card { display: flex; flex-direction: column; gap: 14px; }
+.theme-preview-banner {
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.theme-swatches { display: flex; gap: 8px; }
+.theme-swatch { width: 28px; height: 28px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); }
