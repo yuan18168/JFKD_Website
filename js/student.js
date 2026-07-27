@@ -584,7 +584,30 @@
     const yMin = chartSettings.yMin;
     const yMax = chartSettings.yMax;
 
-    function addMiniChart(title, color, scores, isAverage) {
+    // ---- 科目卡片華麗特效：依「最近一次紀錄」該科目的進步/衛冕/滿分狀況，判斷 hover 要播哪一級特效 ----
+    // 判斷邏輯完全沿用 calc.js 既有的獎金計算欄位（progressBonus/defenseBonus/tierKey），
+    // 跟獎金算法保持一致，不另外設計新的比對規則：
+    //   1級 進步：progressBonus > 0
+    //   2級 衛冕：defenseBonus > 0
+    //   3級 進步+衛冕：兩者都 > 0
+    //   4級 進步+衛冕+滿分：兩者都 > 0 且 tierKey === "A"（100分）
+    function getSubjectEffectTier(name) {
+      for (let i = ordered.length - 1; i >= 0; i--) {
+        const d = (ordered[i].result?.detail || []).find((x) => x.name === name);
+        if (!d) continue;
+        const isProgress = d.progressBonus > 0;
+        const isDefense = d.defenseBonus > 0;
+        const isHundred = d.tierKey === "A";
+        if (isProgress && isDefense && isHundred) return 4;
+        if (isProgress && isDefense) return 3;
+        if (isDefense) return 2;
+        if (isProgress) return 1;
+        return 0;
+      }
+      return 0;
+    }
+
+    function addMiniChart(title, color, scores, isAverage, effectTier) {
       const card = document.createElement("div");
       card.className = "card mini-chart-card" + (isAverage ? " mini-chart-average" : "");
       card.innerHTML = `
@@ -595,6 +618,7 @@
         <canvas height="${isAverage ? 60 : 160}"></canvas>
       `;
       container.appendChild(card);
+      if (!isAverage && effectTier > 0) bindSubjectCardEffect(card, effectTier);
 
       const chart = new Chart(card.querySelector("canvas"), {
         type: "line",
@@ -638,8 +662,100 @@
         const s = (r.subjects || []).find((x) => x.name === name);
         return s ? s.score : null;
       });
-      addMiniChart(name, color, scores, false);
+      addMiniChart(name, color, scores, false, getSubjectEffectTier(name));
     });
+  }
+
+  // ---- 觸發方式：桌面滑鼠有 hover 就用 hover，觸控裝置（手機/平板）沒有 hover 就改成點一下 ----
+  // 每次 hover／點擊都重新播放一次，沒有節流限制，想重看幾次都可以。
+  const IS_TOUCH_DEVICE = !window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  function bindSubjectCardEffect(card, tier) {
+    const trigger = () => playSubjectEffect(card, tier);
+    if (IS_TOUCH_DEVICE) {
+      card.addEventListener("click", trigger);
+    } else {
+      card.addEventListener("mouseenter", trigger);
+    }
+  }
+
+  function playSubjectEffect(card, tier) {
+    if (tier === 1) playCardEmojiEffect(card, "👍", 2000, "pop-effect");
+    else if (tier === 2) playCardEmojiEffect(card, "👑", 2000, "spin-effect");
+    else if (tier === 3) playCardFireworks(card, 5000);
+    else if (tier === 4) playAnimalParty(student.name, 10000);
+  }
+
+  // 特效一／二：卡片內彈出一個大 emoji（約佔卡片一半大小），播完自動淡出移除
+  function playCardEmojiEffect(card, emoji, duration, animClass) {
+    const el = document.createElement("div");
+    el.className = "subject-effect-emoji " + animClass;
+    el.textContent = emoji;
+    card.appendChild(el);
+    setTimeout(() => el.remove(), duration);
+  }
+
+  // 特效三：進步＋衛冕，卡片滿版煙火秀。用 canvas-confetti 把畫布侷限在這張卡片自己的範圍內施放，
+  // 不會噴到卡片外面，也不會跟其他科目卡片的煙火互相干擾。
+  function playCardFireworks(card, duration) {
+    if (typeof confetti === "undefined") return;
+    const canvas = document.createElement("canvas");
+    canvas.className = "subject-effect-canvas";
+    card.appendChild(canvas);
+    const myConfetti = confetti.create(canvas, { resize: true, useWorker: false });
+    const end = Date.now() + duration;
+    (function frame() {
+      myConfetti({
+        particleCount: 6,
+        startVelocity: 24,
+        spread: 75,
+        gravity: 0.9,
+        ticks: 160,
+        origin: { x: Math.random(), y: Math.random() * 0.35 },
+        colors: ["#ffd54a", "#4fd1c5", "#63b3ff", "#ff8fa3", "#ffffff"],
+      });
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      } else {
+        setTimeout(() => canvas.remove(), 400);
+      }
+    })();
+  }
+
+  // 特效四：全能挑戰（進步＋衛冕＋滿分100），整個頁面彈出約 2/3 版面大小的動物派對嘉年華賀卡，
+  // 搭配全螢幕 confetti 禮炮效果，播 10 秒後自動淡出收掉。全部使用通用動物 emoji，
+  // 沒有使用任何官方角色圖或真人肖像。
+  function playAnimalParty(studentName, duration) {
+    const overlay = document.createElement("div");
+    overlay.className = "animal-party-overlay";
+    const animals = ["🐶", "🐱", "🐰", "🦊", "🐼", "🦁", "🐯", "🐨", "🐸", "🐵"];
+    overlay.innerHTML = `
+      <div class="animal-party-box">
+        <div class="animal-party-title">🎉 全能挑戰達成！${escapeHtml(studentName || "")} 太厲害了！🎉</div>
+        <div class="animal-party-sub">進步＋衛冕＋滿分 100，三項全中，超級全能！</div>
+        <div class="animal-party-animals">
+          ${animals.map((a, i) => `<span style="animation-delay:${(i % 5) * 0.15}s;">${a}</span>`).join("")}
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    let burstTimer = null;
+    if (typeof confetti !== "undefined") {
+      burstTimer = setInterval(() => {
+        confetti({
+          particleCount: 60,
+          spread: 100,
+          startVelocity: 45,
+          origin: { x: Math.random(), y: 0.1 },
+          colors: ["#ffd54a", "#4fd1c5", "#63b3ff", "#ff8fa3", "#34d399", "#ffffff"],
+        });
+      }, 350);
+    }
+    setTimeout(() => {
+      if (burstTimer) clearInterval(burstTimer);
+      overlay.classList.add("fading-out");
+      setTimeout(() => overlay.remove(), 400);
+    }, duration);
   }
 
   // 依學期文字（例如「四下」「國一上」「高三下」）判斷屬於哪個學制，轉成表格顯示用文字
