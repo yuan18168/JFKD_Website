@@ -4,6 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>獎懲規則設定｜【JFKD】成績記錄表</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0b1120" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -62,14 +69,16 @@
         <span class="text-faint" style="text-transform:none; font-weight:400; letter-spacing:normal;">－ 正在編輯：<span id="editingProfileName">-</span></span>
       </div>
       <div class="card" style="padding:0; overflow:hidden;">
-        <table id="tiersTable">
-          <thead>
-            <tr>
-              <th>級距</th><th>分數範圍</th><th class="num">基礎獎金</th><th class="num">衛冕獎金</th><th>需處罰</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <div class="table-wrap">
+          <table id="tiersTable">
+            <thead>
+              <tr>
+                <th>級距</th><th>分數範圍</th><th class="num">基礎獎金</th><th class="num">衛冕獎金</th><th>需處罰</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
 
       <div class="grid grid-cols-2" style="margin-top:18px;">

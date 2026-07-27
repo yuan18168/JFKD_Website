@@ -4,6 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>學生紀錄｜【JFKD】成績記錄表</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0b1120" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -56,6 +63,11 @@
           <div class="card stat-card"><div class="label">累計衛冕次數</div><div class="value">–</div></div>
           <div class="card stat-card"><div class="label">連續正常紀錄</div><div class="value">–</div></div>
         </div>
+
+        <div id="scoreProgress"></div>
+
+        <div class="section-title">成就徽章</div>
+        <div class="badge-chip-row" id="achievementBadges"></div>
 
         <div class="section-title">科目成績趨勢</div>
         <div class="chart-grid" id="trendCharts"></div>
@@ -157,17 +169,29 @@
         </div>
       </div>
 
-      <div class="section-title">歷史紀錄</div>
+      <div class="section-title" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <span>歷史紀錄</span>
+        <div style="display:flex; align-items:center; gap:8px; text-transform:none; font-weight:400; letter-spacing:normal;">
+          <select id="recordLevelFilter" style="font-size:12px; padding:6px 8px;">
+            <option value="">全部學制</option>
+          </select>
+          <select id="recordSemesterFilter" style="font-size:12px; padding:6px 8px;">
+            <option value="">全部學期</option>
+          </select>
+        </div>
+      </div>
       <div class="card" style="padding:0; overflow:hidden;">
-        <table id="recordsTable">
-          <thead>
-            <tr>
-              <th>日期</th><th>學制</th><th>學期</th><th>考試</th><th>科目明細</th>
-              <th class="num">平均分數</th><th class="num">總獎金</th><th>處罰狀態</th><th>獎金狀態</th><th></th>
-            </tr>
-          </thead>
-          <tbody><tr><td colspan="10" class="empty-state">載入中...</td></tr></tbody>
-        </table>
+        <div class="table-wrap">
+          <table id="recordsTable">
+            <thead>
+              <tr>
+                <th>日期</th><th>學制</th><th>學期</th><th>考試</th><th>科目明細</th>
+                <th class="num">平均分數</th><th class="num">總獎金</th><th>處罰狀態</th><th>獎金狀態</th><th></th>
+              </tr>
+            </thead>
+            <tbody><tr><td colspan="10" class="empty-state">載入中...</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </main>
   </div>
