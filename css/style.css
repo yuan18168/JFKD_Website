@@ -459,37 +459,79 @@ input[readonly] { background: var(--bg-card); color: var(--text-dim); cursor: de
 .theme-banner .theme-banner-text .name { font-size: 19px; font-weight: 800; }
 .theme-banner .theme-banner-text .tagline { font-size: 12px; opacity: .85; margin-top: 2px; }
 
-/* ---- 索隆・綠色劍士主題（哈哈） ---- */
+/* ---- 索隆・綠色劍士・三刀流主題（哈哈）----
+   配色靈感來自角色本人的道服／刀具（分析色票：墨綠道服、淺綠內裡、酒紅腰帶、金色刀鍔、
+   白刃黑柄、黑靴），但改用更鮮豔、飽和、誇張的原創配色與動感斬擊線條呈現，
+   全部為手繪幾何圖形，並未使用任何官方圖片。 */
 body.theme-zoro {
-  --brand: #52b788;
-  --brand-dim: #1b4332;
-  --good: #74c69d;
+  --brand: #00e676;
+  --brand-dim: #0d3b24;
+  --good: #00e676;
+  --warn: #ffd200;
   background-image:
-    repeating-linear-gradient(115deg, rgba(82,183,136,0.05) 0px, rgba(82,183,136,0.05) 2px, transparent 2px, transparent 40px),
-    radial-gradient(circle at 10% 0%, rgba(82,183,136,0.14), transparent 45%);
+    repeating-linear-gradient(115deg, rgba(0,230,118,0.07) 0px, rgba(0,230,118,0.07) 3px, transparent 3px, transparent 34px),
+    radial-gradient(circle at 8% 0%, rgba(0,230,118,0.22), transparent 42%),
+    radial-gradient(circle at 92% 85%, rgba(255,210,0,0.10), transparent 40%);
 }
-body.theme-zoro .sidebar { border-right-color: #1b4332; }
-body.theme-zoro .sidebar .brand-mark { background: linear-gradient(135deg, #2d6a4f, #74c69d); }
-body.theme-zoro .nav-link.active { background: #1b4332; color: #d8f3dc; }
-body.theme-zoro .card { border-color: #2d6a4f; }
-body.theme-zoro .student-card:hover { border-color: #74c69d; }
+body.theme-zoro .sidebar { border-right: 1px solid #0d3b24; }
+body.theme-zoro .sidebar .brand-mark {
+  background: linear-gradient(135deg, #00e676, #ffd200);
+  box-shadow: 0 0 14px rgba(0,230,118,0.55);
+}
+body.theme-zoro .nav-link.active {
+  background: linear-gradient(90deg, #0d3b24, #145c38);
+  color: #baffd8;
+  box-shadow: inset 2px 0 0 #00e676;
+}
+body.theme-zoro .card { border-color: #145c38; }
+body.theme-zoro .card:hover { border-color: #00e676; }
+body.theme-zoro .student-card:hover {
+  border-color: #00e676;
+  box-shadow: 0 8px 28px rgba(0,230,118,0.25);
+}
+body.theme-zoro .btn-primary {
+  background: linear-gradient(120deg, #00c853, #00e676);
+  border-color: #00e676;
+  color: #04220f;
+  font-weight: 800;
+}
+body.theme-zoro .btn-primary:hover { background: linear-gradient(120deg, #00e676, #ffd200); }
+
 body.theme-zoro .theme-banner {
-  background: linear-gradient(120deg, #0b1f16 0%, #1b4332 45%, #2d6a4f 100%);
-  border: 1px solid #40916c;
-  color: #d8f3dc;
+  background: linear-gradient(120deg, #04160d 0%, #0d3b24 38%, #145c38 68%, #1f7a4d 100%);
+  border: 2px solid #00e676;
+  color: #eafff2;
+  box-shadow: 0 0 0 1px rgba(0,230,118,0.25), 0 10px 34px rgba(0,230,118,0.22);
 }
+/* 動感斬擊光線（三道，呼應三刀流）＋ 角落金色爆閃裝飾，全部純 CSS 幾何繪製 */
 body.theme-zoro .theme-banner::after {
   content: "";
   position: absolute; inset: 0;
   background-image:
-    linear-gradient(105deg, transparent 40%, rgba(216,243,220,0.10) 41%, rgba(216,243,220,0.10) 43%, transparent 44%),
-    linear-gradient(105deg, transparent 55%, rgba(216,243,220,0.10) 56%, rgba(216,243,220,0.10) 58%, transparent 59%),
-    linear-gradient(105deg, transparent 70%, rgba(216,243,220,0.10) 71%, rgba(216,243,220,0.10) 73%, transparent 74%);
+    linear-gradient(105deg, transparent 38%, rgba(255,255,255,0.22) 40%, rgba(255,255,255,0.22) 42%, transparent 44%),
+    linear-gradient(105deg, transparent 53%, rgba(0,230,118,0.5) 55%, rgba(0,230,118,0.5) 57%, transparent 59%),
+    linear-gradient(105deg, transparent 68%, rgba(255,210,0,0.35) 70%, rgba(255,210,0,0.35) 72%, transparent 74%);
   pointer-events: none;
 }
-body.theme-zoro .theme-banner-text .tagline { color: #b7e4c7; }
-body.theme-zoro .stat-card .value { color: #d8f3dc; }
-body.theme-zoro .badge-done { background: rgba(116,198,157,0.18); color: #74c69d; }
+body.theme-zoro .theme-banner::before {
+  content: "✦";
+  position: absolute; top: 6px; right: 14px;
+  font-size: 26px; color: #ffd200;
+  text-shadow: 0 0 10px rgba(255,210,0,0.8);
+  pointer-events: none;
+}
+body.theme-zoro .theme-banner-text .name {
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(0,230,118,0.65);
+  letter-spacing: .02em;
+}
+body.theme-zoro .theme-banner-text .tagline { color: #7dffb8; font-weight: 700; }
+body.theme-zoro .stat-card { border-color: #145c38; }
+body.theme-zoro .stat-card .value { color: #ffd200; text-shadow: 0 0 8px rgba(255,210,0,0.35); }
+body.theme-zoro .mini-chart-average { border-color: #00e676; background: linear-gradient(180deg, rgba(0,230,118,0.12), var(--bg-card) 60%); }
+body.theme-zoro .badge-done { background: rgba(0,230,118,0.20); color: #00e676; }
+body.theme-zoro .badge-warn { background: rgba(255,210,0,0.20); color: #ffd200; }
+body.theme-zoro .total { color: #00e676; text-shadow: 0 0 8px rgba(0,230,118,0.4); }
 
 /* ---- Babymonster/Asa・舞台女孩主題（ㄎㄎ） ---- */
 body.theme-babymonster {
