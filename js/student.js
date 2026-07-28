@@ -762,7 +762,11 @@
     }
     wrap.innerHTML = `
       <div class="rocket-unit">
-        <div class="rocket-flame"></div>
+        <div class="rocket-flame">
+          <div class="flame-layer flame-outer"></div>
+          <div class="flame-layer flame-mid"></div>
+          <div class="flame-layer flame-core"></div>
+        </div>
         ${sparksHtml}
         <div class="rocket-emoji">🚀</div>
       </div>
