@@ -11,18 +11,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/style.css?v=20260729k" />
+<link rel="stylesheet" href="css/style.css?v=20260729l" />
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
-      <div class="brand">
+      <a class="brand" href="index.html" title="回到總覽首頁">
         <div class="brand-mark"><img src="images/jfkd-logo.png" alt="JFKD"></div>
         <div class="brand-text">
           <div class="title">JFKD 成績記錄表</div>
           <div class="subtitle">家庭儀表板</div>
         </div>
-      </div>
+      </a>
 
       <a href="index.html" class="nav-link">🏠 總覽</a>
 
@@ -30,14 +30,14 @@
       <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
 
       <div class="nav-section-label">學生管理</div>
-      <a href="wishlist.html" class="nav-link">🎁 願望清單</a>
+      <a href="wishlist.html" class="nav-link">🎁 許願池</a>
       <a href="themes.html" class="nav-link">🎨 主題造型</a>
 
       <div class="nav-section-label">父母管理</div>
       <a href="students.html" class="nav-link active">👤 學生名單</a>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
-      <a href="chart-settings.html" class="nav-link">📈 圖表顯示設定</a>
+      <a href="chart-settings.html" class="nav-link">📈 顯示設定</a>
       <a href="effects.html" class="nav-link">✨ 特效設定</a>
       <a href="simulate.html" class="nav-link">🧮 試算表</a>
 
@@ -54,7 +54,7 @@
           <h1>學生名單</h1>
           <div class="desc">
             這裡只管理「新增／刪除學生」；刪除學生會一併刪除他的所有歷史考試紀錄，請小心操作。
-            願望清單請到「願望清單」頁管理，主題造型與標題請到「學生主題造型」頁設定。
+            許願池請到「許願池」頁管理，主題造型與標題請到「學生主題造型」頁設定。
           </div>
         </div>
       </div>
@@ -75,11 +75,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-config.js?v=20260729k"></script>
-  <script src="js/auth.js?v=20260729k"></script>
-  <script src="js/calc.js?v=20260729k"></script>
-  <script src="js/data.js?v=20260729k"></script>
-  <script src="js/nav.js?v=20260729k"></script>
-  <script src="js/students.js?v=20260729k"></script>
+  <script src="js/firebase-config.js?v=20260729l"></script>
+  <script src="js/auth.js?v=20260729l"></script>
+  <script src="js/calc.js?v=20260729l"></script>
+  <script src="js/data.js?v=20260729l"></script>
+  <script src="js/nav.js?v=20260729l"></script>
+  <script src="js/students.js?v=20260729l"></script>
 </body>
 </html>
