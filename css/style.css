@@ -83,7 +83,7 @@ a { color: inherit; text-decoration: none; }
 
 .sidebar .brand-mark {
   /* 圖片本身已去背成透明圓形插畫，這裡只需要控制顯示高度，寬度隨圖片比例自動延伸。 */
-  height: 90px;
+  height: 150px;
   width: auto;
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
@@ -651,12 +651,12 @@ a:focus-visible {
   box-shadow: var(--shadow);
 }
 .login-card .brand-mark {
-  width: 72px; height: 72px; margin: 0 auto 16px;
+  height: 150px; width: auto; margin: 0 auto 16px;
   display: flex; align-items: center; justify-content: center;
 }
 .login-card .brand-mark img {
-  width: 100%;
   height: 100%;
+  width: auto;
   object-fit: contain;
   display: block;
 }
