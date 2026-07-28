@@ -2,6 +2,7 @@
    （原本在「學生名單」頁的「專屬主題造型」下拉選單，已經搬到這裡統一管理） */
 (async function () {
   await requireGuard();
+  await applySiteFontScale();
 
   let students = await listStudents();
   renderStudentNav(students, null);
@@ -35,15 +36,15 @@
             <div style="display:flex; align-items:center; gap:14px;">
               <div>${themeIconSvg(theme.id)}</div>
               <div>
-                <div style="font-weight:800; font-size:16px; color:${nameColor};">${escapeHtml(theme.name)}</div>
-                <div style="font-size:12px; color:${taglineColor};">${escapeHtml(theme.tagline)}</div>
+                <div style="font-weight:800; font-size:calc(16px * var(--font-scale, 1)); color:${nameColor};">${escapeHtml(theme.name)}</div>
+                <div style="font-size:calc(12px * var(--font-scale, 1)); color:${taglineColor};">${escapeHtml(theme.tagline)}</div>
               </div>
             </div>
           </div>
           <div class="theme-swatches">
             ${swatches.map((c) => `<span class="theme-swatch" style="background:${c};"></span>`).join("")}
           </div>
-          <div class="text-faint" style="font-size:12px;">
+          <div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">
             套用後會出現在該學生的學生紀錄頁最上方（橫幅＋配色＋圖標），僅此一頁換裝，不影響其他人。
           </div>
         </div>`;
@@ -117,7 +118,7 @@
         <button class="btn btn-primary btn-sm" id="saveBannerBtn" ${hasTheme ? "" : "disabled"}>儲存標題設定</button>
         ${
           hasTheme
-            ? `<div class="text-faint" style="font-size:12px; margin-top:8px;">留白代表使用預設文字：「${escapeHtml(defaultTitle)}」／「${escapeHtml(defaultTagline)}」</div>`
+            ? `<div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); margin-top:8px;">留白代表使用預設文字：「${escapeHtml(defaultTitle)}」／「${escapeHtml(defaultTagline)}」</div>`
             : ""
         }
       </div>`;

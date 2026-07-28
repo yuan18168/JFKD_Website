@@ -2,15 +2,15 @@
   data.js — Firestore 資料存取共用函式
   Collections:
     config/rules          （舊版，已遷移）單一文件的獎懲規則設定
-    config/settings        { defaultProfileId, dashboardTitle（總覽頁可編輯標題） }：家庭共用設定
-    config/chartSettings    { yMin, yMax, xCount（0=全部）, showPointLabels, fontSize }：全域圖表顯示預設值
+    config/settings        { defaultProfileId, dashboardTitle（總覽頁可編輯標題）, fontScale（全站字體大小，'sm'|'md'|'lg'|'xl'） }：家庭共用設定
+    config/chartSettings    { yMin, yMax, xCount（0=全部）, showPointLabels }：全域圖表顯示預設值（字體大小已改由 config/settings.fontScale 全站統一控制）
     config/effectSettings   { progress, defense, both, final100 }：科目卡片特效規則設定，每項 { enabled, effect, duration, trigger }
     ruleProfiles/{id}       { name, tiers, progressBonusPerPoint, comboBonus3, comboBonus5, punishmentText, createdAt }
     students/{id}           { name, color, order,
                                chartOverride（可選，覆寫全域圖表顯示設定，欄位同 config/chartSettings）,
                                themeId（可選，'zoro'|'babymonster'，套用學生主題造型）,
                                targetAvgScore（可選，數字，下次考試的目標平均分）,
-                               wishlist（可選，陣列 [{id,name,amount}]，兌換願望清單項目）}
+                               wishlist（可選，陣列 [{id,name,amount}]，兌換許願池項目）}
     examRecords/{id}        { studentId, semester, examType, date, subjects:[{name,score,prevScore}],
                                ruleProfileId（套用的設定檔）, note,
                                punishmentStatus（'pending'|'done'，只有觸發處罰時才存在),
@@ -269,7 +269,7 @@ async function getLastScoreForSubject(studentId, subjectName, beforeDate) {
 // 圖表顯示設定：全域一份預設值（config/chartSettings），每位學生可在
 // students/{id}.chartOverride 個別覆寫其中任何欄位；沒有覆寫的欄位繼續沿用全域值。
 function defaultChartSettings() {
-  return { yMin: 60, yMax: 100, xCount: 0, showPointLabels: false, fontSize: "md" };
+  return { yMin: 60, yMax: 100, xCount: 0, showPointLabels: false };
 }
 
 async function getChartSettings() {
@@ -294,6 +294,17 @@ function resolveChartSettings(student, globalSettings) {
 const DEFAULT_DASHBOARD_TITLE = "JFKD Family 成績記錄表";
 async function saveDashboardTitle(title) {
   await db.collection("config").doc("settings").set({ dashboardTitle: title }, { merge: true });
+}
+
+// ------------------------------------------------------------------
+// 全站字體大小：單一全域設定（不分學生），存在 config/settings.fontScale，
+// 值為 "sm"｜"md"｜"lg"｜"xl"，預設 "md"（＝原本既有的字體大小）。
+async function getSiteFontScale() {
+  const s = await getSettings();
+  return s.fontScale || "md";
+}
+async function saveSiteFontScale(scale) {
+  await db.collection("config").doc("settings").set({ fontScale: scale }, { merge: true });
 }
 
 // ------------------------------------------------------------------

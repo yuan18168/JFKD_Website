@@ -1,6 +1,7 @@
 /* dashboard.js — 總覽頁 */
 (async function () {
   await requireGuard();
+  await applySiteFontScale();
 
   const [students, profiles, settings, globalChartSettings] = await Promise.all([
     listStudents(),
@@ -69,10 +70,10 @@
             </div>
           </div>
           <div>
-            <div class="text-faint" style="font-size:11px;">累計獎金</div>
+            <div class="text-faint" style="font-size:calc(11px * var(--font-scale, 1));">累計獎金</div>
             <div class="total">${fmtMoney(total)}</div>
           </div>
-          <div class="text-faint" style="font-size:11px; margin-top:6px;">${chartCaption}</div>
+          <div class="text-faint" style="font-size:calc(11px * var(--font-scale, 1)); margin-top:6px;">${chartCaption}</div>
           <div style="height:70px;">
             <canvas data-avg-chart="${s.id}"></canvas>
           </div>
@@ -92,7 +93,7 @@
       if (!ordered.length) return;
       const labels = ordered.map((r) => `${r.semester || ""} ${r.examType || ""}`.trim() || r.date || "");
       const avgScores = ordered.map((r) => (typeof r.result?.avgScore === "number" ? r.result.avgScore : null));
-      const fontPx = chartFontSizePx(chartSettings.fontSize);
+      const fontPx = chartFontSizePx();
       const chart = new Chart(canvas, {
         type: "line",
         data: {
@@ -174,8 +175,8 @@
         return `
         <div class="card" style="padding:0; overflow:hidden; margin-bottom:14px;">
           <div style="padding:14px 16px 0; display:flex; align-items:center; gap:8px;">
-            <span style="width:20px;height:20px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#08122e;">${(s.name || "?").slice(0, 1)}</span>
-            <span style="font-weight:700; font-size:13px;">${escapeHtml(s.name)}</span>
+            <span style="width:20px;height:20px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:calc(10px * var(--font-scale, 1));font-weight:700;color:#08122e;">${(s.name || "?").slice(0, 1)}</span>
+            <span style="font-weight:700; font-size:calc(13px * var(--font-scale, 1));">${escapeHtml(s.name)}</span>
           </div>
           <div class="table-wrap">
             <table class="recent-table">

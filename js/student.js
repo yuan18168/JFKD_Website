@@ -1,6 +1,7 @@
 /* student.js — 學生詳細頁：紀錄列表、趨勢圖、新增紀錄表單 */
 (async function () {
   await requireGuard();
+  await applySiteFontScale();
 
   // ---- 觸發方式：桌面滑鼠有 hover 就用 hover，觸控裝置（手機/平板）沒有 hover 就改成點一下 ----
   // 每次 hover／點擊都重新播放一次，沒有節流限制，想重看幾次都可以。
@@ -217,14 +218,14 @@
     draw();
   }
 
-  // ---- 願望清單：顯示每個願望項目的達成條件、金額來源拆分、達成/兌現狀態（項目本身在「學生名單」頁管理，
+  // ---- 許願池：顯示每個願望項目的達成條件、金額來源拆分、達成/兌現狀態（項目本身在「學生名單」頁管理，
   // 但達成狀態／兌現狀態這裡就能直接編輯，讓小朋友和家長都能在紀錄頁上直接操作）----
   // 設計說明（依家長確認）：
   // ①移除進度條，改成「進行中／達成／未達成」三種手動標記的狀態，三者可以隨時自由切換，
   //   即使標成「未達成」也不是永久判死刑，之後隨時可以再挑戰一次改回「進行中」或「達成」。
   // ②只有「達成」狀態才能標記兌現日期；狀態離開「達成」時，會自動清除先前登記的兌現日期。
   // ③「未達成」的卡片會整張變灰＋顯示鼓勵字樣，當作一個溫和的紀錄，而不是責備。
-  // 學生紀錄頁只需要看「還在努力中」跟「最近的結果」，完整清單改到獨立的「願望清單」管理頁查看，
+  // 學生紀錄頁只需要看「還在努力中」跟「最近的結果」，完整清單改到獨立的「許願池」管理頁查看，
   // 所以這裡只顯示：①全部「進行中」的項目、②最近才變成「達成」或「未達成」的 3 筆（依 statusUpdatedAt 排序）。
   function pickVisibleWishlistItems(items) {
     const withStatus = items.map((item) => ({
@@ -245,7 +246,7 @@
     if (!el) return;
     const items = studentDoc.wishlist || [];
     if (!items.length) {
-      el.innerHTML = `<div class="card empty-state">尚未設定願望清單，請至「願望清單」管理頁新增想兌換的項目</div>`;
+      el.innerHTML = `<div class="card empty-state">尚未設定許願池，請至「許願池」管理頁新增想兌換的項目</div>`;
       return;
     }
     const { visible, hiddenCount } = pickVisibleWishlistItems(items);
@@ -267,15 +268,15 @@
                 <span>${icon} ${escapeHtml(item.name)}</span>
                 <span class="text-faint">合計 ${fmtMoney(total)}</span>
               </div>
-              ${item.condition ? `<div class="text-faint" style="font-size:12px; margin:-4px 0 8px;">🔖 達成條件：${escapeHtml(item.condition)}</div>` : ""}
+              ${item.condition ? `<div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); margin:-4px 0 8px;">🔖 達成條件：${escapeHtml(item.condition)}</div>` : ""}
               <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
                 ${item.amountSelf > 0 ? `<span class="badge badge-normal">自付 ${fmtMoney(item.amountSelf)}</span>` : ""}
                 ${item.amountParent > 0 ? `<span class="badge badge-normal">父母加碼 ${fmtMoney(item.amountParent)}</span>` : ""}
-                ${item.amountOther > 0 ? `<span class="badge badge-normal">其他人加碼 ${fmtMoney(item.amountOther)}</span>` : ""}
+                ${otherContributorsBadgeHtml(item)}
               </div>
 
               <div class="wishlist-status-row">
-                <span class="text-faint" style="font-size:12px;">達成狀態：</span>
+                <span class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">達成狀態：</span>
                 <div class="wishlist-status-btns">
                   <button type="button" class="btn btn-sm ${status === "progress" ? "btn-primary" : ""}" data-wishlist-status="${item.id}" data-status="progress">進行中</button>
                   <button type="button" class="btn btn-sm ${status === "achieved" ? "btn-primary" : ""}" data-wishlist-status="${item.id}" data-status="achieved">達成</button>
@@ -290,7 +291,7 @@
                   ? `<div class="wishlist-redeem-row">
                       ${
                         redeemed
-                          ? `<span style="font-size:12px; color:var(--good);">🎉 已於 ${escapeHtml(item.redeemedDate)} 兌現完成</span>`
+                          ? `<span style="font-size:calc(12px * var(--font-scale, 1)); color:var(--good);">🎉 已於 ${escapeHtml(item.redeemedDate)} 兌現完成</span>`
                           : `<button type="button" class="btn btn-sm btn-primary" data-wishlist-redeem="${item.id}">標記已兌換</button>`
                       }
                     </div>`
@@ -302,8 +303,8 @@
       </div>
       ${
         hiddenCount > 0
-          ? `<div class="text-faint" style="font-size:12px; margin-top:10px;">還有 ${hiddenCount} 個較早的願望項目沒有顯示，<a href="wishlist.html?id=${studentDoc.id}">前往「願望清單」管理頁查看完整清單 →</a></div>`
-          : `<div class="text-faint" style="font-size:12px; margin-top:10px;"><a href="wishlist.html?id=${studentDoc.id}">前往「願望清單」管理頁新增／編輯／排序 →</a></div>`
+          ? `<div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); margin-top:10px;">還有 ${hiddenCount} 個較早的願望項目沒有顯示，<a href="wishlist.html?id=${studentDoc.id}">前往「許願池」管理頁查看完整清單 →</a></div>`
+          : `<div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); margin-top:10px;"><a href="wishlist.html?id=${studentDoc.id}">前往「許願池」管理頁新增／編輯／排序 →</a></div>`
       }`;
 
     // ---- 達成狀態切換：進行中／達成／未達成，三者可自由互相切換 ----
@@ -543,7 +544,7 @@
       hasSteadyGrowth = windowRows[0].result.avgScore > windowRows[4].result.avgScore;
     }
 
-    // 19. 🎁 願望達成（累計型）：願望清單中曾經有項目標記為已兌換
+    // 19. 🎁 願望達成（累計型）：許願池中曾經有項目標記為已兌換
     const wishlistRedeemed = ((student && student.wishlist) || []).some((item) => !!item.redeemedDate);
 
     // 20. 🧩 全能挑戰（里程碑型）：同一次紀錄同時出現「進步獎金」＋「衛冕獎金」＋「全科加碼」
@@ -577,7 +578,7 @@
       { icon: "🎓", label: "科科精通", unlocked: masterCount >= 3, desc: "3 個不同科目都考到 100 分即可解鎖", hint: `再有 ${Math.max(0, 3 - masterCount)} 個不同科目考到 100 分即可解鎖` },
       { icon: "🦸", label: "逆風翻盤", unlocked: hasComebackAfterPunishment, desc: "處罰後，下一次紀錄恢復正常即可解鎖", hint: "處罰後，下一次紀錄恢復正常即可解鎖" },
       { icon: "🌻", label: "穩健成長", unlocked: hasSteadyGrowth, desc: "最近 5 次紀錄要比 5 次之前更好即可解鎖", hint: "最近 5 次紀錄要比 5 次之前更好即可解鎖" },
-      { icon: "🎁", label: "願望達成", unlocked: wishlistRedeemed, desc: "完成兌換任一願望清單項目即可解鎖", hint: "完成兌換任一願望清單項目即可解鎖" },
+      { icon: "🎁", label: "願望達成", unlocked: wishlistRedeemed, desc: "完成兌換任一許願池項目即可解鎖", hint: "完成兌換任一許願池項目即可解鎖" },
       { icon: "🧩", label: "全能挑戰", unlocked: hasAllInOne, desc: "同一次紀錄同時有進步獎金、衛冕獎金、全科加碼即可解鎖", hint: "同一次紀錄同時有進步獎金、衛冕獎金、全科加碼即可解鎖" },
     ];
 
@@ -617,7 +618,7 @@
 
     const palette = ["#4f7cff", "#4fd1c5", "#ffb454", "#ff6b9d", "#a78bfa", "#34d399", "#ffd54a", "#63b3ff"];
     const labels = ordered.map((r) => `${r.semester || ""} ${r.examType || ""}`.trim() || r.date || "");
-    const fontPx = chartFontSizePx(chartSettings.fontSize);
+    const fontPx = chartFontSizePx();
     const yMin = chartSettings.yMin;
     const yMax = chartSettings.yMax;
 
@@ -1134,7 +1135,7 @@
         if (!msg) {
           msg = document.createElement("div");
           msg.className = "field-error";
-          msg.style.cssText = "color:var(--bad); font-size:11px; margin-top:4px;";
+          msg.style.cssText = "color:var(--bad); font-size:calc(11px * var(--font-scale, 1)); margin-top:4px;";
           input.parentElement.appendChild(msg);
         }
         msg.textContent = "分數需介於 0-100";
@@ -1258,7 +1259,7 @@
       previewEl.innerHTML = `
         <div class="flex-between">
           <span>全科加碼：${fmtMoney(result.comboBonus)}</span>
-          <span style="font-weight:800; font-size:16px;">預估總計：${fmtMoney(result.total)}</span>
+          <span style="font-weight:800; font-size:calc(16px * var(--font-scale, 1));">預估總計：${fmtMoney(result.total)}</span>
         </div>
         ${result.hasPunishment ? `<div class="delta down" style="margin-top:8px;">⚠️ ${result.punishmentSubjects.join("、")} 低於 80 分，需執行處罰機制</div>` : ""}
       `;

@@ -3,7 +3,7 @@ function renderStudentNav(students, activeStudentId) {
   const el = document.getElementById("studentNavLinks");
   if (!el) return;
   if (!students.length) {
-    el.innerHTML = '<div class="text-faint" style="padding:8px 12px;font-size:12px;">尚未新增學生，請至「獎懲規則設定」新增</div>';
+    el.innerHTML = '<div class="text-faint" style="padding:8px 12px;font-size:calc(12px * var(--font-scale, 1));">尚未新增學生，請至「獎懲規則設定」新增</div>';
     return;
   }
   el.innerHTML = students
@@ -11,7 +11,7 @@ function renderStudentNav(students, activeStudentId) {
       const active = s.id === activeStudentId ? "active" : "";
       const initial = (s.name || "?").slice(0, 1);
       return `<a href="student.html?id=${s.id}" class="nav-link ${active}">
-        <span style="width:18px;height:18px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#08122e;">${initial}</span>
+        <span style="width:18px;height:18px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:calc(10px * var(--font-scale, 1));font-weight:700;color:#08122e;">${initial}</span>
         ${escapeHtml(s.name)}
       </a>`;
     })
@@ -70,7 +70,7 @@ function confirmDialog(message, opts = {}) {
   });
 }
 
-/* ---------- 願望清單共用小工具（學生名單頁 + 學生紀錄頁都會用到）---------- */
+/* ---------- 許願池共用小工具（學生名單頁 + 學生紀錄頁都會用到）---------- */
 // 願望項目合計金額（自付＋父母加碼＋其他人加碼）；相容舊資料的單一 amount 欄位
 function wishlistItemTotal(item) {
   if (typeof item.amountSelf === "number" || typeof item.amountParent === "number" || typeof item.amountOther === "number") {
@@ -86,7 +86,22 @@ function wishlistStatusLabel(status) {
   return "進行中";
 }
 
-/* ---------- 拖曳排序共用工具（願望清單用；Trello 風格：拖到哪張卡就插進哪，其餘自動往後推）---------- */
+// 「其他人加碼」徽章：支援多位出資者（item.otherContributors: [{name, amount}]），
+// 有明細就列出每位出資者姓名＋金額；相容舊資料（只有單一 amountOther 數字、沒有明細）時退回原本的單一數字顯示。
+function otherContributorsBadgeHtml(item) {
+  const list = Array.isArray(item.otherContributors) ? item.otherContributors.filter((c) => c && c.amount > 0) : [];
+  if (list.length) {
+    const total = list.reduce((s, c) => s + (c.amount || 0), 0);
+    const detail = list.map((c) => `${escapeHtml(c.name || "其他人")} ${fmtMoney(c.amount)}`).join("、");
+    return `<span class="badge badge-normal">其他人加碼 ${fmtMoney(total)}（${detail}）</span>`;
+  }
+  if (item.amountOther > 0) {
+    return `<span class="badge badge-normal">其他人加碼 ${fmtMoney(item.amountOther)}</span>`;
+  }
+  return "";
+}
+
+/* ---------- 拖曳排序共用工具（許願池用；Trello 風格：拖到哪張卡就插進哪，其餘自動往後推）---------- */
 // containerEl：卡片們共同的父層容器（例如 .wishlist-grid）
 // cardSelector：每張可拖曳卡片的 CSS class（例如 ".wishlist-card"），卡片本身需加上 draggable="true" 與 data-drag-id="項目id"
 // onReorder(newIdOrder)：使用者放開滑鼠、順序確定改變後才會呼叫，帶入新的 id 順序陣列，由呼叫端自行寫回 Firestore
@@ -238,9 +253,33 @@ function flashButtonSuccess(btn, text) {
   }, 1600);
 }
 
-/* ---------- 圖表顯示設定共用工具（全域預設 + 每位學生可覆寫）---------- */
-function chartFontSizePx(fontSize) {
-  return { sm: 10, md: 12, lg: 15 }[fontSize] || 12;
+/* ---------- 全站字體大小（顯示設定頁的「整體設定」，單一全域設定，不分學生）----------
+   小/中/大/特大四級，「中」＝目前既有的字體大小，其餘三級依此比例縮放。
+   套用方式：把對應的級別字串寫到 <body data-font-scale="..">，CSS 端已把絕大多數
+   font-size 改成 calc(基準px * var(--font-scale, 1))，只要切換這個屬性全站文字
+   就會同步縮放；圖表（Chart.js 用 canvas 畫的軸標/點位數字，不是 CSS）則另外
+   透過 chartFontSizePx() 讀同一個縮放比例換算成實際像素值。 */
+const FONT_SCALE_FACTORS = { sm: 0.875, md: 1, lg: 1.15, xl: 1.3 };
+const FONT_SCALE_LABELS = { sm: "小", md: "中", lg: "大", xl: "特大" };
+
+async function applySiteFontScale() {
+  let scale = "md";
+  try {
+    scale = await getSiteFontScale();
+  } catch (err) {
+    /* 讀取失敗就先用「中」，不要讓整頁掛掉 */
+  }
+  document.body.dataset.fontScale = scale;
+  window.SITE_FONT_SCALE = scale;
+  window.SITE_FONT_SCALE_FACTOR = FONT_SCALE_FACTORS[scale] || 1;
+  return scale;
+}
+
+/* ---------- 圖表顯示設定共用工具（Y軸/X筆數/點位標籤全域預設 + 每位學生可覆寫；
+   字體大小已改由上面的全站設定統一控制，圖表數字跟著同一個比例縮放）---------- */
+function chartFontSizePx() {
+  const factor = window.SITE_FONT_SCALE_FACTOR || 1;
+  return Math.round(12 * factor);
 }
 
 // 一律顯示分數的自訂 Chart.js 外掛（平常靠 tooltip 顯示，開啟此設定才會把數字直接畫在點位旁邊）
