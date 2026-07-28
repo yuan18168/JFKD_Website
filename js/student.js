@@ -743,16 +743,27 @@
     registerCardEffect(card, finish);
   }
 
-  // 火箭衝天：一枚大火箭從卡片左下角以45度角朝右上方直線衝出（機頭朝向前進方向，
-  // 沿用 emoji 原生的斜向繪製角度，不再額外旋轉），尾端持續噴出閃爍的錐形燃燒火焰，
-  // 象徵「衝高、往上飛」。
+  // 火箭衝天：一枚大火箭從卡片左下角快速衝向右上角（約佔整段時長的前 40%），
+  // 抵達後完全靜止懸停在該處（不飛出畫面、不被卡片邊界裁切），剩餘時間尾端
+  // 持續噴出閃爍的錐形燃燒火焰，並隨機噴出向下飄散淡出的小火星，象徵「衝高、往上飛」。
   function playCardRocketChart(card, duration) {
     const wrap = document.createElement("div");
     wrap.className = "subject-effect-rocket";
     const durSec = Math.max(duration / 1000, 0.4);
+    const sparkCount = 6;
+    let sparksHtml = "";
+    for (let i = 0; i < sparkCount; i++) {
+      const sx = (-10 - Math.random() * 22).toFixed(1);
+      const sy = (28 + Math.random() * 30).toFixed(1);
+      const leftJitter = (Math.random() * 10 - 5).toFixed(1);
+      const sparkDur = (0.8 + Math.random() * 0.6).toFixed(2);
+      const sparkDelay = (-Math.random() * sparkDur).toFixed(2);
+      sparksHtml += `<div class="rocket-spark" style="--sx:${sx}px; --sy:${sy}px; left:calc(-4px + ${leftJitter}px); animation-duration:${sparkDur}s; animation-delay:${sparkDelay}s;"></div>`;
+    }
     wrap.innerHTML = `
       <div class="rocket-unit">
         <div class="rocket-flame"></div>
+        ${sparksHtml}
         <div class="rocket-emoji">🚀</div>
       </div>
     `;
