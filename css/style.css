@@ -1011,19 +1011,21 @@ body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; 
   line-height: 1;
   z-index: 3;
 }
-/* 尾焰噴射：固定貼在火箭尾端、朝後（左下）持續噴射的分層錐形火焰，快速閃爍模擬引擎噴射感。
-   完全不用 blur/drop-shadow 製造發光暈染，改用三層實心漸層色塊（外層橘紅／中層橘黃／
-   內層白熱核心）堆疊出銳利俐落的卡通風格火焰輪廓，方向感、噴射感更強烈明確。 */
+/* 尾焰噴射：固定貼在火箭尾端（依實測 emoji 實際繪製框精準對位）、朝後（左下）噴射的
+   分層錐形火焰。火焰本體大小固定不再忽大忽小，改由持續不斷、快速射出的噴射粒子流
+   （.jet-particle）表現引擎持續推進的動感，粒子沿噴射方向拉出短條狀light streak，
+   一顆接一顆快速竄出再淡出，模擬真實引擎噴嘴的連續推力感。
+   完全不用 blur/drop-shadow 製造發光暈染，改用三層實心色塊（外層橘紅／中層橘黃／
+   內層白熱核心）堆疊出銳利俐落的卡通風格火焰輪廓。 */
 .rocket-flame {
   position: absolute;
   z-index: 2;
-  width: 24px;
-  height: 46px;
-  left: -5px;
-  top: 22px;
+  width: 22px;
+  height: 40px;
+  left: -4px;
+  top: 58px;
   transform: rotate(45deg);
   transform-origin: top center;
-  animation: rocket-flame-flicker 0.24s ease-in-out infinite alternate;
 }
 .flame-layer {
   position: absolute;
@@ -1033,29 +1035,46 @@ body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; 
   border-radius: 50% 50% 50% 50% / 70% 70% 15% 15%;
 }
 .flame-outer {
-  width: 22px;
-  height: 46px;
+  width: 20px;
+  height: 40px;
   background: #ff5a1e;
 }
 .flame-mid {
-  width: 14px;
-  height: 30px;
+  width: 13px;
+  height: 27px;
   background: #ffb84d;
 }
 .flame-core {
-  width: 7px;
-  height: 15px;
+  width: 6px;
+  height: 13px;
   background: #fff6c9;
 }
-@keyframes rocket-flame-flicker {
-  0%   { transform: rotate(45deg) scaleY(0.85) scaleX(0.9); }
-  100% { transform: rotate(45deg) scaleY(1.18) scaleX(1.06); }
+/* 噴射粒子流：從火焰尖端持續快速竄出、拉出短條狀光跡再淡出縮小的粒子，
+   每顆方向/秒數/延遲由 JS 隨機給予並持續無限循環，堆疊出「引擎不斷推進」的動態感，
+   取代原本單靠火焰本體忽大忽小來表現推力的做法。 */
+.jet-particle {
+  position: absolute;
+  left: 6px;
+  top: 90px;
+  width: 5px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fff6d0 0%, #ffb84d 60%, rgba(255,120,40,0) 100%);
+  z-index: 2;
+  opacity: 0;
+  transform-origin: center top;
+  animation-name: jet-particle-fly;
+  animation-timing-function: cubic-bezier(.3,0,.7,1);
+  animation-iteration-count: infinite;
 }
-/* 火星：從火焰尾端持續向下飄散、縮小淡出的小火花點，每顆的方向/秒數/延遲由 JS 隨機給予，
-   讓噴發看起來自然不規律，不是機械式同步。 */
+@keyframes jet-particle-fly {
+  0%   { transform: rotate(45deg) translateY(0) scale(1);    opacity: 0.95; }
+  100% { transform: rotate(45deg) translateY(var(--jd, 48px)) scale(0.3); opacity: 0; }
+}
+/* 火星：搭配粒子流的小點狀火花，向下飄散淡出，補強噴射尾韻的層次感 */
 .rocket-spark {
   position: absolute;
-  top: 66px;
+  top: 92px;
   width: 5px;
   height: 5px;
   border-radius: 50%;
