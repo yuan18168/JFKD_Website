@@ -129,11 +129,10 @@
         if (value) {
           await updateStudent(student.id, { themeId: value });
         } else {
-          // 取消套用主題時，連同大/小標題覆寫一併清除，避免之後重新套用主題時冒出舊的覆寫文字
+          // 取消套用主題時，只清除 themeId，大/小標題覆寫文字保留在資料庫中不刪除，
+          // 這樣之後選回原本的主題時，原本輸入的標題會自動復原，不會憑空消失。
           await updateStudent(student.id, {
             themeId: firebase.firestore.FieldValue.delete(),
-            bannerTitle: firebase.firestore.FieldValue.delete(),
-            bannerTagline: firebase.firestore.FieldValue.delete(),
           });
         }
         students = await listStudents();
