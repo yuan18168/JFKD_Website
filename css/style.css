@@ -49,6 +49,16 @@ body {
   background-attachment: fixed;
 }
 
+/* ---------- 全站字體大小（顯示設定頁可調整：小/中/大/特大）----------
+   透過 body[data-font-scale] 切換 --font-scale 這個 CSS 變數，全站絕大多數
+   font-size 都已改用 calc(基準px * var(--font-scale, 1)) 撰寫，只要切換這個
+   變數就能整體同步縮放。少數「特效專用」的大圖示字級（火箭/皇冠旋轉/星爆等
+   校準過像素位置的動畫元件）刻意排除在外，維持固定大小，避免縮放後跑位。 */
+body[data-font-scale="sm"] { --font-scale: 0.875; }
+body[data-font-scale="md"] { --font-scale: 1; }
+body[data-font-scale="lg"] { --font-scale: 1.15; }
+body[data-font-scale="xl"] { --font-scale: 1.3; }
+
 a { color: inherit; text-decoration: none; }
 
 /* ---------- Layout ---------- */
@@ -62,28 +72,34 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
   background: var(--bg-elevated);
   border-right: 1px solid var(--border);
-  padding: 24px 16px;
+  padding: 18px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .sidebar .brand {
   /* 改為上下垂直排列：第一行是置中的大版圓形 logo 圖片，第二行是置中的品牌文字，
-     讓已經去背透明化的圓形手繪插畫可以放大呈現，不用再跟文字擠在同一行裡。 */
+     讓已經去背透明化的圓形手繪插畫可以放大呈現，不用再跟文字擠在同一行裡。
+     間距經過輕度壓縮（logo 縮小、上下留白減少），讓側邊欄在常見螢幕高度下
+     不用捲動就能完整顯示所有選項。這個區塊本身是超連結（<a>），點擊會回到
+     總覽首頁，當作整個網站的入口。 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px 20px;
+  gap: 6px;
+  padding: 4px 8px 14px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   text-align: center;
+  cursor: pointer;
+  transition: opacity .15s;
 }
+.sidebar .brand:hover { opacity: 0.82; }
 
 .sidebar .brand-mark {
   /* 圖片本身已去背成透明圓形插畫，這裡只需要控制顯示高度，寬度隨圖片比例自動延伸。 */
-  height: 150px;
+  height: 110px;
   width: auto;
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
@@ -96,17 +112,17 @@ a { color: inherit; text-decoration: none; }
 }
 
 .sidebar .brand-text { display: flex; flex-direction: column; align-items: center; }
-.sidebar .brand-text .title { font-weight: 700; font-size: 15px; }
-.sidebar .brand-text .subtitle { font-size: 11px; color: var(--text-faint); }
+.sidebar .brand-text .title { font-weight: 700; font-size: calc(15px * var(--font-scale, 1)); }
+.sidebar .brand-text .subtitle { font-size: calc(11px * var(--font-scale, 1)); color: var(--text-faint); }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 7px 12px;
   border-radius: var(--radius-sm);
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   font-weight: 500;
   transition: background .15s, color .15s;
 }
@@ -114,18 +130,18 @@ a { color: inherit; text-decoration: none; }
 .nav-link.active { background: var(--brand-dim); color: #cddcff; }
 
 .nav-section-label {
-  font-size: 11px;
+  font-size: calc(11px * var(--font-scale, 1));
   text-transform: uppercase;
   letter-spacing: .08em;
   color: var(--text-faint);
-  padding: 16px 12px 4px;
+  padding: 11px 12px 3px;
 }
 
 .sidebar-footer {
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 10px;
   border-top: 1px solid var(--border);
-  font-size: 12px;
+  font-size: calc(12px * var(--font-scale, 1));
   color: var(--text-faint);
   display: flex;
   align-items: center;
@@ -134,7 +150,7 @@ a { color: inherit; text-decoration: none; }
 .sidebar-footer img { width: 26px; height: 26px; border-radius: 50%; }
 .sidebar-footer .user-email { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar-footer button {
-  background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 12px;
+  background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: calc(12px * var(--font-scale, 1));
 }
 .sidebar-footer button:hover { color: var(--bad); }
 
@@ -152,8 +168,8 @@ a { color: inherit; text-decoration: none; }
   flex-wrap: wrap;
   gap: 12px;
 }
-.topbar h1 { font-size: 22px; margin: 0; font-weight: 700; }
-.topbar .desc { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+.topbar h1 { font-size: calc(22px * var(--font-scale, 1)); margin: 0; font-weight: 700; }
+.topbar .desc { color: var(--text-dim); font-size: calc(13px * var(--font-scale, 1)); margin-top: 4px; }
 
 /* ---------- Cards / grid ---------- */
 .grid { display: grid; gap: 18px; }
@@ -218,7 +234,7 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(180deg, rgba(79,124,255,0.08), var(--bg-card) 60%);
 }
 .mini-chart-average .mini-chart-head { margin-bottom: 4px; }
-.mini-chart-average .mini-chart-title { font-size: 12px; }
+.mini-chart-average .mini-chart-title { font-size: calc(12px * var(--font-scale, 1)); }
 .mini-chart-head {
   display: flex;
   align-items: center;
@@ -226,7 +242,7 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 8px;
 }
 .mini-chart-title {
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
   font-weight: 700;
   color: var(--text);
   display: flex;
@@ -237,14 +253,14 @@ a { color: inherit; text-decoration: none; }
   width: 9px; height: 9px; border-radius: 50%;
   display: inline-block;
 }
-.mini-chart-range { font-size: 11px; color: var(--text-faint); font-family: var(--mono); }
+.mini-chart-range { font-size: calc(11px * var(--font-scale, 1)); color: var(--text-faint); font-family: var(--mono); }
 @media (max-width: 640px) {
   .chart-grid { grid-template-columns: 1fr; }
 }
 
-.stat-card .label { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; }
-.stat-card .value { font-size: 30px; font-weight: 800; margin-top: 6px; font-family: var(--mono); }
-.stat-card .delta { font-size: 12px; margin-top: 6px; }
+.stat-card .label { font-size: calc(12px * var(--font-scale, 1)); color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; }
+.stat-card .value { font-size: calc(30px * var(--font-scale, 1)); font-weight: 800; margin-top: 6px; font-family: var(--mono); }
+.stat-card .delta { font-size: calc(12px * var(--font-scale, 1)); margin-top: 6px; }
 .delta.up { color: var(--good); }
 .delta.down { color: var(--bad); }
 
@@ -256,11 +272,11 @@ a { color: inherit; text-decoration: none; }
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   font-weight: 700;
   margin-bottom: 10px;
 }
-.score-progress-head strong { color: var(--brand); font-family: var(--mono); font-size: 15px; }
+.score-progress-head strong { color: var(--brand); font-family: var(--mono); font-size: calc(15px * var(--font-scale, 1)); }
 .score-progress-track {
   height: 10px;
   border-radius: 999px;
@@ -296,7 +312,7 @@ a { color: inherit; text-decoration: none; }
 }
 .wishlist-sorry-msg {
   margin-top: 8px;
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
   font-weight: 600;
   color: var(--text-dim);
 }
@@ -316,12 +332,12 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 640px) { .wishlist-grid { grid-template-columns: 1fr; } }
 .wishlist-card {
   padding: 14px 16px;
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
 }
-.wishlist-card .score-progress-head { font-size: 13px; margin-bottom: 6px; }
+.wishlist-card .score-progress-head { font-size: calc(13px * var(--font-scale, 1)); margin-bottom: 6px; }
 .wishlist-card .wishlist-status-row,
 .wishlist-card .wishlist-redeem-row { margin-top: 8px; gap: 6px; }
-.wishlist-card .wishlist-status-btns .btn-sm { padding: 4px 8px; font-size: 11px; }
+.wishlist-card .wishlist-status-btns .btn-sm { padding: 4px 8px; font-size: calc(11px * var(--font-scale, 1)); }
 
 /* ---------- 願望清單拖曳排序：按住卡片拖動即可交換順序 ---------- */
 .wishlist-card[draggable="true"] { cursor: grab; }
@@ -331,7 +347,7 @@ a { color: inherit; text-decoration: none; }
 .wishlist-drag-handle {
   cursor: grab;
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
   margin-right: 2px;
   user-select: none;
 }
@@ -351,12 +367,12 @@ a { color: inherit; text-decoration: none; }
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--bg-card);
-  font-size: 12px;
+  font-size: calc(12px * var(--font-scale, 1));
   font-weight: 700;
 }
-.badge-chip-icon { font-size: 16px; }
+.badge-chip-icon { font-size: calc(16px * var(--font-scale, 1)); }
 .badge-chip-label { color: var(--text); }
-.badge-chip-hint { color: var(--text-faint); font-weight: 500; font-size: 11px; }
+.badge-chip-hint { color: var(--text-faint); font-weight: 500; font-size: calc(11px * var(--font-scale, 1)); }
 .badge-chip.locked { opacity: .45; filter: grayscale(.6); }
 .badge-chip.unlocked {
   border-color: var(--brand);
@@ -377,16 +393,16 @@ a { color: inherit; text-decoration: none; }
 .avatar {
   width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 16px; color: #08122e;
+  font-weight: 700; font-size: calc(16px * var(--font-scale, 1)); color: #08122e;
 }
-.student-card .name { font-size: 16px; font-weight: 700; }
-.student-card .meta { font-size: 12px; color: var(--text-faint); }
-.student-card .total { font-size: 26px; font-weight: 800; font-family: var(--mono); color: var(--good); }
+.student-card .name { font-size: calc(16px * var(--font-scale, 1)); font-weight: 700; }
+.student-card .meta { font-size: calc(12px * var(--font-scale, 1)); color: var(--text-faint); }
+.student-card .total { font-size: calc(26px * var(--font-scale, 1)); font-weight: 800; font-family: var(--mono); color: var(--good); }
 
 /* ---------- Tables ---------- */
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table { width: 100%; border-collapse: collapse; font-size: calc(13px * var(--font-scale, 1)); }
 th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
-th { color: var(--text-faint); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; }
+th { color: var(--text-faint); font-weight: 600; text-transform: uppercase; font-size: calc(11px * var(--font-scale, 1)); letter-spacing: .04em; }
 tr:last-child td { border-bottom: none; }
 td.num { font-family: var(--mono); text-align: right; }
 th.num { text-align: right; }
@@ -418,7 +434,7 @@ th.num { text-align: right; }
   align-items: center;
   padding: 3px 9px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: calc(11px * var(--font-scale, 1));
   font-weight: 700;
 }
 .badge-A { background: rgba(255,213,74,0.15); color: var(--tier-a); }
@@ -431,7 +447,7 @@ th.num { text-align: right; }
 .badge-first { background: rgba(147,160,194,0.15); color: var(--text-dim); margin-left: 6px; }
 
 /* ---------- Forms ---------- */
-label { font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 6px; }
+label { font-size: calc(12px * var(--font-scale, 1)); color: var(--text-dim); display: block; margin-bottom: 6px; }
 input, select {
   width: 100%;
   background: var(--bg-elevated);
@@ -439,7 +455,7 @@ input, select {
   border-radius: var(--radius-sm);
   padding: 9px 11px;
   color: var(--text);
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   font-family: inherit;
 }
 input:focus, select:focus { outline: none; border-color: var(--brand); }
@@ -461,7 +477,7 @@ input[readonly] { background: var(--bg-card); color: var(--text-dim); cursor: de
   border: 1px solid var(--border);
   background: var(--bg-elevated);
   color: var(--text);
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
   font-weight: 600;
   cursor: pointer;
   transition: background .15s, border-color .15s;
@@ -511,8 +527,8 @@ a:focus-visible {
   box-shadow: 0 24px 60px rgba(0,0,0,0.55);
   animation: celebrate-pop .2s cubic-bezier(.34,1.56,.64,1);
 }
-.confirm-title { font-size: 16px; font-weight: 800; margin-bottom: 10px; color: var(--text); }
-.confirm-message { font-size: 13px; color: var(--text-dim); line-height: 1.65; white-space: pre-line; }
+.confirm-title { font-size: calc(16px * var(--font-scale, 1)); font-weight: 800; margin-bottom: 10px; color: var(--text); }
+.confirm-message { font-size: calc(13px * var(--font-scale, 1)); color: var(--text-dim); line-height: 1.65; white-space: pre-line; }
 .confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
 .btn-danger-solid { background: var(--bad); border-color: var(--bad); color: #2a0a0a; font-weight: 700; }
 .btn-danger-solid:hover { background: #ff8080; }
@@ -528,7 +544,7 @@ a:focus-visible {
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 10px 22px;
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
   font-weight: 700;
   color: var(--text);
   box-shadow: var(--shadow);
@@ -561,8 +577,8 @@ a:focus-visible {
   animation: celebrate-pop .35s cubic-bezier(.34,1.56,.64,1);
   max-width: 320px;
 }
-.celebrate-card .big { font-size: 21px; font-weight: 800; color: var(--text); }
-.celebrate-card .sub { font-size: 13px; color: var(--text-dim); margin-top: 6px; }
+.celebrate-card .big { font-size: calc(21px * var(--font-scale, 1)); font-weight: 800; color: var(--text); }
+.celebrate-card .sub { font-size: calc(13px * var(--font-scale, 1)); color: var(--text-dim); margin-top: 6px; }
 @keyframes celebrate-pop {
   from { transform: scale(.7); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
@@ -579,7 +595,7 @@ a:focus-visible {
   to { transform: translateY(110vh) rotate(540deg); opacity: 0; }
 }
 .btn-block { width: 100%; justify-content: center; }
-.btn-sm { padding: 6px 10px; font-size: 12px; }
+.btn-sm { padding: 6px 10px; font-size: calc(12px * var(--font-scale, 1)); }
 
 /* ---------- 考試紀錄表單：科目與計算合併表格 ---------- */
 /* 注意：不要在 td 本身設 display:flex，會讓該欄位跳出表格版面模型，
@@ -595,7 +611,7 @@ a:focus-visible {
 }
 .subject-badges { display: inline-flex; align-items: center; gap: 4px; }
 .subject-badges:empty { display: none; }
-.subj-label { font-size: 13px; font-weight: 600; }
+.subj-label { font-size: calc(13px * var(--font-scale, 1)); font-weight: 600; }
 #subjectsCalcTable .f-subject-score {
   max-width: 84px;
   margin-left: auto;
@@ -608,7 +624,7 @@ a:focus-visible {
 
 .drag-handle {
   cursor: grab;
-  font-size: 18px;
+  font-size: calc(18px * var(--font-scale, 1));
   line-height: 1;
   color: var(--text-faint);
   padding: 8px 4px;
@@ -621,7 +637,7 @@ a:focus-visible {
 }
 
 .section-title {
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .05em;
@@ -660,8 +676,8 @@ a:focus-visible {
   object-fit: contain;
   display: block;
 }
-.login-card h1 { font-size: 19px; margin: 0 0 6px; }
-.login-card p { color: var(--text-dim); font-size: 13px; margin: 0 0 26px; }
+.login-card h1 { font-size: calc(19px * var(--font-scale, 1)); margin: 0 0 6px; }
+.login-card p { color: var(--text-dim); font-size: calc(13px * var(--font-scale, 1)); margin: 0 0 26px; }
 
 .google-btn {
   display: flex;
@@ -674,14 +690,14 @@ a:focus-visible {
   color: #1f1f1f;
   border-radius: var(--radius-sm);
   border: none;
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   font-weight: 600;
   cursor: pointer;
 }
 .google-btn img { width: 18px; height: 18px; }
 .google-btn:hover { background: #f1f1f1; }
 
-.login-msg { margin-top: 16px; font-size: 12px; }
+.login-msg { margin-top: 16px; font-size: calc(12px * var(--font-scale, 1)); }
 .login-msg.error { color: var(--bad); }
 .login-msg.info { color: var(--text-faint); }
 
@@ -691,14 +707,14 @@ a:focus-visible {
   align-items: center;
   justify-content: center;
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
 }
 
 .empty-state {
   text-align: center;
   padding: 40px 20px;
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
 }
 
 .chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -706,7 +722,7 @@ a:focus-visible {
   padding: 5px 11px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  font-size: 12px;
+  font-size: calc(12px * var(--font-scale, 1));
   color: var(--text-dim);
   cursor: pointer;
 }
@@ -724,12 +740,12 @@ a:focus-visible {
 .editable-title-row { display: flex; align-items: center; gap: 8px; }
 .title-edit-btn {
   background: none; border: none; cursor: pointer;
-  color: var(--text-faint); font-size: 15px; padding: 4px;
+  color: var(--text-faint); font-size: calc(15px * var(--font-scale, 1)); padding: 4px;
   border-radius: 6px; line-height: 1;
 }
 .title-edit-btn:hover { color: var(--brand); background: rgba(255,255,255,0.05); }
 #dashboardTitleInput {
-  font-size: 22px; font-weight: 700; padding: 4px 8px;
+  font-size: calc(22px * var(--font-scale, 1)); font-weight: 700; padding: 4px 8px;
   max-width: 480px;
 }
 
@@ -750,8 +766,8 @@ a:focus-visible {
   box-shadow: var(--shadow);
 }
 .theme-banner .theme-banner-icon { flex-shrink: 0; }
-.theme-banner .theme-banner-text .name { font-size: 19px; font-weight: 800; }
-.theme-banner .theme-banner-text .tagline { font-size: 12px; opacity: .85; margin-top: 2px; }
+.theme-banner .theme-banner-text .name { font-size: calc(19px * var(--font-scale, 1)); font-weight: 800; }
+.theme-banner .theme-banner-text .tagline { font-size: calc(12px * var(--font-scale, 1)); opacity: .85; margin-top: 2px; }
 
 /* ---- 索隆・綠色劍士・三刀流主題（哈哈）----
    配色靈感來自角色本人的道服／刀具（分析色票：墨綠道服、淺綠內裡、酒紅腰帶、金色刀鍔、
@@ -918,7 +934,7 @@ body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; 
   border: 1px solid var(--border);
   background: var(--bg-card);
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
   font-weight: 700;
   cursor: pointer;
   transition: border-color .15s ease, color .15s ease, background .15s ease;
@@ -926,7 +942,7 @@ body.theme-babymonster .badge-chip.unlocked .badge-chip-label { color: #ffd2d9; 
 .student-tab .dot {
   width: 16px; height: 16px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 700; color: #08122e;
+  font-size: calc(9px * var(--font-scale, 1)); font-weight: 700; color: #08122e;
 }
 .student-tab:hover { border-color: var(--brand-dim); }
 .student-tab.active {
