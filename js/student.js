@@ -743,19 +743,29 @@
     registerCardEffect(card, finish);
   }
 
-  // 火箭＋折線圖成長：一條由左下往右上延伸的成長曲線，配一枚火箭沿著同樣的走勢往上衝，象徵「趨勢往上」。
+  // 火箭衝天：一枚大火箭從卡片左下角直線衝向右上角，後面拖著一串橘黃色續級小火花尾韻，象徵「衝高、往上飛」。
   function playCardRocketChart(card, duration) {
     const wrap = document.createElement("div");
     wrap.className = "subject-effect-rocket";
-    wrap.innerHTML = `
-      <svg class="rocket-trail-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path class="rocket-path" d="M6,92 L50,45 L92,10" />
-      </svg>
-      <div class="rocket-emoji">🚀</div>
-    `;
-    card.appendChild(wrap);
     const durSec = Math.max(duration / 1000, 0.4);
-    wrap.querySelector(".rocket-path").style.animationDuration = durSec * 0.75 + "s";
+
+    // 火花尾韻：沿著火箭同一條左下→右上的對角線，陸續冒出多顆會隨機飄散、縮小淡出的橘黃色小火花，
+    // 讓人感覺是火箭噴射引擎留下的軌跡，而不是另外畫一條參考線。
+    const sparkCount = 14;
+    let sparksHtml = "";
+    for (let i = 0; i < sparkCount; i++) {
+      const t = i / sparkCount; // 這顆火花在整趟飛行中，大約是火箭飛到第幾成時冒出來的
+      const jitterX = (Math.random() - 0.5) * 14;
+      const jitterY = (Math.random() - 0.5) * 10 - 6; // 略往下飄，感覺像被留在後面
+      const sx = Math.min(96, Math.max(0, 2 + t * 88 + jitterX));
+      const sy = Math.min(96, Math.max(0, t * 88 + jitterY));
+      const delay = (t * durSec * 0.82).toFixed(2);
+      const dur = (durSec * 0.4).toFixed(2);
+      sparksHtml += `<div class="rocket-spark" style="--sx:${sx}%; --sy:${sy}%; animation-delay:${delay}s; animation-duration:${dur}s;"></div>`;
+    }
+
+    wrap.innerHTML = `${sparksHtml}<div class="rocket-emoji">🚀</div>`;
+    card.appendChild(wrap);
     wrap.querySelector(".rocket-emoji").style.animationDuration = durSec + "s";
     const timer = setTimeout(finish, duration);
     function finish() {

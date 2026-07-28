@@ -361,7 +361,7 @@ function themeIconSvg(themeId) {
 const EFFECT_CATALOG = [
   { id: "thumbsUp", label: "👍 比讚", scope: "card" },
   { id: "crownSpin", label: "👑 皇冠衛冕", scope: "card" },
-  { id: "rocketChart", label: "🚀 火箭＋折線圖成長", scope: "card" },
+  { id: "rocketChart", label: "🚀 火箭衝天＋火花尾韻", scope: "card" },
   { id: "starburst", label: "✨ 星光閃耀＋放射光芒", scope: "card" },
   { id: "cardConfetti", label: "🎊 卡片內灑花", scope: "card" },
   { id: "animalParty", label: "🎉 動物派對嘉年華（全頁）", scope: "fullpage" },
