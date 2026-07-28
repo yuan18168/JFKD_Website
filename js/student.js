@@ -752,35 +752,18 @@
     wrap.className = "subject-effect-rocket";
     const durSec = Math.max(duration / 1000, 0.4);
 
-    const jetCount = 8;
-    let jetHtml = "";
-    for (let i = 0; i < jetCount; i++) {
-      const jd = (40 + Math.random() * 20).toFixed(1);
-      const leftJitter = (Math.random() * 6 - 3).toFixed(1);
-      const jetDur = (0.35 + Math.random() * 0.25).toFixed(2);
-      const jetDelay = (-Math.random() * jetDur).toFixed(2);
-      jetHtml += `<div class="jet-particle" style="--jd:${jd}px; left:calc(6px + ${leftJitter}px); animation-duration:${jetDur}s; animation-delay:${jetDelay}s;"></div>`;
-    }
-
-    const sparkCount = 6;
-    let sparksHtml = "";
-    for (let i = 0; i < sparkCount; i++) {
-      const sx = (-10 - Math.random() * 22).toFixed(1);
-      const sy = (28 + Math.random() * 30).toFixed(1);
+    const streakCount = 14;
+    let streakHtml = "";
+    for (let i = 0; i < streakCount; i++) {
+      const sd = (60 + Math.random() * 30).toFixed(1);
       const leftJitter = (Math.random() * 10 - 5).toFixed(1);
-      const sparkDur = (0.8 + Math.random() * 0.6).toFixed(2);
-      const sparkDelay = (-Math.random() * sparkDur).toFixed(2);
-      sparksHtml += `<div class="rocket-spark" style="--sx:${sx}px; --sy:${sy}px; left:calc(2px + ${leftJitter}px); animation-duration:${sparkDur}s; animation-delay:${sparkDelay}s;"></div>`;
+      const streakDur = (0.4 + Math.random() * 0.3).toFixed(2);
+      const streakDelay = (-Math.random() * streakDur).toFixed(2);
+      streakHtml += `<div class="rocket-streak" style="--sd:${sd}px; left:calc(6px + ${leftJitter}px); animation-duration:${streakDur}s; animation-delay:${streakDelay}s;"></div>`;
     }
     wrap.innerHTML = `
       <div class="rocket-unit">
-        <div class="rocket-flame">
-          <div class="flame-layer flame-outer"></div>
-          <div class="flame-layer flame-mid"></div>
-          <div class="flame-layer flame-core"></div>
-        </div>
-        ${jetHtml}
-        ${sparksHtml}
+        ${streakHtml}
         <div class="rocket-emoji">🚀</div>
       </div>
     `;
