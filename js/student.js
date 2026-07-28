@@ -744,12 +744,24 @@
   }
 
   // 火箭衝天：一枚大火箭從卡片左下角快速衝向右上角（約佔整段時長的前 40%），
-  // 抵達後完全靜止懸停在該處（不飛出畫面、不被卡片邊界裁切），剩餘時間尾端
-  // 持續噴出閃爍的錐形燃燒火焰，並隨機噴出向下飄散淡出的小火星，象徵「衝高、往上飛」。
+  // 抵達後完全靜止懸停在該處（不飛出畫面、不被卡片邊界裁切），剩餘時間尾端的
+  // 分層火焰固定不縮放，改由持續不斷竄出的噴射粒子流（jet-particle）＋小火星
+  // 表現「引擎持續推進」的動感，象徵「衝高、往上飛」。
   function playCardRocketChart(card, duration) {
     const wrap = document.createElement("div");
     wrap.className = "subject-effect-rocket";
     const durSec = Math.max(duration / 1000, 0.4);
+
+    const jetCount = 8;
+    let jetHtml = "";
+    for (let i = 0; i < jetCount; i++) {
+      const jd = (40 + Math.random() * 20).toFixed(1);
+      const leftJitter = (Math.random() * 6 - 3).toFixed(1);
+      const jetDur = (0.35 + Math.random() * 0.25).toFixed(2);
+      const jetDelay = (-Math.random() * jetDur).toFixed(2);
+      jetHtml += `<div class="jet-particle" style="--jd:${jd}px; left:calc(6px + ${leftJitter}px); animation-duration:${jetDur}s; animation-delay:${jetDelay}s;"></div>`;
+    }
+
     const sparkCount = 6;
     let sparksHtml = "";
     for (let i = 0; i < sparkCount; i++) {
@@ -758,7 +770,7 @@
       const leftJitter = (Math.random() * 10 - 5).toFixed(1);
       const sparkDur = (0.8 + Math.random() * 0.6).toFixed(2);
       const sparkDelay = (-Math.random() * sparkDur).toFixed(2);
-      sparksHtml += `<div class="rocket-spark" style="--sx:${sx}px; --sy:${sy}px; left:calc(-4px + ${leftJitter}px); animation-duration:${sparkDur}s; animation-delay:${sparkDelay}s;"></div>`;
+      sparksHtml += `<div class="rocket-spark" style="--sx:${sx}px; --sy:${sy}px; left:calc(2px + ${leftJitter}px); animation-duration:${sparkDur}s; animation-delay:${sparkDelay}s;"></div>`;
     }
     wrap.innerHTML = `
       <div class="rocket-unit">
@@ -767,6 +779,7 @@
           <div class="flame-layer flame-mid"></div>
           <div class="flame-layer flame-core"></div>
         </div>
+        ${jetHtml}
         ${sparksHtml}
         <div class="rocket-emoji">🚀</div>
       </div>
