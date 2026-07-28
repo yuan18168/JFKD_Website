@@ -78,16 +78,18 @@ a { color: inherit; text-decoration: none; }
 }
 
 .sidebar .brand-mark {
-  /* 原本是 34x34 的正方形只放得下「JF」兩個字；改成寬度隨內容自動延伸的圓角徽章，
-     這樣「JFKD」四個字才不會被硬擠在正方形裡而重疊或被裁切。 */
-  width: auto;
-  min-width: 34px;
-  height: 34px;
-  padding: 0 7px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, var(--brand), #7ea0ff);
+  /* 改為顯示手繪版 JFKD 圓形 logo 圖片，移除原本的漸層方塊背景與文字樣式，
+     讓圖片本身的圓形插畫（字母＋圓邊框＋裝飾線條）直接呈現。 */
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 12px; letter-spacing: -0.3px; color: #08122e;
+}
+.sidebar .brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .sidebar .brand-text .title { font-weight: 700; font-size: 15px; }
@@ -634,11 +636,14 @@ a:focus-visible {
   box-shadow: var(--shadow);
 }
 .login-card .brand-mark {
-  width: 56px; height: 56px; margin: 0 auto 16px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--brand), #7ea0ff);
+  width: 72px; height: 72px; margin: 0 auto 16px;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 20px; color: #08122e;
+}
+.login-card .brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 .login-card h1 { font-size: 19px; margin: 0 0 6px; }
 .login-card p { color: var(--text-dim); font-size: 13px; margin: 0 0 26px; }
