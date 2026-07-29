@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>科目對照表｜【JFKD】成績記錄表</title>
+<title>每日任務設定｜【JFKD】成績記錄表</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="manifest" href="manifest.json" />
@@ -32,12 +32,12 @@
       <div class="nav-section-label">學生管理</div>
       <a href="wishlist.html" class="nav-link">🎁 許願池</a>
       <a href="themes.html" class="nav-link">🎨 主題造型</a>
-      <a href="daily-tasks.html" class="nav-link">📝 每日任務設定</a>
+      <a href="daily-tasks.html" class="nav-link active">📝 每日任務設定</a>
 
       <div class="nav-section-label">父母管理</div>
       <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
-      <a href="subjects.html" class="nav-link active">📚 科目對照表</a>
+      <a href="subjects.html" class="nav-link">📚 科目對照表</a>
       <a href="chart-settings.html" class="nav-link">📈 顯示設定</a>
       <a href="effects.html" class="nav-link">✨ 特效設定</a>
       <a href="simulate.html" class="nav-link">🧮 試算表</a>
@@ -52,19 +52,15 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>科目對照表</h1>
+          <h1>每日任務設定</h1>
           <div class="desc">
-            設定每個年級固定會考的科目與順序（上下學期共用同一份）。新增考試紀錄時，選定學制／學期後會自動帶出這裡設定的科目，只需要回填分數；沒有設定的年級仍維持自由輸入科目的方式。
+            為每位學生設定生活習慣小任務（例如：閱讀15分鐘、收拾書包），孩子在「學生紀錄頁」自己勾選完成即可，
+            會自動發放飼料／遊戲幣（全新虛擬貨幣，跟真實獎金NT$完全分開），並累積寵物成長值、增加連續打卡天數。
           </div>
         </div>
       </div>
 
-      <div id="presetGroups"></div>
-
-      <div style="margin-top:22px; display:flex; gap:10px; align-items:center;">
-        <button class="btn btn-primary" id="saveSubjectPresetsBtn">儲存科目對照表</button>
-        <span id="saveSubjectMsg" class="text-faint" style="font-size:12px;"></span>
-      </div>
+      <div id="studentTaskCards"><div class="empty-state">載入中...</div></div>
     </main>
   </div>
 
@@ -76,6 +72,6 @@
   <script src="js/calc.js?v=20260730a"></script>
   <script src="js/data.js?v=20260730a"></script>
   <script src="js/nav.js?v=20260730a"></script>
-  <script src="js/subjects.js?v=20260730a"></script>
+  <script src="js/daily-tasks.js?v=20260730a"></script>
 </body>
 </html>
