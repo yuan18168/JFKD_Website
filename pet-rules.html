@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>寵物說明｜【JFKD】成績記錄表</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0b1120" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css?v=20260730b" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html" title="回到總覽首頁">
+        <div class="brand-mark"><img src="images/jfkd-logo.png" alt="JFKD"></div>
+        <div class="brand-text">
+          <div class="title">JFKD 成績記錄表</div>
+          <div class="subtitle">家庭儀表板</div>
+        </div>
+      </a>
+
+      <a href="index.html" class="nav-link">🏠 總覽</a>
+
+      <div class="nav-section-label">學生</div>
+      <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
+
+      <div class="nav-section-label">學生管理</div>
+      <a href="wishlist.html" class="nav-link">🎁 許願池</a>
+      <a href="themes.html" class="nav-link">🎨 主題造型</a>
+
+      <div class="nav-section-label">父母管理</div>
+      <a href="daily-tasks.html" class="nav-link">📝 每日任務設定</a>
+      <a href="pet-rules.html" class="nav-link active">🐾 寵物說明</a>
+      <a href="students.html" class="nav-link">👤 學生名單</a>
+      <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
+      <a href="subjects.html" class="nav-link">📚 科目對照表</a>
+      <a href="chart-settings.html" class="nav-link">📈 顯示設定</a>
+      <a href="effects.html" class="nav-link">✨ 特效設定</a>
+      <a href="simulate.html" class="nav-link">🧮 試算表</a>
+
+      <div class="sidebar-footer">
+        <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
+        <span class="user-email" id="sidebarUserEmail">載入中...</span>
+        <button id="logoutBtn">登出</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>🐾 寵物說明｜養成規則全解析</h1>
+          <div class="desc">
+            這裡整理了「成長寵物」系統的所有規則，讓ㄎㄎ、哈哈都能清楚知道怎麼養寵物、怎麼打卡、怎麼獲得經驗值。
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">① 經驗值（EXP）怎麼來？</div>
+        <p style="line-height:1.8;">
+          寵物長大靠的是<b>經驗值</b>，經驗值 = <b>累計獎金</b>（考試表現換算，1 元獎金 = 1 點經驗值）
+          ＋ <b>累積飼料</b>（完成每日任務發放的飼料，飼料全部都會變成經驗值）。
+        </p>
+        <div class="card empty-state" style="margin-top:10px; text-align:left; font-family: 'JetBrains Mono', monospace; font-size:calc(13px * var(--font-scale,1));">
+          經驗值 = 累計獎金（NT$，1:1 換算） + 累積飼料
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="section-title mt-0">② 寵物成長 8 階段圖鑑</div>
+        <p style="line-height:1.8;">原創「元素怪獸進化」系列，經驗值累積到門檻就會自動進化到下一階段：</p>
+        <div id="petStageGallery"></div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="section-title mt-0">③ 打卡規則</div>
+        <ul style="line-height:2; padding-left:20px;">
+          <li>當天只要完成<b>任意 1 項</b>每日任務，就算<b>打卡成功 1 天</b>；同一天完成更多任務也不會重複累加天數。</li>
+          <li><b>不能補打卡</b>：如果某天完全沒有完成任何任務，隔天無法補籤，連續天數會直接歸零、重新開始累計。</li>
+          <li>取消勾選（勾錯的補救）會收回當次發放的飼料／J幣與經驗值，但<b>已經計入的打卡天數不會被取消</b>。</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="section-title mt-0">④ 飼料 vs J幣：兩種虛擬貨幣的用途</div>
+        <div class="grid grid-cols-2">
+          <div class="card" style="margin:0;">
+            <div style="font-size:calc(28px * var(--font-scale,1));">🍖 飼料</div>
+            <div class="text-dim" style="margin-top:8px; line-height:1.8;">
+              完成每日任務就會發放。<br />
+              <b>唯一</b>會變成經驗值、推動寵物長大＆解鎖下一階段造型的貨幣。
+            </div>
+          </div>
+          <div class="card" style="margin:0;">
+            <div style="font-size:calc(28px * var(--font-scale,1));">🪙 J幣</div>
+            <div class="text-dim" style="margin-top:8px; line-height:1.8;">
+              完成每日任務也會發放，<b>不會</b>影響經驗值／寵物成長。<br />
+              先累積存起來，未來要用在「寵物小屋裝飾商店」消費（即將推出）。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="section-title mt-0">⑤ 飼料／J幣 跟真實獎金 NT$ 有關係嗎？</div>
+        <p style="line-height:1.8;">
+          完全沒有關係。飼料、J幣是為了寵物養成另外設計的<b>虛擬貨幣</b>，跟許願池使用的真實獎金 NT$
+          是兩套獨立系統，彼此<b>不能互相兌換</b>。真實獎金只會透過「經驗值＝累計獎金」這條規則，
+          間接影響寵物的經驗值成長，但獎金本身不會被消耗或扣除。
+        </p>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="section-title mt-0">⑥ 每日任務怎麼設定？</div>
+        <p style="line-height:1.8;">
+          家長在「<a href="daily-tasks.html">📝 每日任務設定</a>」頁為每位學生自由新增/編輯/刪除任務，
+          並各自設定完成後發放的飼料／J幣數量。孩子在「學生紀錄頁」自己勾選完成即可發放獎勵，
+          採<b>完全信任制</b>，不需要家長逐一審核。
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js?v=20260730b"></script>
+  <script src="js/auth.js?v=20260730b"></script>
+  <script src="js/calc.js?v=20260730b"></script>
+  <script src="js/data.js?v=20260730b"></script>
+  <script src="js/nav.js?v=20260730b"></script>
+  <script src="js/pet-rules.js?v=20260730b"></script>
+</body>
+</html>
