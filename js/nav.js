@@ -28,6 +28,28 @@ function fmtMoney(n) {
   return "NT$" + Math.round(n || 0).toLocaleString("zh-Hant-TW");
 }
 
+// ------------------------------------------------------------------
+// 成長寵物：四個階段，依「成長值」（=累計獎金＋每日任務累積的成長值，見 data.js）決定目前階段。
+// 純粹用 emoji 呈現（原創、非任何品牌角色），避免版權疑慮，也跟全站既有的 emoji 風格一致。
+const PET_STAGES = [
+  { min: 0, emoji: "🥚", label: "蛋" },
+  { min: 500, emoji: "🐣", label: "破殼幼體" },
+  { min: 2000, emoji: "🐥", label: "成長期" },
+  { min: 5000, emoji: "🦜", label: "華麗進化型" },
+];
+function petStageForGrowth(growthValue) {
+  let stage = PET_STAGES[0];
+  let index = 0;
+  PET_STAGES.forEach((s, i) => {
+    if (growthValue >= s.min) {
+      stage = s;
+      index = i;
+    }
+  });
+  const next = PET_STAGES[index + 1] || null;
+  return { ...stage, index, next };
+}
+
 /* ---------- 自訂確認彈窗（共用，取代原生 confirm()）---------- */
 // 回傳 Promise<boolean>：使用者按下確定 -> true，取消／按 Esc／點背景 -> false。
 // 訊息一律用 textContent 塞入，不解析 HTML，避免學生名稱等內容被當成標籤。

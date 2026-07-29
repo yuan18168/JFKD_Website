@@ -90,9 +90,93 @@
   renderStats(enriched);
   renderScoreProgress(enriched[0]);
   renderTargetGoal(student, enriched[0]);
+  renderPetSection(student, totalBonus);
   renderWishlist(student, totalBonus);
   renderChart(enriched);
   setupRecordFilters(enriched);
+
+  // ---- 成長寵物／連續打卡／今日任務：三合一區塊，放在頁面最上方 ----
+  // 寵物的成長值 = 累計獎金（totalBonus，隨著新增/刪除考試紀錄會變動）＋ pet.growthFromTasks（每日任務累積）。
+  function renderPetSection(studentDoc, bonusTotal) {
+    const el = document.getElementById("petSection");
+    if (!el) return;
+
+    const pet = { ...defaultPetState(), ...(studentDoc.pet || {}) };
+    const streak = { ...defaultStreakState(), ...(studentDoc.streak || {}) };
+    const currency = { ...defaultCurrency(), ...(studentDoc.currency || {}) };
+    const growthValue = Math.max(0, Math.round(bonusTotal)) + (pet.growthFromTasks || 0);
+    const stage = petStageForGrowth(growthValue);
+    const progressPct = stage.next
+      ? Math.min(100, Math.round(((growthValue - stage.min) / (stage.next.min - stage.min)) * 100))
+      : 100;
+
+    const today = todayStr();
+    const doneToday = new Set((studentDoc.dailyTaskCompletions || {})[today] || []);
+    const tasks = Array.isArray(studentDoc.dailyTasks) ? studentDoc.dailyTasks : [];
+
+    const tasksHtml = tasks.length
+      ? `<div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+          ${tasks
+            .map((t) => {
+              const done = doneToday.has(t.id);
+              return `
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" data-daily-task="${t.id}" ${done ? "checked" : ""} style="width:auto;" />
+                <span style="${done ? "text-decoration:line-through;color:var(--text-faint);" : ""}">${escapeHtml(t.name)}</span>
+                <span class="text-faint" style="font-size:calc(11px * var(--font-scale, 1));">🍖${t.foodReward || 0}　🪙${t.coinReward || 0}</span>
+              </label>`;
+            })
+            .join("")}
+        </div>`
+      : `<div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); margin-top:10px;">尚未設定每日任務，<a href="daily-tasks.html">前往「每日任務設定」新增 →</a></div>`;
+
+    el.innerHTML = `
+      <div class="card" style="margin-bottom:18px;">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+          <div style="text-align:center; min-width:80px;">
+            <div style="font-size:calc(52px * var(--font-scale, 1)); line-height:1;">${stage.emoji}</div>
+            <div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); margin-top:4px;">${stage.label}</div>
+          </div>
+          <div style="flex:1; min-width:220px;">
+            <div style="display:flex; justify-content:space-between; font-size:calc(12px * var(--font-scale, 1)); color:var(--text-dim); margin-bottom:4px;">
+              <span>成長值 ${growthValue}</span>
+              <span>${stage.next ? `距離下一階段還差 ${stage.next.min - growthValue}` : "已達最高階段 🎉"}</span>
+            </div>
+            <div style="height:10px; background:var(--border); border-radius:6px; overflow:hidden;">
+              <div style="height:100%; width:${progressPct}%; background:var(--brand,#4f7cff);"></div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span class="badge badge-normal">🔥 連續打卡 ${streak.count || 0} 天</span>
+            <span class="badge badge-normal">🍖 飼料 ${currency.food || 0}</span>
+            <span class="badge badge-normal">🪙 遊戲幣 ${currency.coins || 0}</span>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:14px;">今日任務</div>
+        ${tasksHtml}
+      </div>`;
+
+    el.querySelectorAll("[data-daily-task]").forEach((checkbox) => {
+      checkbox.addEventListener("change", async () => {
+        const taskId = checkbox.dataset.dailyTask;
+        const task = tasks.find((t) => t.id === taskId);
+        if (!task) return;
+        checkbox.disabled = true;
+        try {
+          const updated = checkbox.checked
+            ? await completeDailyTask(studentDoc, task)
+            : await uncompleteDailyTask(studentDoc, task);
+          Object.assign(studentDoc, updated);
+          renderPetSection(studentDoc, bonusTotal);
+        } catch (err) {
+          alert("更新失敗：" + err.message);
+          checkbox.checked = !checkbox.checked;
+          checkbox.disabled = false;
+        }
+      });
+    });
+  }
 
   // ---- 距離下一個獎金級距還差幾分（用最新一筆紀錄當時套用的設定檔門檻）----
   function renderScoreProgress(latestRow) {

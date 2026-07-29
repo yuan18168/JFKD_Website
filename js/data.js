@@ -409,6 +409,92 @@ async function saveEffectSettings(settings) {
   await db.collection("config").doc("effectSettings").set(settings, { merge: true });
 }
 
+// ------------------------------------------------------------------
+// 成長寵物／連續登入 Streak／每日任務／飼料與遊戲幣（虛擬貨幣，跟真實獎金NT$完全分開，不能互相兌換）：
+// 每位學生 students/{id} 新增以下欄位（全部選填，沒有資料時用預設值）：
+//   pet                  { growthFromTasks }：來自「每日任務」累積的額外成長值；
+//                          寵物實際成長值 = 該學生累計獎金（examRecords 算出的 totalBonus，在 student.js 計算）
+//                          ＋ growthFromTasks，兩者一起決定寵物成長到第幾階段（見 nav.js petStageForGrowth）。
+//   streak                { count, lastCheckInDate }：連續打卡天數與最後一次打卡日期（YYYY-MM-DD）。
+//   currency              { food, coins }：飼料／遊戲幣，全新虛擬貨幣。
+//   dailyTasks            [{id, name, foodReward, coinReward}]：家長在「每日任務設定」頁設定的任務清單。
+//   dailyTaskCompletions  { "2026-07-30": ["taskId1","taskId2"], ... }：每天完成的任務id（孩子自行勾選即完成，完全信任制）。
+function defaultPetState() {
+  return { growthFromTasks: 0 };
+}
+function defaultStreakState() {
+  return { count: 0, lastCheckInDate: null };
+}
+function defaultCurrency() {
+  return { food: 0, coins: 0 };
+}
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+function yesterdayStr() {
+  return new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+}
+
+/** 打卡：只要今天完成至少一項任務就會呼叫，更新連續天數；同一天內重複呼叫不會重複累加 */
+function bumpStreakForToday(streakState) {
+  const s = { ...defaultStreakState(), ...(streakState || {}) };
+  const today = todayStr();
+  if (s.lastCheckInDate === today) return s;
+  s.count = s.lastCheckInDate === yesterdayStr() ? (s.count || 0) + 1 : 1;
+  s.lastCheckInDate = today;
+  return s;
+}
+
+async function saveDailyTasks(studentId, tasks) {
+  await updateStudent(studentId, { dailyTasks: tasks });
+}
+
+/** 孩子勾選「今日任務」完成：發放飼料／遊戲幣、累積寵物成長值、更新連續打卡天數。
+ *  同一天內同一項任務只會發放一次。回傳合併後的學生物件（呼叫端可直接取代原本的 student 變數）。 */
+async function completeDailyTask(student, task) {
+  const today = todayStr();
+  const completions = { ...(student.dailyTaskCompletions || {}) };
+  const doneToday = new Set(completions[today] || []);
+  if (doneToday.has(task.id)) return student;
+  doneToday.add(task.id);
+  completions[today] = [...doneToday];
+
+  const currency = { ...defaultCurrency(), ...(student.currency || {}) };
+  currency.food = (currency.food || 0) + (Number(task.foodReward) || 0);
+  currency.coins = (currency.coins || 0) + (Number(task.coinReward) || 0);
+
+  const pet = { ...defaultPetState(), ...(student.pet || {}) };
+  pet.growthFromTasks = (pet.growthFromTasks || 0) + 15;
+
+  const streak = bumpStreakForToday(student.streak);
+
+  const fields = { dailyTaskCompletions: completions, currency, pet, streak };
+  await updateStudent(student.id, fields);
+  return { ...student, ...fields };
+}
+
+/** 取消勾選（勾錯的補救）：收回今天發放的飼料/遊戲幣與成長值；「連續打卡天數」維持不變，
+ *  避免同一天內勾了又取消造成天數判斷的邊界情況。 */
+async function uncompleteDailyTask(student, task) {
+  const today = todayStr();
+  const completions = { ...(student.dailyTaskCompletions || {}) };
+  const doneToday = new Set(completions[today] || []);
+  if (!doneToday.has(task.id)) return student;
+  doneToday.delete(task.id);
+  completions[today] = [...doneToday];
+
+  const currency = { ...defaultCurrency(), ...(student.currency || {}) };
+  currency.food = Math.max(0, (currency.food || 0) - (Number(task.foodReward) || 0));
+  currency.coins = Math.max(0, (currency.coins || 0) - (Number(task.coinReward) || 0));
+
+  const pet = { ...defaultPetState(), ...(student.pet || {}) };
+  pet.growthFromTasks = Math.max(0, (pet.growthFromTasks || 0) - 15);
+
+  const fields = { dailyTaskCompletions: completions, currency, pet };
+  await updateStudent(student.id, fields);
+  return { ...student, ...fields };
+}
+
 /** 組出主題橫幅 HTML（student.html 套用主題時放在內容區最上方）
  * overrideTitle／overrideTagline：在「學生主題造型」頁可個別覆寫的大標題／小標題文字，
  * 沒有覆寫時就退回預設值（學生名稱＋主題名稱／主題原本的 tagline）。 */
