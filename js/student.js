@@ -96,7 +96,7 @@
   setupRecordFilters(enriched);
 
   // ---- 成長寵物／連續打卡／今日任務：三合一區塊，放在頁面最上方 ----
-  // 寵物的成長值 = 累計獎金（totalBonus，隨著新增/刪除考試紀錄會變動）＋ pet.growthFromTasks（每日任務累積）。
+  // 寵物的經驗值 = 累計獎金（totalBonus，隨著新增/刪除考試紀錄會變動）＋ pet.growthFromTasks（每日任務累積）。
   function renderPetSection(studentDoc, bonusTotal) {
     const el = document.getElementById("petSection");
     if (!el) return;
@@ -139,7 +139,7 @@
           </div>
           <div style="flex:1; min-width:220px;">
             <div style="display:flex; justify-content:space-between; font-size:calc(12px * var(--font-scale, 1)); color:var(--text-dim); margin-bottom:4px;">
-              <span>成長值 ${growthValue}</span>
+              <span>經驗值 ${growthValue}</span>
               <span>${stage.next ? `距離下一階段還差 ${stage.next.min - growthValue}` : "已達最高階段 🎉"}</span>
             </div>
             <div style="height:10px; background:var(--border); border-radius:6px; overflow:hidden;">
@@ -149,7 +149,7 @@
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <span class="badge badge-normal">🔥 連續打卡 ${streak.count || 0} 天</span>
             <span class="badge badge-normal">🍖 飼料 ${currency.food || 0}</span>
-            <span class="badge badge-normal">🪙 遊戲幣 ${currency.coins || 0}</span>
+            <span class="badge badge-normal">🪙 J幣 ${currency.coins || 0}</span>
           </div>
         </div>
 

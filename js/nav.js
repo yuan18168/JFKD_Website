@@ -29,13 +29,18 @@ function fmtMoney(n) {
 }
 
 // ------------------------------------------------------------------
-// 成長寵物：四個階段，依「成長值」（=累計獎金＋每日任務累積的成長值，見 data.js）決定目前階段。
+// 成長寵物：8個階段，依「經驗值」（=累計獎金＋每日任務累積的飼料，見 data.js）決定目前階段。
 // 純粹用 emoji 呈現（原創、非任何品牌角色），避免版權疑慮，也跟全站既有的 emoji 風格一致。
+// 原創「元素怪獸進化」系列，共8階，門檻＝經驗值(EXP)＝累計獎金(1元=1點)＋每日任務累積飼料（見 data.js 開頭的規則說明）
 const PET_STAGES = [
   { min: 0, emoji: "🥚", label: "蛋" },
-  { min: 500, emoji: "🐣", label: "破殼幼體" },
-  { min: 2000, emoji: "🐥", label: "成長期" },
-  { min: 5000, emoji: "🦜", label: "華麗進化型" },
+  { min: 300, emoji: "🌱", label: "芽芽怪" },
+  { min: 700, emoji: "🔥", label: "小火獸" },
+  { min: 1200, emoji: "⚡", label: "風雷獸" },
+  { min: 2000, emoji: "✨", label: "光影獸" },
+  { min: 3000, emoji: "🌟", label: "星辰獸" },
+  { min: 4500, emoji: "🌈", label: "彩虹獸" },
+  { min: 6500, emoji: "👑", label: "守護神獸" },
 ];
 function petStageForGrowth(growthValue) {
   let stage = PET_STAGES[0];

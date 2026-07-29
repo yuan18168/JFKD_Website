@@ -410,13 +410,26 @@ async function saveEffectSettings(settings) {
 }
 
 // ------------------------------------------------------------------
-// 成長寵物／連續登入 Streak／每日任務／飼料與遊戲幣（虛擬貨幣，跟真實獎金NT$完全分開，不能互相兌換）：
+// 寵物養成完整規則（2026-07-30 定案，詳見 pet-rules.html「寵物說明」頁對孩子/家長的完整說明）：
+//
+// 【經驗值 EXP】＝ 寵物成長的唯一依據，由兩個來源相加：
+//   1) 累計獎金（examRecords 算出的 totalBonus，1元獎金＝1點經驗值，在 student.js 計算）
+//   2) 累積飼料（pet.growthFromTasks，只有完成每日任務發放的「飼料」才會累積，J幣不影響經驗值）
+//   EXP 決定寵物長到第幾階段，共 8 階，門檻與造型見 nav.js 的 PET_STAGES（元素怪獸進化系列）。
+//
+// 【每日任務 / 打卡】：家長在「每日任務設定」頁為每位學生自訂任務清單（每項任務各自設定飼料／J幣獎勵）。
+//   孩子在「學生紀錄頁」自行勾選完成即發放獎勵，完全信任制、無需家長審核。
+//   打卡＝當天「第一次」完成任意 1 項每日任務，之後同一天再完成其他任務不會重複加打卡天數。
+//   打卡不能補打：忘記打卡的那天就是斷了，連續天數會歸零重新累計（無寬限、無補籤）。
+//
+// 【飼料 vs J幣】兩者都是全新虛擬貨幣，跟真實獎金 NT$ 完全分開、不能互相兌換：
+//   飼料（food）：唯一會累積進 pet.growthFromTasks、進而推動寵物長大／解鎖下一階段造型的貨幣。
+//   J幣（coins，前身「J幣」）：目前只累積顯示，用於未來「寵物小屋裝飾商店」消費，不影響經驗值/成長。
+//
 // 每位學生 students/{id} 新增以下欄位（全部選填，沒有資料時用預設值）：
-//   pet                  { growthFromTasks }：來自「每日任務」累積的額外成長值；
-//                          寵物實際成長值 = 該學生累計獎金（examRecords 算出的 totalBonus，在 student.js 計算）
-//                          ＋ growthFromTasks，兩者一起決定寵物成長到第幾階段（見 nav.js petStageForGrowth）。
+//   pet                  { growthFromTasks }：完成每日任務累積的飼料總量＝額外經驗值。
 //   streak                { count, lastCheckInDate }：連續打卡天數與最後一次打卡日期（YYYY-MM-DD）。
-//   currency              { food, coins }：飼料／遊戲幣，全新虛擬貨幣。
+//   currency              { food, coins }：飼料／J幣，全新虛擬貨幣。
 //   dailyTasks            [{id, name, foodReward, coinReward}]：家長在「每日任務設定」頁設定的任務清單。
 //   dailyTaskCompletions  { "2026-07-30": ["taskId1","taskId2"], ... }：每天完成的任務id（孩子自行勾選即完成，完全信任制）。
 function defaultPetState() {
@@ -449,7 +462,7 @@ async function saveDailyTasks(studentId, tasks) {
   await updateStudent(studentId, { dailyTasks: tasks });
 }
 
-/** 孩子勾選「今日任務」完成：發放飼料／遊戲幣、累積寵物成長值、更新連續打卡天數。
+/** 孩子勾選「今日任務」完成：發放飼料／J幣、累積寵物經驗值、更新連續打卡天數。
  *  同一天內同一項任務只會發放一次。回傳合併後的學生物件（呼叫端可直接取代原本的 student 變數）。 */
 async function completeDailyTask(student, task) {
   const today = todayStr();
@@ -464,7 +477,7 @@ async function completeDailyTask(student, task) {
   currency.coins = (currency.coins || 0) + (Number(task.coinReward) || 0);
 
   const pet = { ...defaultPetState(), ...(student.pet || {}) };
-  pet.growthFromTasks = (pet.growthFromTasks || 0) + 15;
+  pet.growthFromTasks = (pet.growthFromTasks || 0) + (Number(task.foodReward) || 0);
 
   const streak = bumpStreakForToday(student.streak);
 
@@ -473,7 +486,7 @@ async function completeDailyTask(student, task) {
   return { ...student, ...fields };
 }
 
-/** 取消勾選（勾錯的補救）：收回今天發放的飼料/遊戲幣與成長值；「連續打卡天數」維持不變，
+/** 取消勾選（勾錯的補救）：收回今天發放的飼料/J幣與經驗值；「連續打卡天數」維持不變，
  *  避免同一天內勾了又取消造成天數判斷的邊界情況。 */
 async function uncompleteDailyTask(student, task) {
   const today = todayStr();
@@ -488,7 +501,7 @@ async function uncompleteDailyTask(student, task) {
   currency.coins = Math.max(0, (currency.coins || 0) - (Number(task.coinReward) || 0));
 
   const pet = { ...defaultPetState(), ...(student.pet || {}) };
-  pet.growthFromTasks = Math.max(0, (pet.growthFromTasks || 0) - 15);
+  pet.growthFromTasks = Math.max(0, (pet.growthFromTasks || 0) - (Number(task.foodReward) || 0));
 
   const fields = { dailyTaskCompletions: completions, currency, pet };
   await updateStudent(student.id, fields);

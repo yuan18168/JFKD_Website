@@ -1,5 +1,5 @@
 /* daily-tasks.js — 每日任務設定：家長為每位學生自由新增/編輯/刪除任務清單，
-   設定完成後發放的飼料／遊戲幣數量。任務清單存在 students/{id}.dailyTasks。 */
+   設定完成後發放的飼料／J幣數量。任務清單存在 students/{id}.dailyTasks。 */
 (async function () {
   await requireGuard();
   await applySiteFontScale();
@@ -24,7 +24,7 @@
       <div class="card" data-task-row="${task.id}" data-owner="${studentId}" style="display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:10px 12px;">
         <input type="text" value="${escapeHtml(task.name || "")}" data-task-name placeholder="任務名稱" style="flex:1;" />
         <input type="number" min="0" value="${task.foodReward || 0}" data-task-food placeholder="飼料" style="width:90px;" />
-        <input type="number" min="0" value="${task.coinReward || 0}" data-task-coin placeholder="遊戲幣" style="width:90px;" />
+        <input type="number" min="0" value="${task.coinReward || 0}" data-task-coin placeholder="J幣" style="width:90px;" />
         <span data-task-del="${task.id}" data-owner-del="${studentId}" style="cursor:pointer; color:var(--bad); font-size:calc(12px * var(--font-scale, 1));">刪除</span>
       </div>`;
   }
@@ -47,7 +47,7 @@
         <div style="display:flex; gap:8px; margin-top:6px;">
           <input type="text" placeholder="新任務名稱（例如：閱讀15分鐘）" data-new-name="${student.id}" style="flex:1;" />
           <input type="number" min="0" placeholder="飼料" data-new-food="${student.id}" style="width:90px;" />
-          <input type="number" min="0" placeholder="遊戲幣" data-new-coin="${student.id}" style="width:90px;" />
+          <input type="number" min="0" placeholder="J幣" data-new-coin="${student.id}" style="width:90px;" />
           <button class="btn btn-sm" data-add-task="${student.id}">＋新增任務</button>
         </div>
 
