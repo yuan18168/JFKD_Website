@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>【JFKD】成績記錄表</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#FFF7EE" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css?v=20260731a" />
+</head>
+<body class="kid-app">
+  <div class="kid-shell">
+    <main class="kid-main">
+
+      <!-- 學生切換（有兩位以上時才顯示） -->
+      <div class="kid-switcher" id="studentSwitcher"></div>
+
+      <!-- ============ 首頁 ============ -->
+      <section class="kid-view active" id="view-home">
+        <div class="kid-topbar">
+          <div class="kid-who">
+            <div class="kid-avatar" id="homeAvatar">?</div>
+            <div class="kid-title" id="homeName">載入中...</div>
+          </div>
+          <a class="kid-pill ghost" href="index.html" id="parentLink">👨‍💼 家長</a>
+        </div>
+        <div id="homeBody"><div class="kid-empty">載入中...</div></div>
+      </section>
+
+      <!-- ============ 成績 ============ -->
+      <section class="kid-view" id="view-score">
+        <div class="kid-topbar">
+          <div class="kid-title">📊 我的成績</div>
+          <div class="kid-pill accent" id="scoreMoney">NT$0</div>
+        </div>
+        <div id="scoreBody"><div class="kid-empty">載入中...</div></div>
+      </section>
+
+      <!-- ============ 圖鑑 ============ -->
+      <section class="kid-view" id="view-dex">
+        <div class="kid-topbar"><div class="kid-title">🗂️ 成就圖鑑</div></div>
+        <div id="dexBody"><div class="kid-empty">載入中...</div></div>
+      </section>
+
+      <!-- ============ 許願池 ============ -->
+      <section class="kid-view" id="view-wish">
+        <div class="kid-topbar">
+          <div class="kid-title">🎁 許願池</div>
+          <div class="kid-pill accent" id="wishMoney">NT$0</div>
+        </div>
+        <div id="wishBody"><div class="kid-empty">載入中...</div></div>
+      </section>
+
+      <!-- ============ 造型 ============ -->
+      <section class="kid-view" id="view-theme">
+        <div class="kid-topbar">
+          <div class="kid-title">🎨 主題造型</div>
+          <div class="kid-pill" id="themeXp">0 XP</div>
+        </div>
+        <div id="themeBody"><div class="kid-empty">載入中...</div></div>
+      </section>
+
+    </main>
+
+    <nav class="kid-tabbar">
+      <button class="kid-tab active" data-tab="home"><span class="kid-tab-icon">🏠</span><span class="kid-tab-label">首頁</span></button>
+      <button class="kid-tab" data-tab="score"><span class="kid-tab-icon">📊</span><span class="kid-tab-label">成績</span></button>
+      <button class="kid-tab" data-tab="dex"><span class="kid-tab-icon">🗂️</span><span class="kid-tab-label">圖鑑</span></button>
+      <button class="kid-tab" data-tab="wish"><span class="kid-tab-icon">🎁</span><span class="kid-tab-label">許願池</span></button>
+      <button class="kid-tab" data-tab="theme"><span class="kid-tab-icon">🎨</span><span class="kid-tab-label">造型</span></button>
+    </nav>
+  </div>
+
+  <div class="dex-modal" id="dexModal"><div class="dex-modal-card" id="dexModalCard"></div></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="js/firebase-config.js?v=20260731a"></script>
+  <script src="js/auth.js?v=20260731a"></script>
+  <script src="js/calc.js?v=20260731a"></script>
+  <script src="js/data.js?v=20260731a"></script>
+  <script src="js/gamify.js?v=20260731a"></script>
+  <script src="js/nav.js?v=20260731a"></script>
+  <script src="js/app.js?v=20260731a"></script>
+</body>
+</html>

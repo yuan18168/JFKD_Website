@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>遊戲規則｜【JFKD】成績記錄表</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0b1120" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css?v=20260731a" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html" title="回到總覽首頁">
+        <div class="brand-mark"><img src="images/jfkd-logo.png" alt="JFKD"></div>
+        <div class="brand-text">
+          <div class="title">JFKD 成績記錄表</div>
+          <div class="subtitle">家庭儀表板</div>
+        </div>
+      </a>
+
+      <a href="app.html" class="nav-link">👦 孩子模式</a>
+      <a href="index.html" class="nav-link">🏠 總覽</a>
+
+      <div class="nav-section-label">學生</div>
+      <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
+
+      <div class="nav-section-label">學生管理</div>
+      <a href="wishlist.html" class="nav-link">🎁 許願池</a>
+      <a href="themes.html" class="nav-link">🎨 主題造型</a>
+
+      <div class="nav-section-label">父母管理</div>
+      <a href="daily-tasks.html" class="nav-link">📝 每日任務設定</a>
+      <a href="rules.html" class="nav-link active">📖 遊戲規則</a>
+      <a href="students.html" class="nav-link">👤 學生名單</a>
+      <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
+      <a href="subjects.html" class="nav-link">📚 科目對照表</a>
+      <a href="chart-settings.html" class="nav-link">📈 顯示設定</a>
+      <a href="effects.html" class="nav-link">✨ 特效設定</a>
+      <a href="simulate.html" class="nav-link">🧮 試算表</a>
+
+      <div class="sidebar-footer">
+        <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" alt="" />
+        <span class="user-email" id="sidebarUserEmail">載入中...</span>
+        <button id="logoutBtn">登出</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>📖 遊戲規則全解析</h1>
+          <div class="desc">
+            這頁把「連續打卡 → XP → 等級 → 徽章圖鑑 → 主題造型」整套規則寫清楚，
+            家長和孩子都看得懂。成績、獎金與許願池的規則不在這裡，請看「獎懲規則設定」。
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">① XP 經驗值怎麼來？</div>
+        <p style="line-height:1.9;">
+          XP 是這個網站唯一的累積型點數，由兩個來源相加：
+        </p>
+        <div class="card empty-state" style="margin-top:10px; text-align:left; font-family:'JetBrains Mono', monospace; font-size:calc(13px * var(--font-scale,1));">
+          XP ＝ 累計獎金（NT$，1 元 = 1 點）　＋　每日任務累積的 XP
+        </div>
+        <ul style="line-height:2; padding-left:20px; margin-top:12px;">
+          <li>考試表現越好、獎金越多，XP 自然越高。</li>
+          <li>每天完成任務也能穩定累積 XP，就算這次考試失常，努力還是看得見。</li>
+          <li><b>XP 只是遊戲進度，永遠不會被消耗</b>；真實獎金 NT$ 只用於許願池，兩者完全分開。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">② 等級</div>
+        <p style="line-height:1.9;">
+          等級由 XP 決定，第 N 級需要 <code>75 + 18 × (N−1)</code> XP，越後面升級越慢。
+          等級只是榮譽稱號，不影響任何獎金。
+        </p>
+        <div id="levelTable" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">③ 每日任務與打卡</div>
+        <ul style="line-height:2; padding-left:20px;">
+          <li>家長在「<a href="daily-tasks.html">📝 每日任務設定</a>」為每位學生自訂任務清單，每項各自設定完成後給多少 XP。</li>
+          <li>孩子在孩子模式首頁自己勾選完成即可，<b>完全信任制</b>，不需要家長逐一審核。</li>
+          <li><b>打卡</b>＝當天第一次完成任意 1 項任務。同一天再完成其他任務不會重複加天數。</li>
+          <li>當天所有任務都完成，額外獲得 <b id="perfectXp">20</b> XP「完美一天」加成。</li>
+          <li>取消勾選會收回該次的 XP，但<b>已經計入的打卡天數不會被收回</b>（避免手誤就失去辛苦累積的紀錄）。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">④ 連續打卡與雙重保護</div>
+        <p style="line-height:1.9;">連續打卡是這個網站最重要的動力來源，所以特別設計了兩層保護，避免「斷一天就全毀」：</p>
+        <div class="grid grid-cols-2" style="margin-top:12px;">
+          <div class="card" style="margin:0;">
+            <div style="font-size:calc(26px * var(--font-scale,1));">🛡️ 護盾卡</div>
+            <div class="text-dim" style="margin-top:8px; line-height:1.9;">
+              每連續打卡滿 <b id="shieldEvery">7</b> 天自動獲得 1 張，最多同時持有 <b id="shieldMax">2</b> 張。<br />
+              忘記打卡時<b>自動消耗 1 張</b>把連續紀錄接回來，不會中斷。
+            </div>
+          </div>
+          <div class="card" style="margin:0;">
+            <div style="font-size:calc(26px * var(--font-scale,1));">📅 累計總天數</div>
+            <div class="text-dim" style="margin-top:8px; line-height:1.9;">
+              只增不減、<b>永遠不會歸零</b>。<br />
+              就算連續紀錄斷了，孩子仍然看得到自己總共累積了幾天，努力不會白費。
+            </div>
+          </div>
+        </div>
+        <div class="section-title">連續打卡里程碑獎勵</div>
+        <div id="milestoneTable"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">⑤ 成就徽章圖鑑</div>
+        <p style="line-height:1.9;">
+          共 <b id="badgeCount">60</b> 個徽章，分成打卡、成績、任務、隱藏四大系列，四種稀有度。
+          未解鎖的顯示為灰色，隱藏版連名稱與條件都不會顯示，解鎖後才揭曉。
+        </p>
+        <div style="margin-top:12px;" id="raritySummary"></div>
+        <div class="card empty-state" style="margin-top:14px; text-align:left; line-height:1.9;">
+          <b>設計原則（很重要）：</b>所有徽章都不會因為「一次失手」就永久拿不到。
+          每個徽章都是下列三種安全型之一 ——
+          ①累計型（只增不減）、②里程碑型（歷史上發生過一次就永久成立）、
+          ③滾動型（可能重置但永遠能再挑戰）。<b>不會有「整學期零處罰」這種一次失誤就出局的條件。</b>
+        </div>
+        <div class="section-title">完整徽章清單</div>
+        <div id="badgeList"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">⑥ 主題造型解鎖</div>
+        <p style="line-height:1.9;">
+          累積 XP 可以解鎖新的主題造型，孩子能在「孩子模式 → 造型」自由切換。
+          鎖住的主題也看得到預覽與「還差多少 XP」，作為長期目標。
+        </p>
+        <div id="themeTable" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">⑦ 特效</div>
+        <ul style="line-height:2; padding-left:20px;">
+          <li>家長登錄新成績後，孩子下次打開「成績」分頁，該筆紀錄會標上 <b>✨NEW</b>，並<b>自動播放</b>對應特效。</li>
+          <li>觸發規則優先序：<b>滿分 &gt; 進步＋衛冕 &gt; 衛冕 &gt; 進步</b>，每科只會套用最高等級的那一條。</li>
+          <li>看完後點科目卡片可以隨時重播。特效的種類與秒數可在「<a href="effects.html">✨ 特效設定</a>」調整。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="section-title mt-0">⑧ 家長模式 PIN 碼</div>
+        <p style="line-height:1.9;">
+          切換到家長模式需要輸入 4 位數 PIN 碼（預設 <b>1234</b>），避免孩子好奇去改獎金金額或處罰狀態。
+          可在「<a href="chart-settings.html">📈 顯示設定</a>」頁修改。
+          <span class="text-faint">※ 這是防止誤觸等級的保護，真正的存取控制仍由 Google 登入白名單負責。</span>
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js?v=20260731a"></script>
+  <script src="js/auth.js?v=20260731a"></script>
+  <script src="js/calc.js?v=20260731a"></script>
+  <script src="js/data.js?v=20260731a"></script>
+  <script src="js/gamify.js?v=20260731a"></script>
+  <script src="js/nav.js?v=20260731a"></script>
+  <script src="js/pin.js?v=20260731a"></script>
+  <script src="js/rules.js?v=20260731a"></script>
+</body>
+</html>

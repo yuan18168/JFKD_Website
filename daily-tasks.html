@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/style.css?v=20260730b" />
+<link rel="stylesheet" href="css/style.css?v=20260731a" />
 </head>
 <body>
   <div class="app-shell">
@@ -24,6 +24,7 @@
         </div>
       </a>
 
+      <a href="app.html" class="nav-link">👦 孩子模式</a>
       <a href="index.html" class="nav-link">🏠 總覽</a>
 
       <div class="nav-section-label">學生</div>
@@ -35,7 +36,7 @@
 
       <div class="nav-section-label">父母管理</div>
       <a href="daily-tasks.html" class="nav-link active">📝 每日任務設定</a>
-      <a href="pet-rules.html" class="nav-link">🐾 寵物說明</a>
+      <a href="rules.html" class="nav-link">📖 遊戲規則</a>
       <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
@@ -56,7 +57,7 @@
           <h1>每日任務設定</h1>
           <div class="desc">
             為每位學生設定生活習慣小任務（例如：閱讀15分鐘、收拾書包），孩子在「學生紀錄頁」自己勾選完成即可，
-            會自動發放飼料／J幣（全新虛擬貨幣，跟真實獎金NT$完全分開），並累積寵物經驗值、增加連續打卡天數。
+            完成後會自動發放 XP（遊戲經驗值，跟真實獎金 NT$ 完全分開），並累積連續打卡天數與解鎖成就徽章。
           </div>
         </div>
       </div>
@@ -68,11 +69,13 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-config.js?v=20260730b"></script>
-  <script src="js/auth.js?v=20260730b"></script>
-  <script src="js/calc.js?v=20260730b"></script>
-  <script src="js/data.js?v=20260730b"></script>
-  <script src="js/nav.js?v=20260730b"></script>
-  <script src="js/daily-tasks.js?v=20260730b"></script>
+  <script src="js/firebase-config.js?v=20260731a"></script>
+  <script src="js/auth.js?v=20260731a"></script>
+  <script src="js/calc.js?v=20260731a"></script>
+  <script src="js/data.js?v=20260731a"></script>
+  <script src="js/gamify.js?v=20260731a"></script>
+  <script src="js/nav.js?v=20260731a"></script>
+  <script src="js/pin.js?v=20260731a"></script>
+  <script src="js/daily-tasks.js?v=20260731a"></script>
 </body>
 </html>
