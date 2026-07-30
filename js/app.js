@@ -60,6 +60,31 @@
     return (name || "?").slice(0, 1);
   }
 
+  /** 套用該學生的主題造型到整個孩子模式（背景／卡片／火焰／XP條／分頁列全部換色） */
+  function applyTheme(student) {
+    Object.values(STUDENT_THEMES).forEach((t) => document.body.classList.remove(t.bodyClass));
+    const theme = getStudentTheme(student && student.themeId);
+    if (theme) document.body.classList.add(theme.bodyClass);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", getComputedStyle(document.body).getPropertyValue("--kid-bg").trim() || "#FFF7EE");
+    return theme;
+  }
+
+  /** 主題橫幅：顯示大標題／小標題（可在家長端「主題造型」頁個別覆寫） */
+  function themeBannerBlock(student) {
+    const theme = getStudentTheme(student.themeId);
+    if (!theme) return "";
+    const title = student.bannerTitle || `${student.name} · ${theme.name}`;
+    const tagline = student.bannerTagline || theme.tagline || "";
+    return `<div class="kid-banner">
+      <div class="kid-banner-icon">${themeIconSvg(theme.id)}</div>
+      <div class="kid-banner-text">
+        <div class="kid-banner-title">${escapeHtml(title)}</div>
+        <div class="kid-banner-tagline">${escapeHtml(tagline)}</div>
+      </div>
+    </div>`;
+  }
+
   function floatXp(x, y, text, color) {
     const el = document.createElement("div");
     el.className = "xp-float";
@@ -140,6 +165,7 @@
     const latest = ctx.rows[0];
 
     document.getElementById("homeBody").innerHTML = `
+      ${themeBannerBlock(s)}
       <div class="streak-hero">
         <div class="streak-flame">🔥</div>
         <div class="streak-num">${streak.count}</div>
@@ -437,34 +463,36 @@
     const box = document.getElementById("chartBox");
     if (pts.length === 0) { box.innerHTML = '<div class="kid-empty">這個科目還沒有紀錄</div>'; return; }
 
-    const W = 320, H = 170, PT = 26, PB = 32, PL = 20, PR = 8;
+    const W = 480, H = 210, PT = 34, PB = 40, PL = 30, PR = 12;
     const min = Number(cs.yMin) || 0, max = Number(cs.yMax) || 100;
     const span = Math.max(1, max - min);
     const n = pts.length;
     const x = (i) => (n === 1 ? (W - PL - PR) / 2 + PL : PL + i * ((W - PL - PR) / (n - 1)));
     const y = (v) => PT + (1 - (Math.min(max, Math.max(min, v)) - min) / span) * (H - PT - PB);
-    const color = chartSeries === "平均" ? "#7B5CFF" : "#FF7A2F";
+    const cssv = getComputedStyle(document.body);
+    const color = (chartSeries === "平均"
+      ? cssv.getPropertyValue("--k-accent") : cssv.getPropertyValue("--k-warm")).trim() || "#7B5CFF";
 
     const gridVals = [];
     const step = span <= 40 ? 10 : Math.ceil(span / 4 / 10) * 10;
     for (let v = min; v <= max; v += step) gridVals.push(v);
 
     const grid = gridVals.map((v) =>
-      `<line x1="${PL - 4}" y1="${y(v)}" x2="${W - PR}" y2="${y(v)}" stroke="#F0ECF7" stroke-width="1"/>
-       <text x="2" y="${y(v) + 3}" font-size="8" fill="#C9C3D6" font-weight="700">${v}</text>`).join("");
+      `<line x1="${PL - 4}" y1="${y(v)}" x2="${W - PR}" y2="${y(v)}" stroke="var(--k-track,#F0ECF7)" stroke-width="1.5"/>
+       <text x="2" y="${y(v) + 3}" font-size="11" fill="var(--kid-faint,#C9C3D6)" font-weight="700">${v}</text>`).join("");
 
     const poly = n > 1 ? `<polyline points="${pts.map((p, i) => `${x(i)},${y(p.v)}`).join(" ")}"
-      fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+      fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>` : "";
 
     const showLabels = cs.showPointLabels !== false;
     const dots = pts.map((p, i) => `
-      <circle cx="${x(i)}" cy="${y(p.v)}" r="4.5" fill="#fff" stroke="${color}" stroke-width="3"/>
-      ${showLabels ? `<text x="${x(i)}" y="${y(p.v) - 11}" text-anchor="middle" font-size="10" font-weight="800" fill="${color}">${p.v}</text>` : ""}
-      <text x="${x(i)}" y="${H - 9}" text-anchor="middle" font-size="8" fill="#A9A2BC" font-weight="700">${escapeHtml(p.label)}</text>`).join("");
+      <circle cx="${x(i)}" cy="${y(p.v)}" r="6" fill="var(--kid-card,#fff)" stroke="${color}" stroke-width="4"/>
+      ${showLabels ? `<text x="${x(i)}" y="${y(p.v) - 11}" text-anchor="middle" font-size="14" font-weight="800" fill="${color}">${p.v}</text>` : ""}
+      <text x="${x(i)}" y="${H - 9}" text-anchor="middle" font-size="11" fill="var(--kid-faint,#A9A2BC)" font-weight="700">${escapeHtml(p.label)}</text>`).join("");
 
     const vals = pts.map((p) => p.v);
     const change = Math.round((vals[vals.length - 1] - vals[0]) * 10) / 10;
-    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${grid}${poly}${dots}</svg>
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeHtml(chartSeries)}成績趨勢圖">${grid}${poly}${dots}</svg>
       <div class="kid-chart-legend"><span>${escapeHtml(chartSeries)}　最高 ${Math.max(...vals)} · 最低 ${Math.min(...vals)}${
         vals.length > 1 ? ` · 變化 ${change > 0 ? "+" : ""}${change}` : ""}</span></div>`;
   }
@@ -640,6 +668,7 @@
         try {
           await updateStudent(ctx.student.id, { themeId: id });
           ctx.student.themeId = id;
+          applyTheme(ctx.student);
           renderTheme(ctx);
           showToast("已套用主題造型 ✓");
         } catch (e) { alert("套用失敗：" + e.message); }
@@ -774,6 +803,7 @@
 
   async function renderTab() {
     const ctx = await loadStudent(currentId);
+    applyTheme(ctx.student);
     if (activeTab === "home") renderHome(ctx);
     else if (activeTab === "score") renderScore(ctx);
     else if (activeTab === "dex") await renderDex(ctx);
@@ -800,6 +830,7 @@
   // ---------------------------------------------------------------- 啟動
   renderSwitcher();
   const ctx0 = await loadStudent(currentId);
+  applyTheme(ctx0.student);
   await refreshBadges(ctx0, { celebrate: false });
   renderHome(ctx0);
 })();

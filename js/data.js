@@ -314,14 +314,14 @@ async function saveSiteFontScale(scale) {
 const STUDENT_THEMES = {
   zoro: {
     id: "zoro",
-    name: "綠色劍士・三刀流",
-    tagline: "致敬海賊迷弟哈哈最愛的綠髮劍士，鮮豔螢光綠＋耀眼金色配色",
+    name: "索隆劍士 · 霸氣三刀流",
+    tagline: "致敬 海賊王，哈哈最愛的綠髮劍士，鮮豔螢光綠＋耀眼金色配色",
     bodyClass: "theme-zoro",
   },
   babymonster: {
     id: "babymonster",
-    name: "猛獸舞台・酷紅戰帖",
-    tagline: "致敬 K-POP 女孩團體舞台氣勢，黑×紅×白×銀金屬酷酸配色",
+    name: "寶貝怪獸 · 媚力四射",
+    tagline: "致敬 Babymonster K-POP 女團舞台氣勢，黑×紅×白×銀金屬酷炫配色",
     bodyClass: "theme-babymonster",
   },
   // ---- 2026-07-31 新增：用 XP 解鎖的高階主題（門檻見 gamify.js THEME_XP）----
