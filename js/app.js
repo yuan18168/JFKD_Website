@@ -96,6 +96,10 @@
     setTimeout(() => el.remove(), 1000);
   }
 
+  function cssVar(name, fallback) {
+    return (getComputedStyle(document.body).getPropertyValue(name) || "").trim() || fallback || "#7B5CFF";
+  }
+
   function badgeToast(badge) {
     const el = document.createElement("div");
     el.className = "badge-unlock-toast";
@@ -105,7 +109,7 @@
     setTimeout(() => el.remove(), 3500);
     if (typeof confetti !== "undefined") {
       confetti({ particleCount: 70, spread: 90, startVelocity: 40, origin: { y: 0.75 },
-        colors: ["#7B5CFF", "#3FA9F5", "#FFD166", "#17C09A", "#ffffff"] });
+        colors: [cssVar("--k-accent"), cssVar("--k-accent2"), "#FFD166", cssVar("--k-good"), "#ffffff"] });
     }
   }
 
@@ -207,10 +211,10 @@
       <div class="kid-card">
         <div class="kid-card-title">最新成績 <small>${escapeHtml(latest.semester || "")} ${escapeHtml(latest.examType || "")}</small></div>
         <div style="display:flex;align-items:center;gap:12px">
-          <div style="font-size:calc(30px * var(--font-scale,1));font-weight:900;color:#7B5CFF">${latest.result.avgScore}</div>
+          <div style="font-size:calc(30px * var(--font-scale,1));font-weight:900;color:var(--k-accent)">${latest.result.avgScore}</div>
           <div style="flex:1;min-width:0">
             ${diffText(ctx)}
-            <div style="font-size:calc(11px * var(--font-scale,1));color:var(--kid-faint,#A9A2BC);margin-top:2px">
+            <div style="font-size:calc(11px * var(--font-scale,1));color:var(--kid-faint);margin-top:2px">
               獲得獎金 ${fmtMoney(latest.total)} · ${bonusStateText(latest)}
             </div>
           </div>
@@ -223,8 +227,8 @@
         <div class="kid-card-title">最近 28 天打卡</div>
         <div class="kid-cal">${calendarHtml(ctx)}</div>
         <div class="kid-cal-legend">
-          <span><i class="kid-dot" style="background:linear-gradient(135deg,#FF7A2F,#FFB020)"></i>有打卡</span>
-          <span><i class="kid-dot" style="background:#F3EEE7"></i>沒打卡</span>
+          <span><i class="kid-dot" style="background:var(--k-warm-grad)"></i>有打卡</span>
+          <span><i class="kid-dot" style="background:var(--k-soft-bg2)"></i>沒打卡</span>
         </div>
       </div>
     `;
@@ -235,11 +239,11 @@
   }
 
   function diffText(ctx) {
-    if (ctx.rows.length < 2) return '<div style="font-size:calc(12px * var(--font-scale,1));font-weight:800;color:#7B5CFF">第一筆紀錄，加油！</div>';
+    if (ctx.rows.length < 2) return '<div style="font-size:calc(12px * var(--font-scale,1));font-weight:800;color:var(--k-accent)">第一筆紀錄，加油！</div>';
     const d = Math.round((ctx.rows[0].result.avgScore - ctx.rows[1].result.avgScore) * 10) / 10;
-    if (d > 0) return `<div style="font-size:calc(12px * var(--font-scale,1));font-weight:800;color:#17C09A">▲ 比上次進步 ${d} 分</div>`;
-    if (d < 0) return `<div style="font-size:calc(12px * var(--font-scale,1));font-weight:800;color:#FF5D8F">▼ 比上次退步 ${Math.abs(d)} 分</div>`;
-    return '<div style="font-size:calc(12px * var(--font-scale,1));font-weight:800;color:var(--kid-soft,#6B6480)">與上次持平</div>';
+    if (d > 0) return `<div style="font-size:calc(12px * var(--font-scale,1));font-weight:800;color:var(--k-good)">▲ 比上次進步 ${d} 分</div>`;
+    if (d < 0) return `<div style="font-size:calc(12px * var(--font-scale,1));font-weight:800;color:var(--k-pink)">▼ 比上次退步 ${Math.abs(d)} 分</div>`;
+    return '<div style="font-size:calc(12px * var(--font-scale,1));font-weight:800;color:var(--kid-soft)">與上次持平</div>';
   }
   function bonusStateText(r) {
     if (!r.bonusStatus) return "無獎金";
@@ -585,13 +589,13 @@
         const pct = total > 0 ? Math.min(100, Math.round((ctx.totalBonus / total) * 100)) : 0;
         const achieved = it.status === "achieved";
         const notAchieved = it.status === "notAchieved";
-        let state = `<div class="kid-wish-state" style="color:#FF7A2F">🔥 進行中 · 已累積 ${fmtMoney(Math.min(ctx.totalBonus, total))}</div>`;
+        let state = `<div class="kid-wish-state" style="color:var(--k-warm)">🔥 進行中 · 已累積 ${fmtMoney(Math.min(ctx.totalBonus, total))}</div>`;
         if (achieved) {
           state = it.redeemedDate
-            ? `<div class="kid-wish-state" style="color:#17C09A">✅ 已達成 · 已於 ${escapeHtml(it.redeemedDate)} 兌現</div>`
-            : '<div class="kid-wish-state" style="color:#17C09A">✅ 已達成 · 等待兌現</div>';
+            ? `<div class="kid-wish-state" style="color:var(--k-good)">✅ 已達成 · 已於 ${escapeHtml(it.redeemedDate)} 兌現</div>`
+            : '<div class="kid-wish-state" style="color:var(--k-good)">✅ 已達成 · 等待兌現</div>';
         } else if (notAchieved) {
-          state = '<div class="kid-wish-state" style="color:var(--kid-faint,#A9A2BC)">下次再挑戰 💪</div>';
+          state = '<div class="kid-wish-state" style="color:var(--kid-faint)">下次再挑戰 💪</div>';
         }
         return `<div class="kid-wish ${achieved ? "achieved" : ""}">
           <div class="kid-wish-top">
@@ -625,15 +629,18 @@
       const theme = id ? getStudentTheme(id) : { name: "預設主題", tagline: "乾淨清爽的預設配色" };
       if (!theme) return "";
       const need = THEME_XP[id] || 0;
-      const unlocked = themeUnlocked(id, xp);
       const isCur = cur === id;
+      // 正在使用中的主題一律視為已解鎖（家長可在管理頁直接指定，指定後就不該再被 XP 門檻擋住）
+      const unlocked = isCur || themeUnlocked(id, xp);
       const pct = need > 0 ? Math.min(100, Math.round((xp / need) * 100)) : 100;
       return `<div class="theme-card ${THEME_SWATCH[id]} ${unlocked ? "" : "locked"} ${isCur ? "current" : ""}"
                    ${unlocked ? `data-theme="${id}"` : ""}>
         <div class="theme-card-name">${THEME_ICON[id]} ${escapeHtml(theme.name)}${unlocked ? "" : " 🔒"}</div>
         <div class="theme-card-desc">${escapeHtml(theme.tagline || "")}</div>
         ${unlocked
-          ? `<div class="theme-card-state">${isCur ? "✅ 使用中" : `✅ 已解鎖${need ? `（${need.toLocaleString()} XP）` : ""} · 點我套用`}</div>`
+          ? `<div class="theme-card-state">${isCur
+              ? (themeUnlocked(id, xp) ? "✅ 使用中" : "✅ 使用中（家長指定）")
+              : `✅ 已解鎖${need ? `（${need.toLocaleString()} XP）` : ""} · 點我套用`}</div>`
           : `<div class="theme-lock-bar"><div style="width:${pct}%"></div></div>
              <div class="theme-card-state">還差 ${(need - xp).toLocaleString()} XP 解鎖（需 ${need.toLocaleString()} XP）</div>`}
       </div>`;

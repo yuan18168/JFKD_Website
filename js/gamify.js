@@ -45,8 +45,8 @@ function levelInfo(totalXp) {
 // 主題造型解鎖門檻（XP）。themeId 對應 data.js 的 STUDENT_THEMES。
 const THEME_XP = {
   "": 0,               // 無主題（預設）
-  zoro: 500,
-  babymonster: 1500,
+  zoro: 300,
+  babymonster: 600,
   galaxy: 3000,
   lava: 7500,
   aurora: 15000,
