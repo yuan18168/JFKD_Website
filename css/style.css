@@ -1257,7 +1257,7 @@ body.kid-app {
   font-size: calc(11px * var(--font-scale, 1)); font-weight: 800;
   padding: 6px 12px; border-radius: 999px; text-decoration: none;
 }
-.kid-pill.accent { background: linear-gradient(135deg, #FF7A2F, #FFB020); }
+.kid-pill.accent { background: var(--k-warm-grad); }
 .kid-pill.ghost { background: rgba(42,35,64,.08); color: var(--kid-ink,#2A2340); }
 
 /* 學生切換器 */
@@ -1293,9 +1293,9 @@ body.kid-app {
 
 /* ---------- 連續打卡火焰 ---------- */
 .streak-hero {
-  background: linear-gradient(160deg, #FF8A3D 0%, #FF6B35 45%, #F0442F 100%);
+  background: var(--k-hero);
   border-radius: 28px; padding: 24px 20px 20px; text-align: center; color: #fff;
-  position: relative; overflow: hidden; box-shadow: 0 14px 30px rgba(255,107,53,.30);
+  position: relative; overflow: hidden; box-shadow: 0 14px 30px var(--k-hero-shadow);
 }
 .streak-hero::before {
   content: ""; position: absolute; width: 230px; height: 230px; border-radius: 50%;
@@ -1322,42 +1322,42 @@ body.kid-app {
 .xp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
 .xp-level { font-size: calc(21px * var(--font-scale,1)); font-weight: 900; }
 .xp-level span { font-size: calc(11.5px * var(--font-scale,1)); color: var(--kid-faint,#A9A2BC); font-weight: 700; margin-left: 5px; }
-.xp-total { font-size: calc(12px * var(--font-scale,1)); font-weight: 800; color: #7B5CFF; }
-.xp-track { height: 13px; background: #F0ECF7; border-radius: 999px; overflow: hidden; }
-.xp-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #7B5CFF, #3FA9F5); transition: width .55s cubic-bezier(.2,.8,.3,1); }
+.xp-total { font-size: calc(12px * var(--font-scale,1)); font-weight: 800; color: var(--k-accent); }
+.xp-track { height: 13px; background: var(--k-track); border-radius: 999px; overflow: hidden; }
+.xp-fill { height: 100%; border-radius: 999px; background: var(--k-xp-grad); transition: width .55s cubic-bezier(.2,.8,.3,1); }
 .xp-hint { font-size: calc(11px * var(--font-scale,1)); color: var(--kid-faint,#A9A2BC); margin-top: 6px; font-weight: 600; }
 
 /* ---------- 每日任務 ---------- */
 .kid-task {
   display: flex; align-items: center; gap: 11px; padding: 12px;
-  border-radius: 15px; background: #FAF7F2; border: 1.5px solid transparent;
+  border-radius: 15px; background: var(--k-soft-bg); border: 1.5px solid transparent;
   margin-bottom: 8px; cursor: pointer; transition: transform .12s, background .16s, border-color .16s;
 }
 .kid-task:active { transform: scale(.985); }
-.kid-task.done { background: #EAFBF5; border-color: #B8EEDD; }
+.kid-task.done { background: var(--k-good-bg); border-color: var(--k-good-line); }
 .kid-task-box {
-  width: 26px; height: 26px; border-radius: 8px; border: 2.5px solid #D9D0E5;
+  width: 26px; height: 26px; border-radius: 8px; border: 2.5px solid var(--k-box-line);
   flex: 0 0 auto; display: grid; place-items: center; color: #fff;
   font-size: calc(14px * var(--font-scale,1)); font-weight: 900; transition: .16s;
 }
-.kid-task.done .kid-task-box { background: #17C09A; border-color: #17C09A; }
+.kid-task.done .kid-task-box { background: var(--k-good); border-color: var(--k-good); }
 .kid-task-name { flex: 1; font-size: calc(14px * var(--font-scale,1)); font-weight: 700; min-width: 0; }
 .kid-task.done .kid-task-name { color: var(--kid-faint,#A9A2BC); text-decoration: line-through; }
 .kid-task-xp {
-  font-size: calc(11.5px * var(--font-scale,1)); font-weight: 900; color: #7B5CFF;
-  background: #F1EDFC; padding: 5px 9px; border-radius: 999px; flex: 0 0 auto;
+  font-size: calc(11.5px * var(--font-scale,1)); font-weight: 900; color: var(--k-accent);
+  background: var(--k-accent-bg); padding: 5px 9px; border-radius: 999px; flex: 0 0 auto;
 }
-.kid-task.done .kid-task-xp { background: #D6F7EC; color: #17C09A; }
+.kid-task.done .kid-task-xp { background: var(--k-good-bg2); color: var(--k-good); }
 .kid-perfect {
   text-align: center; padding: 14px; margin-top: 4px;
-  background: linear-gradient(135deg, #17C09A, #3FA9F5); border-radius: 15px;
+  background: var(--k-good-grad); border-radius: 15px;
   color: #fff; font-weight: 900; font-size: calc(13.5px * var(--font-scale,1));
   animation: kidPop .4s cubic-bezier(.2,1.4,.4,1);
 }
 @keyframes kidPop { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .xp-float {
   position: fixed; font-weight: 900; font-size: calc(22px * var(--font-scale,1));
-  color: #7B5CFF; pointer-events: none; z-index: 900;
+  color: var(--k-accent); pointer-events: none; z-index: 900;
   animation: xpFloatUp 1s ease-out forwards;
 }
 @keyframes xpFloatUp { 0% { opacity: 1; transform: translateY(0) scale(.8); } 100% { opacity: 0; transform: translateY(-64px) scale(1.28); } }
@@ -1365,22 +1365,22 @@ body.kid-app {
 /* ---------- 28 天打卡日曆 ---------- */
 .kid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 .kid-cal-day {
-  aspect-ratio: 1; border-radius: 8px; background: #F3EEE7;
+  aspect-ratio: 1; border-radius: 8px; background: var(--k-soft-bg2);
   display: grid; place-items: center; color: var(--kid-faint,#A9A2BC);
   font-size: calc(10px * var(--font-scale,1)); font-weight: 700;
 }
-.kid-cal-day.hit { background: linear-gradient(135deg, #FF7A2F, #FFB020); color: #fff; }
-.kid-cal-day.today { outline: 2.5px solid #7B5CFF; outline-offset: 1.5px; }
+.kid-cal-day.hit { background: var(--k-warm-grad); color: #fff; }
+.kid-cal-day.today { outline: 2.5px solid var(--k-accent); outline-offset: 1.5px; }
 .kid-cal-legend { display: flex; gap: 14px; margin-top: 10px; font-size: calc(10.5px * var(--font-scale,1)); color: var(--kid-soft,#6B6480); font-weight: 600; }
 .kid-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; vertical-align: -1px; margin-right: 4px; }
 
 /* ---------- 成績：新紀錄慶祝卡 ---------- */
 .new-record {
-  background: linear-gradient(150deg, #2A2340, #4A3B7A); border-radius: 24px;
+  background: var(--k-record-grad); border-radius: 24px;
   padding: 20px; color: #fff; position: relative; overflow: hidden; margin-bottom: 13px;
 }
 .new-record-tag {
-  display: inline-block; background: #FF5D8F; font-size: calc(10px * var(--font-scale,1));
+  display: inline-block; background: var(--k-pink); font-size: calc(10px * var(--font-scale,1));
   font-weight: 900; padding: 4px 11px; border-radius: 999px; letter-spacing: 1px;
 }
 .new-record h3 { font-size: calc(17px * var(--font-scale,1)); font-weight: 900; margin: 9px 0 0; }
@@ -1412,12 +1412,12 @@ body.kid-app {
 .kid-chart-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; }
 .kid-chart-tabs::-webkit-scrollbar { height: 0; }
 .kid-chart-tab {
-  flex: 0 0 auto; padding: 7px 14px; border-radius: 999px; background: #F4F0EA;
+  flex: 0 0 auto; padding: 7px 14px; border-radius: 999px; background: var(--k-chip-bg);
   font-size: calc(11.5px * var(--font-scale,1)); font-weight: 800;
   color: var(--kid-soft,#6B6480); cursor: pointer; border: 0; font-family: inherit;
 }
 .kid-chart-tab.active { background: var(--kid-ink,#2A2340); color: #fff; }
-.kid-chart svg { width: 100%; height: 170px; display: block; }
+.kid-chart svg { width: 100%; height: auto; display: block; }
 .kid-chart-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; font-size: calc(10.5px * var(--font-scale,1)); font-weight: 700; color: var(--kid-soft,#6B6480); }
 
 /* ---------- 歷史紀錄卡 ---------- */
@@ -1428,24 +1428,24 @@ body.kid-app {
 .kid-rec-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .kid-rec-title { font-size: calc(14px * var(--font-scale,1)); font-weight: 900; }
 .kid-rec-date { font-size: calc(10.5px * var(--font-scale,1)); color: var(--kid-faint,#A9A2BC); font-weight: 700; margin-top: 2px; }
-.kid-rec-avg { font-size: calc(21px * var(--font-scale,1)); font-weight: 900; color: #7B5CFF; flex: 0 0 auto; }
+.kid-rec-avg { font-size: calc(21px * var(--font-scale,1)); font-weight: 900; color: var(--k-accent); flex: 0 0 auto; }
 .kid-subs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .kid-sub {
-  font-size: calc(10.5px * var(--font-scale,1)); font-weight: 800; background: #F4F0EA;
+  font-size: calc(10.5px * var(--font-scale,1)); font-weight: 800; background: var(--k-chip-bg);
   padding: 4px 9px; border-radius: 8px; color: var(--kid-soft,#6B6480);
 }
-.kid-sub.up { background: #EAFBF5; color: #17C09A; }
-.kid-sub.down { background: #FFEEF3; color: #FF5D8F; }
+.kid-sub.up { background: var(--k-good-bg); color: var(--k-good); }
+.kid-sub.down { background: #FFEEF3; color: var(--k-pink); }
 .kid-rec-foot { display: flex; gap: 7px; margin-top: 11px; flex-wrap: wrap; align-items: center; }
 .kid-status { font-size: calc(10.5px * var(--font-scale,1)); font-weight: 800; padding: 4px 10px; border-radius: 999px; }
-.kid-status.ok { background: #EAFBF5; color: #17C09A; }
+.kid-status.ok { background: var(--k-good-bg); color: var(--k-good); }
 .kid-status.wait { background: #FFF4E0; color: #D98800; }
-.kid-status.bad { background: #FFEEF3; color: #FF5D8F; }
-.kid-rec-money { margin-left: auto; font-size: calc(14px * var(--font-scale,1)); font-weight: 900; color: #FF7A2F; }
+.kid-status.bad { background: #FFEEF3; color: var(--k-pink); }
+.kid-rec-money { margin-left: auto; font-size: calc(14px * var(--font-scale,1)); font-weight: 900; color: var(--k-warm); }
 
 /* ---------- 圖鑑 ---------- */
 .dex-hero {
-  background: linear-gradient(150deg, #7B5CFF, #3FA9F5); border-radius: 24px;
+  background: var(--k-dex-grad); border-radius: 24px;
   padding: 19px; color: #fff; text-align: center;
 }
 .dex-hero-num { font-size: calc(36px * var(--font-scale,1)); font-weight: 900; line-height: 1.1; }
@@ -1479,11 +1479,11 @@ body.kid-app {
   color: var(--kid-soft,#6B6480); text-align: center; line-height: 1.25;
   padding: 0 2px; overflow: hidden;
 }
-.dex-badge.locked { background: #F4F0EA; border-color: #E7DFD5; }
+.dex-badge.locked { background: var(--k-chip-bg); border-color: #E7DFD5; }
 .dex-badge.locked .dex-badge-icon { filter: grayscale(1) brightness(1.55); opacity: .42; }
 .dex-badge.locked .dex-badge-name { color: #C6BCB0; }
 .dex-badge.r1 { border-color: #9AA3B2; }
-.dex-badge.r2 { border-color: #3FA9F5; box-shadow: 0 0 0 3px rgba(63,169,245,.12); }
+.dex-badge.r2 { border-color: var(--k-accent2); box-shadow: 0 0 0 3px rgba(63,169,245,.12); }
 .dex-badge.r3 { border-color: #A855F7; box-shadow: 0 0 0 3px rgba(168,85,247,.14); }
 .dex-badge.r4 {
   border-color: #FFA51F; box-shadow: 0 0 0 3px rgba(255,165,31,.18);
@@ -1496,7 +1496,7 @@ body.kid-app {
 }
 @keyframes dexShine { 0% { transform: translateX(-130%); } 100% { transform: translateX(130%); } }
 .dex-new {
-  position: absolute; top: 5px; right: 5px; background: #FF5D8F; color: #fff;
+  position: absolute; top: 5px; right: 5px; background: var(--k-pink); color: #fff;
   font-size: calc(7px * var(--font-scale,1)); font-weight: 900;
   padding: 2px 5px; border-radius: 999px; z-index: 3;
 }
@@ -1520,7 +1520,7 @@ body.kid-app {
 }
 .dex-modal-cond {
   font-size: calc(12.5px * var(--font-scale,1)); color: var(--kid-soft,#6B6480);
-  margin-top: 14px; line-height: 1.75; background: #FAF7F2; padding: 13px; border-radius: 13px;
+  margin-top: 14px; line-height: 1.75; background: var(--k-soft-bg); padding: 13px; border-radius: 13px;
 }
 .dex-modal-close {
   margin-top: 16px; width: 100%; padding: 14px; border: 0; border-radius: 15px;
@@ -1532,7 +1532,7 @@ body.kid-app {
 .badge-unlock-toast {
   position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%); z-index: 1100;
-  background: linear-gradient(135deg, #7B5CFF, #3FA9F5); color: #fff;
+  background: linear-gradient(135deg, var(--k-accent), var(--k-accent2)); color: #fff;
   padding: 13px 20px; border-radius: 999px; font-weight: 800;
   font-size: calc(13px * var(--font-scale,1)); box-shadow: 0 10px 26px rgba(0,0,0,.3);
   display: flex; align-items: center; gap: 9px; max-width: calc(100% - 32px);
@@ -1549,13 +1549,13 @@ body.kid-app {
   background: var(--kid-card,#fff); border-radius: 20px; padding: 16px;
   margin-bottom: 11px; border: 1.5px solid var(--kid-line,#EFE4D8);
 }
-.kid-wish.achieved { border-color: #B8EEDD; background: #F6FFFC; }
+.kid-wish.achieved { border-color: var(--k-good-line); background: #F6FFFC; }
 .kid-wish-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .kid-wish-name { font-size: calc(14.5px * var(--font-scale,1)); font-weight: 900; }
-.kid-wish-amt { font-size: calc(13.5px * var(--font-scale,1)); font-weight: 900; color: #FF7A2F; flex: 0 0 auto; }
+.kid-wish-amt { font-size: calc(13.5px * var(--font-scale,1)); font-weight: 900; color: var(--k-warm); flex: 0 0 auto; }
 .kid-wish-cond { font-size: calc(11px * var(--font-scale,1)); color: var(--kid-soft,#6B6480); margin-top: 5px; line-height: 1.6; }
-.kid-wish-bar { height: 8px; background: #F0ECF7; border-radius: 999px; margin-top: 11px; overflow: hidden; }
-.kid-wish-bar div { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #FF7A2F, #FFB020); }
+.kid-wish-bar { height: 8px; background: var(--k-track); border-radius: 999px; margin-top: 11px; overflow: hidden; }
+.kid-wish-bar div { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--k-warm), #FFB020); }
 .kid-wish-state { font-size: calc(11px * var(--font-scale,1)); font-weight: 800; margin-top: 8px; }
 
 /* ---------- 主題造型解鎖 ---------- */
@@ -1571,7 +1571,7 @@ body.kid-app {
 .theme-card-desc { font-size: calc(11px * var(--font-scale,1)); margin-top: 5px; opacity: .88; line-height: 1.6; }
 .theme-card-state { font-size: calc(11px * var(--font-scale,1)); font-weight: 800; margin-top: 11px; }
 .theme-lock-bar { height: 6px; background: rgba(255,255,255,.25); border-radius: 999px; margin-top: 9px; overflow: hidden; }
-.theme-lock-bar div { height: 100%; background: #7B5CFF; border-radius: 999px; }
+.theme-lock-bar div { height: 100%; background: var(--k-accent); border-radius: 999px; }
 .theme-card.current { box-shadow: 0 0 0 3px rgba(123,92,255,.35); }
 .theme-swatch-default { background: linear-gradient(135deg, #F5F1FF, #EAF3FF); border-color: #DCD3F5; color: #2A2340; }
 .theme-swatch-zoro { background: linear-gradient(135deg, #0B3D2E, #1B7A4F); color: #D7FFE9; border-color: #2CCB84; }
@@ -1588,7 +1588,7 @@ body.kid-app {
 .fx-collection { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
 @media (min-width: 460px) { .fx-collection { grid-template-columns: repeat(4, 1fr); } }
 .fx-item {
-  background: #FAF7F2; border-radius: 14px; padding: 13px 8px; text-align: center;
+  background: var(--k-soft-bg); border-radius: 14px; padding: 13px 8px; text-align: center;
   border: 1.5px solid var(--kid-line,#EFE4D8);
 }
 .fx-item.locked { opacity: .5; }
@@ -1611,7 +1611,7 @@ body.kid-app {
 }
 .kid-tab-icon { font-size: calc(21px * var(--font-scale,1)); line-height: 1; transition: transform .16s; }
 .kid-tab-label { font-size: calc(9.5px * var(--font-scale,1)); font-weight: 800; }
-.kid-tab.active { color: #7B5CFF; }
+.kid-tab.active { color: var(--k-accent); }
 .kid-tab.active .kid-tab-icon { transform: translateY(-2px) scale(1.12); }
 
 /* ---------- 家長模式 PIN 閘門 ---------- */
@@ -1626,7 +1626,7 @@ body.kid-app {
 .pin-dots { display: flex; gap: 15px; margin: 26px 0 4px; }
 .pin-dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #A9A2BC; transition: .15s; }
 .pin-dot.filled { background: #2A2340; border-color: #2A2340; }
-.pin-error { color: #FF5D8F; font-size: 12px; font-weight: 800; height: 18px; margin: 10px 0; }
+.pin-error { color: var(--k-pink); font-size: 12px; font-weight: 800; height: 18px; margin: 10px 0; }
 .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; width: 100%; max-width: 300px; }
 .pin-pad button {
   aspect-ratio: 1.5; border: 1px solid #EFE4D8; border-radius: 15px; background: #fff;
@@ -1681,7 +1681,7 @@ body.theme-galaxy {
 }
 body.theme-galaxy .card,
 body.theme-galaxy .sidebar { background: rgba(30,20,64,.72); border-color: #4B2E86; }
-body.theme-galaxy .nav-link.active { background: linear-gradient(135deg,#7B2FA8,#3FA9F5); color: #fff; }
+body.theme-galaxy .nav-link.active { background: linear-gradient(135deg,#7B2FA8,var(--k-accent2)); color: #fff; }
 body.theme-galaxy .theme-banner {
   background: linear-gradient(120deg, #1B1046 0%, #46208C 55%, #7B2FA8 100%);
   border: 1px solid #A855F7; box-shadow: 0 0 30px rgba(168,85,247,.35);
@@ -1752,3 +1752,247 @@ body.theme-gold .theme-banner::after {
 body.theme-gold .theme-banner .title { color: #FFFBEC; text-shadow: 0 0 16px rgba(255,215,100,.9); }
 body.theme-gold .theme-banner .tagline { color: #FFE9A8; }
 body.theme-gold .badge-chip.unlocked { border-color: #FFC93C; box-shadow: 0 0 12px rgba(255,201,60,.45); }
+
+/* ==========================================================================
+   孩子模式主題調色盤（2026-07-31 修正：原本 app.js 沒套用 bodyClass，主題完全沒生效）
+   每個主題只要覆寫這組變數，整個孩子模式（背景／卡片／火焰／XP條／圖鑑／分頁列）
+   就會整體換色，而不只是換一張橫幅。
+   ========================================================================== */
+body.kid-app {
+  --kid-bg: #FFF7EE;
+  --kid-card: #FFFFFF;
+  --kid-ink: #2A2340;
+  --kid-soft: #6B6480;
+  --kid-faint: #A9A2BC;
+  --kid-line: #EFE4D8;
+
+  --k-accent: #7B5CFF;
+  --k-accent2: #3FA9F5;
+  --k-good: #17C09A;
+  --k-warm: #FF7A2F;
+  --k-pink: #FF5D8F;
+
+  --k-hero: linear-gradient(160deg, #FF8A3D 0%, #FF6B35 45%, #F0442F 100%);
+  --k-hero-shadow: rgba(255,107,53,.30);
+  --k-warm-grad: linear-gradient(135deg, #FF7A2F, #FFB020);
+  --k-xp-grad: linear-gradient(90deg, #7B5CFF, #3FA9F5);
+  --k-dex-grad: linear-gradient(150deg, #7B5CFF, #3FA9F5);
+  --k-good-grad: linear-gradient(135deg, #17C09A, #3FA9F5);
+  --k-record-grad: linear-gradient(150deg, #2A2340, #4A3B7A);
+
+  --k-track: #F0ECF7;
+  --k-soft-bg: #FAF7F2;
+  --k-soft-bg2: #F3EEE7;
+  --k-chip-bg: #F4F0EA;
+  --k-good-bg: #EAFBF5;
+  --k-good-bg2: #D6F7EC;
+  --k-good-line: #B8EEDD;
+  --k-box-line: #D9D0E5;
+  --k-accent-bg: #F1EDFC;
+
+  --k-emblem: "🎨";
+  --k-tabbar-bg: rgba(255,255,255,.97);
+}
+
+/* ---------- 孩子模式主題橫幅（呼應網頁版的 theme-banner）---------- */
+.kid-banner {
+  border-radius: 24px; padding: 18px 18px 16px; margin-bottom: 14px;
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: 14px;
+  background: var(--k-banner-bg, var(--k-hero));
+  border: 2px solid var(--k-banner-border, transparent);
+  box-shadow: 0 10px 26px var(--k-hero-shadow);
+}
+.kid-banner-icon { flex: 0 0 auto; line-height: 0; position: relative; z-index: 2; }
+.kid-banner-text { flex: 1; min-width: 0; position: relative; z-index: 2; }
+.kid-banner-title {
+  font-size: calc(17px * var(--font-scale, 1)); font-weight: 900; line-height: 1.35;
+  color: var(--k-banner-title, #fff); text-shadow: 0 2px 10px rgba(0,0,0,.28);
+}
+.kid-banner-tagline {
+  font-size: calc(11.5px * var(--font-scale, 1)); margin-top: 5px; line-height: 1.6;
+  color: var(--k-banner-tagline, rgba(255,255,255,.88));
+}
+.kid-banner::after {
+  content: var(--k-emblem); position: absolute; right: -10px; bottom: -18px;
+  font-size: 92px; opacity: .13; transform: rotate(-12deg); pointer-events: none; z-index: 1;
+}
+
+/* ---------- 修正：火箭特效在小卡片內被裁掉 ----------
+   火箭 emoji 原本 62px、動畫飛到容器 64% 高度，塞進 56px 高的 .fx-card
+   （overflow:hidden）等於整個看不見。這裡把特效容器內的尺寸依卡片縮小，
+   並把卡片高度拉高一點，讓進步特效跟衛冕特效一樣看得到。 */
+.fx-card { min-height: 74px; }
+.fx-card .rocket-emoji { font-size: 34px; }
+.fx-card .rocket-streak { top: 30px; width: 5px; height: 14px; left: 4px; }
+.fx-card .subject-effect-emoji { font-size: 40px; }
+.fx-card .subject-effect-emoji.spin-effect { font-size: 56px; }
+.fx-card .starburst-core { font-size: 34px; }
+
+/* ==========================================================================
+   七個主題的孩子模式配色
+   ========================================================================== */
+
+/* ---- ⚔️ 索隆劍士・霸氣三刀流：螢光綠 × 金 ---- */
+body.kid-app.theme-zoro {
+  --kid-bg: #04160F; --kid-card: #0C2A1C; --kid-ink: #EAFFF3;
+  --kid-soft: #9FE7C0; --kid-faint: #5F9D7C; --kid-line: #1B5B3A;
+  --k-accent: #00E676; --k-accent2: #FFD200; --k-good: #00E676;
+  --k-warm: #FFD200; --k-pink: #FF7A5C;
+  --k-hero: linear-gradient(155deg, #04301C 0%, #0F7A44 48%, #00E676 100%);
+  --k-hero-shadow: rgba(0,230,118,.35);
+  --k-warm-grad: linear-gradient(135deg, #FFD200, #FFF07A);
+  --k-xp-grad: linear-gradient(90deg, #00E676, #FFD200);
+  --k-dex-grad: linear-gradient(150deg, #0F7A44, #00E676);
+  --k-good-grad: linear-gradient(135deg, #00E676, #FFD200);
+  --k-record-grad: linear-gradient(150deg, #052A19, #0F7A44);
+  --k-track: #10402A; --k-soft-bg: #0F3423; --k-soft-bg2: #0C2A1C;
+  --k-chip-bg: #10402A; --k-good-bg: #0F4A2E; --k-good-bg2: #10633C;
+  --k-good-line: #00E676; --k-box-line: #2E7A52; --k-accent-bg: #0F4A2E;
+  --k-emblem: "⚔️";
+  --k-tabbar-bg: rgba(6,32,20,.97);
+  --k-banner-bg: linear-gradient(120deg, #04301C 0%, #0F7A44 55%, #00E676 100%);
+  --k-banner-border: #FFD200;
+  --k-banner-title: #EAFFF3;
+  --k-banner-tagline: #B7FFD8;
+}
+
+/* ---- 🖤 寶貝怪獸・媚力四射：黑 × 紅 × 銀 ---- */
+body.kid-app.theme-babymonster {
+  --kid-bg: #0B0407; --kid-card: #1C0810; --kid-ink: #FFEDF1;
+  --kid-soft: #F0A9B8; --kid-faint: #9A6675; --kid-line: #5B0E1C;
+  --k-accent: #FF1744; --k-accent2: #D8DBE2; --k-good: #FF4D6D;
+  --k-warm: #FF1744; --k-pink: #FF1744;
+  --k-hero: linear-gradient(155deg, #1A0409 0%, #8B0F22 50%, #FF1744 100%);
+  --k-hero-shadow: rgba(255,23,68,.38);
+  --k-warm-grad: linear-gradient(135deg, #FF1744, #FF7A96);
+  --k-xp-grad: linear-gradient(90deg, #FF1744, #D8DBE2);
+  --k-dex-grad: linear-gradient(150deg, #8B0F22, #FF1744);
+  --k-good-grad: linear-gradient(135deg, #FF1744, #D8DBE2);
+  --k-record-grad: linear-gradient(150deg, #1A0409, #6B0C1A);
+  --k-track: #3A0D18; --k-soft-bg: #260A12; --k-soft-bg2: #1C0810;
+  --k-chip-bg: #300B16; --k-good-bg: #3D0F1D; --k-good-bg2: #5B1528;
+  --k-good-line: #FF1744; --k-box-line: #7A2136; --k-accent-bg: #3D0F1D;
+  --k-emblem: "🖤";
+  --k-tabbar-bg: rgba(16,5,9,.97);
+  --k-banner-bg: linear-gradient(120deg, #1A0409 0%, #8B0F22 55%, #FF1744 100%);
+  --k-banner-border: #D8DBE2;
+  --k-banner-title: #FFF4F6;
+  --k-banner-tagline: #FFC2CE;
+}
+
+/* ---- 🌌 銀河星空 ---- */
+body.kid-app.theme-galaxy {
+  --kid-bg: #08061A; --kid-card: #16123A; --kid-ink: #F2EAFF;
+  --kid-soft: #BCA7F0; --kid-faint: #7566B0; --kid-line: #33२A66;
+  --kid-line: #332A66;
+  --k-accent: #A855F7; --k-accent2: #3FA9F5; --k-good: #4DD9C0;
+  --k-warm: #FFB020; --k-pink: #FF7AC6;
+  --k-hero: linear-gradient(155deg, #0E0A2E 0%, #3B1F7A 55%, #7B2FA8 100%);
+  --k-hero-shadow: rgba(168,85,247,.38);
+  --k-warm-grad: linear-gradient(135deg, #A855F7, #3FA9F5);
+  --k-xp-grad: linear-gradient(90deg, #A855F7, #3FA9F5);
+  --k-dex-grad: linear-gradient(150deg, #3B1F7A, #A855F7);
+  --k-good-grad: linear-gradient(135deg, #4DD9C0, #3FA9F5);
+  --k-record-grad: linear-gradient(150deg, #0E0A2E, #46208C);
+  --k-track: #241C52; --k-soft-bg: #1C1745; --k-soft-bg2: #16123A;
+  --k-chip-bg: #241C52; --k-good-bg: #17304A; --k-good-bg2: #1D4257;
+  --k-good-line: #4DD9C0; --k-box-line: #4B3E86; --k-accent-bg: #2A1F5E;
+  --k-emblem: "🌌";
+  --k-tabbar-bg: rgba(14,10,46,.97);
+  --k-banner-bg: linear-gradient(120deg, #0E0A2E 0%, #46208C 55%, #7B2FA8 100%);
+  --k-banner-border: #A855F7;
+  --k-banner-title: #F2EAFF;
+  --k-banner-tagline: #C9A7FF;
+}
+
+/* ---- 🌋 熔岩烈焰 ---- */
+body.kid-app.theme-lava {
+  --kid-bg: #140600; --kid-card: #2E0E02; --kid-ink: #FFEFE2;
+  --kid-soft: #FFB98A; --kid-faint: #A56B45; --kid-line: #6B1C00;
+  --k-accent: #FF6B00; --k-accent2: #FFC93C; --k-good: #FFC93C;
+  --k-warm: #FF3D00; --k-pink: #FF7A5C;
+  --k-hero: linear-gradient(155deg, #2B0A00 0%, #8A2200 50%, #FF6B00 100%);
+  --k-hero-shadow: rgba(255,107,0,.40);
+  --k-warm-grad: linear-gradient(135deg, #FF3D00, #FFC93C);
+  --k-xp-grad: linear-gradient(90deg, #FF6B00, #FFC93C);
+  --k-dex-grad: linear-gradient(150deg, #8A2200, #FF6B00);
+  --k-good-grad: linear-gradient(135deg, #FF6B00, #FFC93C);
+  --k-record-grad: linear-gradient(150deg, #2B0A00, #8A2200);
+  --k-track: #4A1704; --k-soft-bg: #3A1103; --k-soft-bg2: #2E0E02;
+  --k-chip-bg: #4A1704; --k-good-bg: #4A2A04; --k-good-bg2: #6B3D06;
+  --k-good-line: #FFC93C; --k-box-line: #8A3A14; --k-accent-bg: #4A1704;
+  --k-emblem: "🌋";
+  --k-tabbar-bg: rgba(24,8,0,.97);
+  --k-banner-bg: linear-gradient(120deg, #2B0A00 0%, #8A2200 55%, #FF6B00 100%);
+  --k-banner-border: #FFC93C;
+  --k-banner-title: #FFF1E4;
+  --k-banner-tagline: #FFC08A;
+}
+
+/* ---- 🌲 極光森林 ---- */
+body.kid-app.theme-aurora {
+  --kid-bg: #01100E; --kid-card: #08302A; --kid-ink: #E8FFF9;
+  --kid-soft: #8FE8D2; --kid-faint: #4F8F80; --kid-line: #0E5F4D;
+  --k-accent: #19C79A; --k-accent2: #7DF9D6; --k-good: #19C79A;
+  --k-warm: #7DF9D6; --k-pink: #5CC8FF;
+  --k-hero: linear-gradient(155deg, #04241F 0%, #0B5C4A 52%, #19C79A 100%);
+  --k-hero-shadow: rgba(25,199,154,.36);
+  --k-warm-grad: linear-gradient(135deg, #19C79A, #7DF9D6);
+  --k-xp-grad: linear-gradient(90deg, #19C79A, #7DF9D6);
+  --k-dex-grad: linear-gradient(150deg, #0B5C4A, #19C79A);
+  --k-good-grad: linear-gradient(135deg, #19C79A, #7DF9D6);
+  --k-record-grad: linear-gradient(150deg, #04241F, #0B5C4A);
+  --k-track: #0D4238; --k-soft-bg: #0A392F; --k-soft-bg2: #08302A;
+  --k-chip-bg: #0D4238; --k-good-bg: #0E5044; --k-good-bg2: #12695A;
+  --k-good-line: #19C79A; --k-box-line: #1E7A66; --k-accent-bg: #0E5044;
+  --k-emblem: "🌲";
+  --k-tabbar-bg: rgba(3,26,22,.97);
+  --k-banner-bg: linear-gradient(120deg, #04241F 0%, #0B5C4A 55%, #19C79A 100%);
+  --k-banner-border: #7DF9D6;
+  --k-banner-title: #E8FFF9;
+  --k-banner-tagline: #7DF9D6;
+}
+
+/* ---- 👑 黃金殿堂 ---- */
+body.kid-app.theme-gold {
+  --kid-bg: #120C00; --kid-card: #322400; --kid-ink: #FFFBEC;
+  --kid-soft: #FFE9A8; --kid-faint: #A38E4A; --kid-line: #6B5200;
+  --k-accent: #FFC93C; --k-accent2: #FFF6D6; --k-good: #FFD966;
+  --k-warm: #FFC93C; --k-pink: #FFB020;
+  --k-hero: linear-gradient(155deg, #241A00 0%, #8A6A00 52%, #FFC93C 100%);
+  --k-hero-shadow: rgba(255,201,60,.38);
+  --k-warm-grad: linear-gradient(135deg, #8A6A00, #FFC93C);
+  --k-xp-grad: linear-gradient(90deg, #8A6A00, #FFC93C);
+  --k-dex-grad: linear-gradient(150deg, #8A6A00, #FFC93C);
+  --k-good-grad: linear-gradient(135deg, #FFC93C, #FFF6D6);
+  --k-record-grad: linear-gradient(150deg, #241A00, #8A6A00);
+  --k-track: #4A3800; --k-soft-bg: #3E2D00; --k-soft-bg2: #322400;
+  --k-chip-bg: #4A3800; --k-good-bg: #4A3800; --k-good-bg2: #6B5200;
+  --k-good-line: #FFC93C; --k-box-line: #8A6A00; --k-accent-bg: #4A3800;
+  --k-emblem: "👑";
+  --k-tabbar-bg: rgba(20,14,0,.97);
+  --k-banner-bg: linear-gradient(120deg, #241A00 0%, #8A6A00 55%, #FFC93C 100%);
+  --k-banner-border: #FFF6D6;
+  --k-banner-title: #FFFBEC;
+  --k-banner-tagline: #FFE9A8;
+}
+
+/* 深色主題下，白底元件要跟著變 */
+body.kid-app[class*="theme-"] .kid-card,
+body.kid-app[class*="theme-"] .kid-rec,
+body.kid-app[class*="theme-"] .kid-wish,
+body.kid-app[class*="theme-"] .dex-badge,
+body.kid-app[class*="theme-"] .dex-tab,
+body.kid-app[class*="theme-"] .kid-switch-btn { background: var(--kid-card); }
+body.kid-app[class*="theme-"] .dex-badge.locked { background: var(--k-soft-bg2); }
+body.kid-app[class*="theme-"] .dex-modal-card { background: var(--kid-card); color: var(--kid-ink); }
+body.kid-app[class*="theme-"] .dex-modal-cond { background: var(--k-soft-bg); color: var(--kid-soft); }
+body.kid-app[class*="theme-"] .dex-modal-close { background: var(--k-accent); color: #0B0812; }
+body.kid-app[class*="theme-"] .kid-tabbar { background: var(--k-tabbar-bg); }
+body.kid-app[class*="theme-"] .kid-pill.ghost { background: var(--k-chip-bg); color: var(--kid-ink); }
+body.kid-app[class*="theme-"] .kid-pill { background: var(--k-accent); color: #0B0812; }
+body.kid-app[class*="theme-"] .kid-chart-tab { background: var(--k-chip-bg); color: var(--kid-soft); }
+body.kid-app[class*="theme-"] .kid-chart-tab.active { background: var(--k-accent); color: #0B0812; }
+body.kid-app[class*="theme-"] .dex-tab.active { background: var(--k-accent); color: #0B0812; border-color: var(--k-accent); }
+body.kid-app[class*="theme-"] .kid-switch-btn.active { background: var(--k-accent); color: #0B0812; border-color: var(--k-accent); }
+body.kid-app[class*="theme-"] .theme-swatch-default { color: #2A2340; }
