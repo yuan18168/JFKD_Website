@@ -1,7 +1,9 @@
 /* daily-tasks.js — 每日任務設定：家長為每位學生自由新增/編輯/刪除任務清單，
-   設定完成後發放的飼料／J幣數量。任務清單存在 students/{id}.dailyTasks。 */
+   設定完成後發放的 XP 數量。任務清單存在 students/{id}.dailyTasks。
+   舊資料的 foodReward + coinReward 會由 data.js 的 normalizeDailyTasks() 自動合併成 xpReward。 */
 (async function () {
   await requireGuard();
+  await requireParentPin();
   await applySiteFontScale();
 
   const students = await listStudents();
@@ -16,15 +18,15 @@
   // 每位學生一份「草稿」任務清單（新增/刪除時只改這裡＋局部重畫，不會動到其他學生的卡片）
   const drafts = {};
   students.forEach((s) => {
-    drafts[s.id] = Array.isArray(s.dailyTasks) ? [...s.dailyTasks] : [];
+    drafts[s.id] = normalizeDailyTasks(s.dailyTasks);
   });
 
   function taskRowHtml(studentId, task) {
     return `
       <div class="card" data-task-row="${task.id}" data-owner="${studentId}" style="display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:10px 12px;">
         <input type="text" value="${escapeHtml(task.name || "")}" data-task-name placeholder="任務名稱" style="flex:1;" />
-        <input type="number" min="0" value="${task.foodReward || 0}" data-task-food placeholder="飼料" style="width:90px;" />
-        <input type="number" min="0" value="${task.coinReward || 0}" data-task-coin placeholder="J幣" style="width:90px;" />
+        <input type="number" min="0" value="${task.xpReward || 0}" data-task-xp placeholder="XP" style="width:80px;" />
+        <span class="text-faint" style="font-size:calc(11px * var(--font-scale, 1));">XP</span>
         <span data-task-del="${task.id}" data-owner-del="${studentId}" style="cursor:pointer; color:var(--bad); font-size:calc(12px * var(--font-scale, 1));">刪除</span>
       </div>`;
   }
@@ -46,8 +48,7 @@
 
         <div style="display:flex; gap:8px; margin-top:6px;">
           <input type="text" placeholder="新任務名稱（例如：閱讀15分鐘）" data-new-name="${student.id}" style="flex:1;" />
-          <input type="number" min="0" placeholder="飼料" data-new-food="${student.id}" style="width:90px;" />
-          <input type="number" min="0" placeholder="J幣" data-new-coin="${student.id}" style="width:90px;" />
+          <input type="number" min="0" placeholder="XP" data-new-xp="${student.id}" style="width:80px;" />
           <button class="btn btn-sm" data-add-task="${student.id}">＋新增任務</button>
         </div>
 
@@ -73,8 +74,7 @@
       .map((row) => ({
         id: row.dataset.taskRow,
         name: row.querySelector("[data-task-name]").value.trim(),
-        foodReward: Number(row.querySelector("[data-task-food]").value) || 0,
-        coinReward: Number(row.querySelector("[data-task-coin]").value) || 0,
+        xpReward: Number(row.querySelector("[data-task-xp]").value) || 0,
       }))
       .filter((t) => t.name);
   }
@@ -93,8 +93,7 @@
     const addBtn = card.querySelector(`[data-add-task="${student.id}"]`);
     addBtn.addEventListener("click", () => {
       const nameEl = card.querySelector(`[data-new-name="${student.id}"]`);
-      const foodEl = card.querySelector(`[data-new-food="${student.id}"]`);
-      const coinEl = card.querySelector(`[data-new-coin="${student.id}"]`);
+      const xpEl = card.querySelector(`[data-new-xp="${student.id}"]`);
       const name = nameEl.value.trim();
       if (!name) {
         alert("請輸入任務名稱");
@@ -103,8 +102,7 @@
       const newTask = {
         id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
         name,
-        foodReward: Number(foodEl.value) || 0,
-        coinReward: Number(coinEl.value) || 0,
+        xpReward: Number(xpEl.value) || 0,
       };
       drafts[student.id] = [...readDraftFromDom(student.id), newTask];
       renderCard(student);

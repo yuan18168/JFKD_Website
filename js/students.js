@@ -1,7 +1,9 @@
 /* students.js — 學生名單管理頁（單純管理「新增／刪除學生」；
-   主題造型已搬到「學生主題造型」頁、願望清單已搬到「願望清單」頁獨立管理） */
+   主題造型已搬到「學生主題造型」頁、許願池已搬到「許願池」頁獨立管理） */
 (async function () {
   await requireGuard();
+  await requireParentPin();
+  await applySiteFontScale();
 
   let students = await listStudents();
   renderStudentNav(students, null);
@@ -19,10 +21,10 @@
       <div class="card" style="margin-bottom:12px;">
         <div class="flex-between">
           <div style="display:flex; align-items:center; gap:10px;">
-            <span style="width:26px;height:26px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#08122e;">${(s.name || "?").slice(0, 1)}</span>
-            <span style="font-weight:700; font-size:15px;">${escapeHtml(s.name)}</span>
+            <span style="width:26px;height:26px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:calc(12px * var(--font-scale, 1));font-weight:700;color:#08122e;">${(s.name || "?").slice(0, 1)}</span>
+            <span style="font-weight:700; font-size:calc(15px * var(--font-scale, 1));">${escapeHtml(s.name)}</span>
           </div>
-          <span data-del="${s.id}" style="cursor:pointer; color:var(--bad); font-size:13px;">刪除</span>
+          <span data-del="${s.id}" style="cursor:pointer; color:var(--bad); font-size:calc(13px * var(--font-scale, 1));">刪除</span>
         </div>
       </div>`
       )

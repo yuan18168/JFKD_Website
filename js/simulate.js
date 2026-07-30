@@ -2,6 +2,8 @@
    純前端試算，不會寫入 Firestore，也不會影響任何歷史紀錄。*/
 (async function () {
   await requireGuard();
+  await requireParentPin();
+  await applySiteFontScale();
 
   const [students, profiles, settings] = await Promise.all([
     listStudents(),
@@ -188,7 +190,7 @@
     previewEl.innerHTML = `
       <div class="flex-between">
         <span>全科加碼：${fmtMoney(result.comboBonus)}</span>
-        <span style="font-weight:800; font-size:16px;">預估總計：${fmtMoney(result.total)}</span>
+        <span style="font-weight:800; font-size:calc(16px * var(--font-scale, 1));">預估總計：${fmtMoney(result.total)}</span>
       </div>
       ${result.hasPunishment ? `<div class="delta down" style="margin-top:8px;">⚠️ ${result.punishmentSubjects.join("、")} 低於 80 分，若真的考出這個結果，將會觸發處罰機制</div>` : ""}
     `;

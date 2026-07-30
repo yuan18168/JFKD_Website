@@ -1,6 +1,8 @@
 /* effects.js — 特效設定頁：4 條觸發規則各自搭配素材庫、播放秒數、觸發方式 */
 (async function () {
   await requireGuard();
+  await requireParentPin();
+  await applySiteFontScale();
 
   const [students, settings] = await Promise.all([listStudents(), getEffectSettings()]);
   renderStudentNav(students, null);
@@ -22,13 +24,13 @@
     return `
       <div class="card" style="margin-bottom:14px;" data-rule="${key}">
         <div class="flex-between" style="margin-bottom:6px;">
-          <div style="font-weight:700; font-size:15px;">${EFFECT_RULE_LABELS[key]}</div>
-          <label style="display:flex; align-items:center; gap:6px; margin:0; font-size:12px; color:var(--text-dim); cursor:pointer;">
+          <div style="font-weight:700; font-size:calc(15px * var(--font-scale, 1));">${EFFECT_RULE_LABELS[key]}</div>
+          <label style="display:flex; align-items:center; gap:6px; margin:0; font-size:calc(12px * var(--font-scale, 1)); color:var(--text-dim); cursor:pointer;">
             <input type="checkbox" data-field="enabled" data-rule="${key}" style="width:auto;" ${rule.enabled ? "checked" : ""} />
             啟用這條規則
           </label>
         </div>
-        <div class="text-faint" style="font-size:12px; margin-bottom:12px;">${RULE_DESC[key]}</div>
+        <div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); margin-bottom:12px;">${RULE_DESC[key]}</div>
         <div class="grid grid-cols-3">
           <div>
             <label>播放素材</label>

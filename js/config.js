@@ -1,6 +1,8 @@
 /* config.js — 獎懲規則設定頁（多設定檔版本） */
 (async function () {
   await requireGuard();
+  await requireParentPin();
+  await applySiteFontScale();
 
   const students = await listStudents();
   renderStudentNav(students, null);
@@ -22,7 +24,7 @@
   function renderProfileChips() {
     const el = document.getElementById("profileChips");
     if (!profiles.length) {
-      el.innerHTML = '<span class="text-faint" style="font-size:13px;">尚未建立任何設定檔</span>';
+      el.innerHTML = '<span class="text-faint" style="font-size:calc(13px * var(--font-scale, 1));">尚未建立任何設定檔</span>';
       return;
     }
     el.innerHTML = profiles

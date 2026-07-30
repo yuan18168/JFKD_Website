@@ -1,6 +1,7 @@
 /* chart-settings.js — 圖表顯示設定：全域預設 + 每位學生可個別覆寫 */
 (async function () {
   await requireGuard();
+  await requireParentPin();
   await applySiteFontScale();
 
   const [students, globalSettings] = await Promise.all([listStudents(), getChartSettings()]);
@@ -191,5 +192,45 @@
         saveBtn.disabled = false;
       }
     });
+  });
+})();
+
+/* ---------- 家長模式 PIN 碼設定（2026-07-31 新增）----------
+   存在 config/settings.parentPin，預設 1234。只接受 4 位數字。 */
+(async function setupParentPin() {
+  const input = document.getElementById("parentPinInput");
+  const btn = document.getElementById("saveParentPinBtn");
+  const msg = document.getElementById("parentPinMsg");
+  if (!input || !btn) return;
+
+  try {
+    input.value = await getParentPin();
+  } catch (e) {
+    input.value = "1234";
+  }
+
+  btn.addEventListener("click", async () => {
+    const val = (input.value || "").trim();
+    if (!/^\d{4}$/.test(val)) {
+      msg.style.color = "var(--bad)";
+      msg.textContent = "請輸入 4 位數字";
+      return;
+    }
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = "儲存中...";
+    try {
+      await saveParentPin(val);
+      msg.style.color = "var(--good)";
+      msg.textContent = "已儲存 ✓";
+      flashButtonSuccess(btn);
+      setTimeout(() => { msg.textContent = ""; msg.style.color = ""; }, 2500);
+    } catch (err) {
+      msg.style.color = "var(--bad)";
+      msg.textContent = "儲存失敗：" + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
   });
 })();

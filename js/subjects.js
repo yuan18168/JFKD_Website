@@ -1,6 +1,8 @@
 /* subjects.js — 科目對照表管理頁：設定每個年級固定會考的科目與順序（上下學期共用） */
 (async function () {
   await requireGuard();
+  await requireParentPin();
+  await applySiteFontScale();
 
   const GRADE_GROUPS = [
     { title: "國小", grades: ["一", "二", "三", "四", "五", "六"] },
@@ -54,7 +56,7 @@
           (grade) => `
         <div class="grade-preset-row" data-grade="${grade}" style="margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--border);">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-            <div style="font-size:13px; font-weight:700;">${GRADE_LABELS[grade]}</div>
+            <div style="font-size:calc(13px * var(--font-scale, 1)); font-weight:700;">${GRADE_LABELS[grade]}</div>
             ${
               previousGradeOf(grade)
                 ? `<button type="button" class="btn btn-sm" data-copy-prev="${grade}">⬇ 帶入上一年級科目（${GRADE_LABELS[previousGradeOf(grade)]}）</button>`
@@ -85,13 +87,13 @@
     const el = container.querySelector(`[data-grade-chips="${grade}"]`);
     if (!presets[grade].length) {
       el.innerHTML =
-        '<span class="text-faint" style="font-size:12px;">尚未設定，新增考試紀錄時這個年級將維持目前的自由輸入科目方式</span>';
+        '<span class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">尚未設定，新增考試紀錄時這個年級將維持目前的自由輸入科目方式</span>';
       return;
     }
     el.innerHTML = presets[grade]
       .map(
         (name) => `<span class="chip subject-chip" draggable="true" data-name="${escapeHtml(name)}">
-          <span class="drag-handle" title="拖曳調整順序" style="cursor:grab; margin-right:4px; font-size:13px;">⠿</span>${escapeHtml(name)}
+          <span class="drag-handle" title="拖曳調整順序" style="cursor:grab; margin-right:4px; font-size:calc(13px * var(--font-scale, 1));">⠿</span>${escapeHtml(name)}
           <span data-remove-subject="${escapeHtml(name)}" style="cursor:pointer; color:var(--bad); margin-left:6px;">✕</span>
         </span>`
       )

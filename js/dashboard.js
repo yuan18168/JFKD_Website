@@ -1,6 +1,7 @@
 /* dashboard.js — 總覽頁 */
 (async function () {
   await requireGuard();
+  await requireParentPin();
   await applySiteFontScale();
 
   const [students, profiles, settings, globalChartSettings] = await Promise.all([

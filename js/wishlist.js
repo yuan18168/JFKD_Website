@@ -3,6 +3,7 @@
    跟學生紀錄頁的邏輯共用（wishlistItemTotal / wishlistStatusLabel / promptDateDialog / attachDragReorder 都在 nav.js）。 */
 (async function () {
   await requireGuard();
+  await requireParentPin();
   await applySiteFontScale();
 
   let students = await listStudents();

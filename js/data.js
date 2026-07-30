@@ -324,6 +324,31 @@ const STUDENT_THEMES = {
     tagline: "致敬 K-POP 女孩團體舞台氣勢，黑×紅×白×銀金屬酷酸配色",
     bodyClass: "theme-babymonster",
   },
+  // ---- 2026-07-31 新增：用 XP 解鎖的高階主題（門檻見 gamify.js THEME_XP）----
+  galaxy: {
+    id: "galaxy",
+    name: "銀河星空",
+    tagline: "深紫星雲與流星劃過的夜空，累積 3,000 XP 解鎖",
+    bodyClass: "theme-galaxy",
+  },
+  lava: {
+    id: "lava",
+    name: "熔岩烈焰",
+    tagline: "橘紅岩漿流動的火山地心，累積 7,500 XP 解鎖",
+    bodyClass: "theme-lava",
+  },
+  aurora: {
+    id: "aurora",
+    name: "極光森林",
+    tagline: "青綠極光籠罩的靜謐森林夜，累積 15,000 XP 解鎖",
+    bodyClass: "theme-aurora",
+  },
+  gold: {
+    id: "gold",
+    name: "黃金殿堂",
+    tagline: "最高階的金色流光與皇冠，累積 30,000 XP 解鎖",
+    bodyClass: "theme-gold",
+  },
 };
 function getStudentTheme(themeId) {
   return STUDENT_THEMES[themeId] || null;
@@ -357,6 +382,44 @@ function themeIconSvg(themeId) {
         <line x1="38" y1="12" x2="46" y2="50" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
         <circle cx="45" cy="15" r="8" fill="#111114" stroke="#d8dbe2" stroke-width="2"/>
         <path d="M45 10.5 L46.6 13.8 L50.2 14.3 L47.6 16.8 L48.3 20.3 L45 18.6 L41.7 20.3 L42.4 16.8 L39.8 14.3 L43.4 13.8 Z" fill="#ff1744"/>
+      </svg>`;
+  }
+  if (themeId === "galaxy") {
+    return `
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="22" fill="#2A1258" stroke="#A855F7" stroke-width="2"/>
+        <ellipse cx="30" cy="30" rx="24" ry="8" stroke="#C9A7FF" stroke-width="2" transform="rotate(-25 30 30)"/>
+        <circle cx="22" cy="24" r="2" fill="#fff"/><circle cx="38" cy="21" r="1.5" fill="#E4D9FF"/>
+        <circle cx="41" cy="38" r="2" fill="#fff"/><circle cx="19" cy="39" r="1.5" fill="#C9A7FF"/>
+        <path d="M44 12 L46 17 L51 19 L46 21 L44 26 L42 21 L37 19 L42 17 Z" fill="#FFE9A8"/>
+      </svg>`;
+  }
+  if (themeId === "lava") {
+    return `
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 50 L24 16 L36 34 L44 22 L52 50 Z" fill="#4A1200" stroke="#FF6B00" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M13 50 L24 27 L34 41 L44 30 L48 50 Z" fill="#FF6B00" opacity="0.85"/>
+        <path d="M18 50 L25 36 L33 46 L40 38 L44 50 Z" fill="#FFC93C"/>
+        <circle cx="24" cy="13" r="3" fill="#FF3D00"/><circle cx="43" cy="18" r="2" fill="#FF8A3D"/>
+      </svg>`;
+  }
+  if (themeId === "aurora") {
+    return `
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 22 Q18 6 30 20 Q42 34 54 16" stroke="#19C79A" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.85"/>
+        <path d="M6 30 Q18 14 30 28 Q42 42 54 24" stroke="#7DF9D6" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M16 54 L22 34 L28 54 Z" fill="#0B5C4A"/>
+        <path d="M31 54 L38 30 L45 54 Z" fill="#0E7A62"/>
+        <circle cx="48" cy="12" r="2" fill="#D6FFF4"/><circle cx="12" cy="15" r="1.5" fill="#D6FFF4"/>
+      </svg>`;
+  }
+  if (themeId === "gold") {
+    return `
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 42 L16 20 L24 32 L30 14 L36 32 L44 20 L50 42 Z" fill="#FFC93C" stroke="#8A6A00" stroke-width="2" stroke-linejoin="round"/>
+        <rect x="10" y="42" width="40" height="7" rx="2" fill="#FFE9A8" stroke="#8A6A00" stroke-width="2"/>
+        <circle cx="30" cy="14" r="3.5" fill="#FFF6D6" stroke="#8A6A00" stroke-width="1.5"/>
+        <circle cx="20" cy="45.5" r="1.8" fill="#8A6A00"/><circle cx="30" cy="45.5" r="1.8" fill="#8A6A00"/><circle cx="40" cy="45.5" r="1.8" fill="#8A6A00"/>
       </svg>`;
   }
   return "";
@@ -410,102 +473,202 @@ async function saveEffectSettings(settings) {
 }
 
 // ------------------------------------------------------------------
-// 寵物養成完整規則（2026-07-30 定案，詳見 pet-rules.html「寵物說明」頁對孩子/家長的完整說明）：
+// 【2026-07-31 改版】成長系統：XP 經驗值／連續打卡／護盾卡／成就徽章
 //
-// 【經驗值 EXP】＝ 寵物成長的唯一依據，由兩個來源相加：
-//   1) 累計獎金（examRecords 算出的 totalBonus，1元獎金＝1點經驗值，在 student.js 計算）
-//   2) 累積飼料（pet.growthFromTasks，只有完成每日任務發放的「飼料」才會累積，J幣不影響經驗值）
-//   EXP 決定寵物長到第幾階段，共 8 階，門檻與造型見 nav.js 的 PET_STAGES（元素怪獸進化系列）。
+// ＝＝ XP 經驗值（唯一的累積型點數）＝＝
+//   XP = 累計獎金（examRecords 算出的 totalBonus，1 元 = 1 點，在畫面端計算）
+//        ＋ xpFromTasks（完成每日任務、完美一天加成、連續打卡里程碑獎勵累積而來）
+//   XP 決定：等級（見 gamify.js LEVELS）、主題造型解鎖門檻、部分成就徽章。
+//   ※ XP 純粹是遊戲進度，跟真實獎金 NT$ 是兩回事：獎金只用於許願池，永遠不會被 XP 消耗。
 //
-// 【每日任務 / 打卡】：家長在「每日任務設定」頁為每位學生自訂任務清單（每項任務各自設定飼料／J幣獎勵）。
-//   孩子在「學生紀錄頁」自行勾選完成即發放獎勵，完全信任制、無需家長審核。
-//   打卡＝當天「第一次」完成任意 1 項每日任務，之後同一天再完成其他任務不會重複加打卡天數。
-//   打卡不能補打：忘記打卡的那天就是斷了，連續天數會歸零重新累計（無寬限、無補籤）。
+// ＝＝ 連續打卡 ＝＝
+//   打卡＝當天「第一次」完成任意 1 項每日任務。同一天再完成其他任務不會重複加天數。
+//   斷線保護（雙保險）：
+//     1) 護盾卡 shields：每連續打卡滿 SHIELD_EVERY 天自動 +1（上限 SHIELD_MAX 張）。
+//        隔天發現昨天沒打卡時，自動消耗 1 張護盾把連續天數接回去。
+//     2) totalDays 累計總打卡天數：只增不減，就算連續斷了也看得到自己總共累積了幾天。
+//   best 保存歷史最高連續天數。
 //
-// 【飼料 vs J幣】兩者都是全新虛擬貨幣，跟真實獎金 NT$ 完全分開、不能互相兌換：
-//   飼料（food）：唯一會累積進 pet.growthFromTasks、進而推動寵物長大／解鎖下一階段造型的貨幣。
-//   J幣（coins，前身「J幣」）：目前只累積顯示，用於未來「寵物小屋裝飾商店」消費，不影響經驗值/成長。
-//
-// 每位學生 students/{id} 新增以下欄位（全部選填，沒有資料時用預設值）：
-//   pet                  { growthFromTasks }：完成每日任務累積的飼料總量＝額外經驗值。
-//   streak                { count, lastCheckInDate }：連續打卡天數與最後一次打卡日期（YYYY-MM-DD）。
-//   currency              { food, coins }：飼料／J幣，全新虛擬貨幣。
-//   dailyTasks            [{id, name, foodReward, coinReward}]：家長在「每日任務設定」頁設定的任務清單。
-//   dailyTaskCompletions  { "2026-07-30": ["taskId1","taskId2"], ... }：每天完成的任務id（孩子自行勾選即完成，完全信任制）。
-function defaultPetState() {
-  return { growthFromTasks: 0 };
-}
+// ＝＝ students/{id} 新增欄位（全部選填，沒有資料時用預設值）＝＝
+//   xpFromTasks           number：每日任務／完美一天／里程碑累積的 XP
+//   streak                { count, lastCheckInDate, best, totalDays, shields }
+//   dailyTasks            [{ id, name, xpReward }]（舊資料的 foodReward+coinReward 會自動換算成 xpReward）
+//   dailyTaskCompletions  { "2026-07-31": ["taskId1", ...] }
+//   badges                { "badgeId": "2026-07-31", ... } 徽章解鎖日期
+//   ※ 舊版的 pet / currency 欄位一律保留不刪除（改版前的備份還原時才不會遺失），只是不再讀取。
+
+const SHIELD_EVERY = 7;   // 每連續打卡滿幾天送 1 張護盾卡
+const SHIELD_MAX = 2;     // 護盾卡同時最多持有幾張
+const PERFECT_DAY_XP = 20; // 當天所有任務都完成的額外加成
+const STREAK_MILESTONES = { 7: 30, 14: 50, 30: 100, 50: 150, 100: 300, 180: 500, 365: 1000 };
+
 function defaultStreakState() {
-  return { count: 0, lastCheckInDate: null };
+  return { count: 0, lastCheckInDate: null, best: 0, totalDays: 0, shields: 0 };
 }
-function defaultCurrency() {
-  return { food: 0, coins: 0 };
+function normalizeStreak(raw) {
+  const s = { ...defaultStreakState(), ...(raw || {}) };
+  // 相容舊資料：舊版只有 count / lastCheckInDate
+  s.count = Number(s.count) || 0;
+  s.best = Math.max(Number(s.best) || 0, s.count);
+  s.totalDays = Math.max(Number(s.totalDays) || 0, s.count);
+  s.shields = Math.min(SHIELD_MAX, Number(s.shields) || 0);
+  return s;
 }
 function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+  return localDateStr(new Date());
 }
 function yesterdayStr() {
-  return new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  return localDateStr(new Date(Date.now() - 86400000));
+}
+/** 用「本地時區」算日期字串，避免 toISOString() 在台灣時區把凌晨算成前一天 */
+function localDateStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+}
+function daysBetween(aStr, bStr) {
+  if (!aStr || !bStr) return null;
+  const a = new Date(aStr + "T00:00:00");
+  const b = new Date(bStr + "T00:00:00");
+  return Math.round((b - a) / 86400000);
 }
 
-/** 打卡：只要今天完成至少一項任務就會呼叫，更新連續天數；同一天內重複呼叫不會重複累加 */
-function bumpStreakForToday(streakState) {
-  const s = { ...defaultStreakState(), ...(streakState || {}) };
-  const today = todayStr();
-  if (s.lastCheckInDate === today) return s;
-  s.count = s.lastCheckInDate === yesterdayStr() ? (s.count || 0) + 1 : 1;
-  s.lastCheckInDate = today;
-  return s;
+/** 每日任務清單（相容舊的 foodReward / coinReward，一律換算成單一 xpReward） */
+function normalizeDailyTasks(list) {
+  return (Array.isArray(list) ? list : []).map((t) => ({
+    id: t.id,
+    name: t.name || "",
+    xpReward:
+      typeof t.xpReward === "number"
+        ? t.xpReward
+        : (Number(t.foodReward) || 0) + (Number(t.coinReward) || 0),
+  }));
 }
 
 async function saveDailyTasks(studentId, tasks) {
   await updateStudent(studentId, { dailyTasks: tasks });
 }
 
-/** 孩子勾選「今日任務」完成：發放飼料／J幣、累積寵物經驗值、更新連續打卡天數。
- *  同一天內同一項任務只會發放一次。回傳合併後的學生物件（呼叫端可直接取代原本的 student 變數）。 */
-async function completeDailyTask(student, task) {
+/**
+ * 打卡：當天第一次完成任意任務時呼叫，回傳新的 streak 物件與本次額外獲得的里程碑 XP。
+ * 會先處理「昨天沒打卡 → 自動消耗護盾卡」的補救，再累加今天。
+ */
+function checkInToday(rawStreak) {
+  const s = normalizeStreak(rawStreak);
+  const today = todayStr();
+  if (s.lastCheckInDate === today) return { streak: s, bonusXp: 0, usedShield: false, milestone: null };
+
+  const gap = daysBetween(s.lastCheckInDate, today);
+  let usedShield = false;
+
+  if (gap === 1 || s.lastCheckInDate === null) {
+    // 昨天有打卡（或第一次打卡）→ 正常累加
+    s.count = (s.count || 0) + 1;
+  } else if (gap !== null && gap > 1) {
+    // 中間有斷：每漏一天消耗一張護盾卡，護盾夠就把連續紀錄接回來，不夠就重新開始
+    const missed = gap - 1;
+    if (s.shields >= missed) {
+      s.shields -= missed;
+      s.count = (s.count || 0) + 1;
+      usedShield = true;
+    } else {
+      s.count = 1;
+      s.shields = 0;
+    }
+  } else {
+    s.count = (s.count || 0) + 1;
+  }
+
+  s.lastCheckInDate = today;
+  s.totalDays = (s.totalDays || 0) + 1;
+  s.best = Math.max(s.best || 0, s.count);
+
+  // 每滿 SHIELD_EVERY 天送一張護盾卡（上限 SHIELD_MAX）
+  if (s.count > 0 && s.count % SHIELD_EVERY === 0) {
+    s.shields = Math.min(SHIELD_MAX, (s.shields || 0) + 1);
+  }
+
+  const milestone = STREAK_MILESTONES[s.count] ? s.count : null;
+  const bonusXp = milestone ? STREAK_MILESTONES[milestone] : 0;
+  return { streak: s, bonusXp, usedShield, milestone };
+}
+
+/**
+ * 孩子勾選「今日任務」完成：發 XP、必要時打卡、處理完美一天加成。
+ * 同一天內同一項任務只會發一次。回傳 { student, gainedXp, checkIn }。
+ */
+async function completeDailyTask(student, task, allTasks) {
   const today = todayStr();
   const completions = { ...(student.dailyTaskCompletions || {}) };
   const doneToday = new Set(completions[today] || []);
-  if (doneToday.has(task.id)) return student;
+  if (doneToday.has(task.id)) return { student, gainedXp: 0, checkIn: null };
+
+  const wasEmpty = doneToday.size === 0;
   doneToday.add(task.id);
   completions[today] = [...doneToday];
 
-  const currency = { ...defaultCurrency(), ...(student.currency || {}) };
-  currency.food = (currency.food || 0) + (Number(task.foodReward) || 0);
-  currency.coins = (currency.coins || 0) + (Number(task.coinReward) || 0);
+  let gained = Number(task.xpReward) || 0;
 
-  const pet = { ...defaultPetState(), ...(student.pet || {}) };
-  pet.growthFromTasks = (pet.growthFromTasks || 0) + (Number(task.foodReward) || 0);
+  // 當天所有任務都完成 → 完美一天加成
+  const total = normalizeDailyTasks(allTasks || student.dailyTasks).length;
+  if (total > 0 && doneToday.size === total) gained += PERFECT_DAY_XP;
 
-  const streak = bumpStreakForToday(student.streak);
+  // 當天第一次完成任務 → 打卡
+  let streak = normalizeStreak(student.streak);
+  let checkIn = null;
+  if (wasEmpty) {
+    checkIn = checkInToday(streak);
+    streak = checkIn.streak;
+    gained += checkIn.bonusXp;
+  }
 
-  const fields = { dailyTaskCompletions: completions, currency, pet, streak };
+  const xpFromTasks = (Number(student.xpFromTasks) || 0) + gained;
+  const fields = { dailyTaskCompletions: completions, xpFromTasks, streak };
   await updateStudent(student.id, fields);
-  return { ...student, ...fields };
+  return { student: { ...student, ...fields }, gainedXp: gained, checkIn };
 }
 
-/** 取消勾選（勾錯的補救）：收回今天發放的飼料/J幣與經驗值；「連續打卡天數」維持不變，
- *  避免同一天內勾了又取消造成天數判斷的邊界情況。 */
-async function uncompleteDailyTask(student, task) {
+/**
+ * 取消勾選（勾錯的補救）：收回該任務的 XP 與完美一天加成。
+ * 連續打卡天數與里程碑獎勵「不會」被收回 —— 避免同一天勾了又取消造成天數判斷的邊界問題，
+ * 也避免孩子因為手誤就失去辛苦累積的連續紀錄。
+ */
+async function uncompleteDailyTask(student, task, allTasks) {
   const today = todayStr();
   const completions = { ...(student.dailyTaskCompletions || {}) };
   const doneToday = new Set(completions[today] || []);
-  if (!doneToday.has(task.id)) return student;
+  if (!doneToday.has(task.id)) return { student, lostXp: 0 };
+
+  const total = normalizeDailyTasks(allTasks || student.dailyTasks).length;
+  const wasPerfect = total > 0 && doneToday.size === total;
+
   doneToday.delete(task.id);
   completions[today] = [...doneToday];
 
-  const currency = { ...defaultCurrency(), ...(student.currency || {}) };
-  currency.food = Math.max(0, (currency.food || 0) - (Number(task.foodReward) || 0));
-  currency.coins = Math.max(0, (currency.coins || 0) - (Number(task.coinReward) || 0));
+  let lost = Number(task.xpReward) || 0;
+  if (wasPerfect) lost += PERFECT_DAY_XP;
 
-  const pet = { ...defaultPetState(), ...(student.pet || {}) };
-  pet.growthFromTasks = Math.max(0, (pet.growthFromTasks || 0) - (Number(task.foodReward) || 0));
-
-  const fields = { dailyTaskCompletions: completions, currency, pet };
+  const xpFromTasks = Math.max(0, (Number(student.xpFromTasks) || 0) - lost);
+  const fields = { dailyTaskCompletions: completions, xpFromTasks };
   await updateStudent(student.id, fields);
-  return { ...student, ...fields };
+  return { student: { ...student, ...fields }, lostXp: lost };
+}
+
+/** 徽章解鎖狀態：{ badgeId: "YYYY-MM-DD" }，只會新增不會移除已解鎖的徽章 */
+async function saveUnlockedBadges(studentId, badgeMap) {
+  await updateStudent(studentId, { badges: badgeMap });
+}
+
+// ------------------------------------------------------------------
+// 家長模式 PIN 碼（存在 config/settings.parentPin，預設 1234）
+const DEFAULT_PARENT_PIN = "1234";
+async function getParentPin() {
+  const s = await getSettings();
+  return String(s.parentPin || DEFAULT_PARENT_PIN);
+}
+async function saveParentPin(pin) {
+  await db.collection("config").doc("settings").set({ parentPin: String(pin) }, { merge: true });
 }
 
 /** 組出主題橫幅 HTML（student.html 套用主題時放在內容區最上方）

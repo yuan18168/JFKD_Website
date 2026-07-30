@@ -2,6 +2,7 @@
    （原本在「學生名單」頁的「專屬主題造型」下拉選單，已經搬到這裡統一管理） */
 (async function () {
   await requireGuard();
+  await requireParentPin();
   await applySiteFontScale();
 
   let students = await listStudents();
@@ -102,9 +103,17 @@
           <select id="themeSelect">
             <option value="">無主題（標準樣式）</option>
             ${Object.values(STUDENT_THEMES)
-              .map((t) => `<option value="${t.id}" ${student.themeId === t.id ? "selected" : ""}>${escapeHtml(t.name)}</option>`)
+              .map((t) => {
+                const need = THEME_XP[t.id] || 0;
+                const tag = need > 0 ? `（需 ${need.toLocaleString()} XP）` : "";
+                return `<option value="${t.id}" ${student.themeId === t.id ? "selected" : ""}>${escapeHtml(t.name)}${tag}</option>`;
+              })
               .join("")}
           </select>
+          <div class="text-faint" style="font-size:calc(11.5px * var(--font-scale, 1)); margin-top:6px; line-height:1.7;">
+            括號內是孩子在「孩子模式 → 造型」自行解鎖所需的 XP 門檻。<br>
+            家長在這裡可以<b>直接指定</b>任何主題，不受門檻限制。
+          </div>
         </div>
 
         <div style="margin-bottom:10px;">
