@@ -1996,3 +1996,32 @@ body.kid-app[class*="theme-"] .kid-chart-tab.active { background: var(--k-accent
 body.kid-app[class*="theme-"] .dex-tab.active { background: var(--k-accent); color: #0B0812; border-color: var(--k-accent); }
 body.kid-app[class*="theme-"] .kid-switch-btn.active { background: var(--k-accent); color: #0B0812; border-color: var(--k-accent); }
 body.kid-app[class*="theme-"] .theme-swatch-default { color: #2A2340; }
+
+
+/* ==========================================================================
+   2026-07-31 黑箱測試修正
+   ========================================================================== */
+
+/* BUG-05 觸控目標放大到 44px（Apple/Google 建議的最小可點擊尺寸）
+   原本學生切換鈕 38px、家長入口 28px、看全部 33px，小朋友手指容易點不準。 */
+.kid-switch-btn { min-height: 44px; padding: 10px 16px; }
+.kid-pill { min-height: 36px; display: inline-flex; align-items: center; }
+.kid-topbar .kid-pill { min-height: 44px; padding: 10px 14px; }
+.kid-card [data-goto] { min-height: 44px; padding: 10px 14px; }
+.kid-tab { min-height: 48px; justify-content: center; }
+.dex-tab, .kid-chart-tab { min-height: 40px; }
+.kid-task { min-height: 52px; }
+
+/* BUG-08 主題橫幅在窄螢幕的文字排版：圖示縮小、標題允許換行不溢出 */
+.kid-banner-icon svg { width: 46px; height: 46px; }
+.kid-banner-title { word-break: break-word; }
+@media (max-width: 380px) {
+  .kid-banner { padding: 15px 14px; gap: 10px; }
+  .kid-banner-icon svg { width: 38px; height: 38px; }
+}
+
+/* BUG-09 火焰數字在特大字級下可能撐破卡片 */
+.streak-num { max-width: 100%; overflow-wrap: anywhere; }
+
+/* BUG-10 圖鑑徽章名稱過長時的截斷保護（避免撐開格子） */
+.dex-badge-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
