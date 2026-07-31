@@ -213,9 +213,14 @@ function otherContributorsBadgeHtml(item) {
 // containerEl：卡片們共同的父層容器（例如 .wishlist-grid）
 // cardSelector：每張可拖曳卡片的 CSS class（例如 ".wishlist-card"），卡片本身需加上 draggable="true" 與 data-drag-id="項目id"
 // onReorder(newIdOrder)：使用者放開滑鼠、順序確定改變後才會呼叫，帶入新的 id 順序陣列，由呼叫端自行寫回 Firestore
-function attachDragReorder(containerEl, cardSelector, onReorder) {
+/**
+ * orientation：'horizontal'（預設，依左右半邊判斷插入位置，例如許願池的並排卡片格）
+ *              'vertical'（依上下半邊判斷，例如每日任務這種一行一項的直向清單）
+ */
+function attachDragReorder(containerEl, cardSelector, onReorder, orientation) {
   if (!containerEl) return;
   let draggedEl = null;
+  const vertical = orientation === "vertical";
 
   containerEl.querySelectorAll(cardSelector).forEach((card) => {
     card.addEventListener("dragstart", (e) => {
@@ -246,9 +251,9 @@ function attachDragReorder(containerEl, cardSelector, onReorder) {
       e.preventDefault();
       card.classList.remove("drag-over");
       if (!draggedEl || draggedEl === card) return;
-      // 依放開滑鼠時位在目標卡片的左半邊或右半邊，決定插入到目標「之前」還是「之後」
       const rect = card.getBoundingClientRect();
-      const insertAfter = e.clientX - rect.left > rect.width / 2;
+      // 直向清單依上下半邊判斷；橫向（並排卡片格）依左右半邊判斷，決定插入到目標「之前」還是「之後」
+      const insertAfter = vertical ? e.clientY - rect.top > rect.height / 2 : e.clientX - rect.left > rect.width / 2;
       if (insertAfter) {
         card.after(draggedEl);
       } else {

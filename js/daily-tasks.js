@@ -27,7 +27,8 @@
       .map((d) => `<label class="task-day-chip"><input type="checkbox" data-task-day="${d}" ${days.includes(d) ? "checked" : ""}><span>${WEEKDAY_LABELS[d]}</span></label>`)
       .join("");
     return `
-      <div class="card" data-task-row="${task.id}" data-owner="${studentId}" style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:8px; padding:10px 12px;">
+      <div class="card" draggable="true" data-drag-id="${task.id}" data-task-row="${task.id}" data-owner="${studentId}" style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:8px; padding:10px 12px;">
+        <span class="task-drag-handle" title="按住拖曳可調整順序" style="cursor:grab; color:var(--text-faint); font-size:calc(16px * var(--font-scale, 1)); user-select:none;">⠿</span>
         <input type="text" value="${escapeHtml(task.name || "")}" data-task-name placeholder="任務名稱" style="flex:1; min-width:130px;" />
         <input type="number" min="0" value="${task.xpReward || 0}" data-task-xp placeholder="XP" style="width:80px;" />
         <span class="text-faint" style="font-size:calc(11px * var(--font-scale, 1));">XP</span>
@@ -120,6 +121,19 @@
       drafts[student.id] = [...readDraftFromDom(student.id), newTask];
       renderCard(student);
     });
+
+    // 【拖曳排序】任務清單本身沒有獨立的順序欄位，陣列順序就是顯示順序；
+    // 拖放結束後直接依照 DOM 目前的順序重新排列 drafts，交給下面的「儲存」按鈕寫回 Firestore。
+    // 孩子模式（app.js）依 dailyTasks 陣列順序原樣顯示，故排序會自動連動，孩子模式端不可拖曳。
+    attachDragReorder(
+      card.querySelector(`[data-task-list="${student.id}"]`),
+      "[data-task-row]",
+      (newIdOrder) => {
+        const current = readDraftFromDom(student.id);
+        drafts[student.id] = newIdOrder.map((id) => current.find((t) => t.id === id)).filter(Boolean);
+      },
+      "vertical"
+    );
 
     const saveBtn = card.querySelector(`[data-save-tasks="${student.id}"]`);
     saveBtn.addEventListener("click", async () => {

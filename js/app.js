@@ -607,8 +607,10 @@
 
     if (isNew) {
       localStorage.setItem(seenKey, latest.id);
-      setTimeout(() => autoPlayEffects(ctx, latest), 450);
     }
+    // 【每次切到「我的成績」都依序輪流播放特效】原本只有第一次看到「新紀錄」時才會自動播，
+    // 改成不管是不是新紀錄，只要切到這個分頁就重播一次（跟點擊卡片手動重播是分開的兩件事）。
+    setTimeout(() => autoPlayEffects(ctx, latest), 450);
     document.querySelectorAll(".fx-card").forEach((card) => {
       card.addEventListener("click", () => {
         const rule = card.dataset.rule;
@@ -675,13 +677,19 @@
         <div class="new-record-sub">${escapeHtml(latest.date || "")} · 平均 ${latest.result.avgScore} 分</div>
         ${fx.length ? `<div class="fx-list">${fx.map(({ s, rule }) => {
           const diff = typeof s.prevScore === "number" ? s.score - s.prevScore : null;
+          // 【右側比較文字】原本右邊又大又粗地重複顯示一次分數（跟左邊 fx-name 的「科目 分數」重複），
+          // 改成「上次 → 這次」的比較格式，左邊科目名稱已經有了就不再重複；
+          // 沒有上次分數可比（該生第一筆紀錄）時顯示「首次 X分」。
+          // 進步＝綠、退步＝紅、持平／首次＝灰，三色區分一眼看出方向。
+          const cmpClass = diff === null || diff === 0 ? "same" : diff > 0 ? "up" : "down";
+          const cmpText = diff === null ? `首次 ${s.score}分` : `${s.prevScore} → ${s.score}`;
           return `<div class="fx-card" data-rule="${rule}">
             <div class="fx-emoji">${RULE_EMOJI[rule]}</div>
             <div class="fx-text">
               <div class="fx-name">${escapeHtml(s.name)} ${s.score} 分</div>
               <div class="fx-desc">${RULE_LABEL[rule]}${diff !== null && diff > 0 ? ` · 進步 ${diff} 分` : ""} · 點一下重播特效</div>
             </div>
-            <div class="fx-score ${diff !== null ? (diff > 0 ? "up" : diff < 0 ? "down" : "") : ""}">${s.score}</div>
+            <div class="fx-score ${cmpClass}">${cmpText}</div>
           </div>`;
         }).join("")}</div>` : ""}
         <div class="new-record-bonus">
@@ -948,7 +956,7 @@
         } else if (notAchieved) {
           state = '<div class="kid-wish-state" style="color:var(--kid-faint)">下次再挑戰 💪</div>';
         }
-        return `<div class="kid-wish ${achieved ? "achieved" : ""}">
+        return `<div class="kid-wish ${achieved ? "achieved" : notAchieved ? "not-achieved" : ""}">
           <div class="kid-wish-top">
             <div style="min-width:0">
               <div class="kid-wish-name">${escapeHtml(it.name)}</div>
