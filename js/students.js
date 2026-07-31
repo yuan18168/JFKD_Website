@@ -7,9 +7,99 @@
 
   const GRADE_OPTIONS = ["", "小一", "小二", "小三", "小四", "小五", "小六", "國一", "國二", "國三", "高一", "高二", "高三"];
 
+  // 【2026-08-01】圖鑑（徽章）重置：測試時常常會不小心解鎖到不是孩子真正達成的徽章，
+  // 這裡讓家長可以逐一勾選、移除；移除後如果條件又符合，孩子模式會自動重新判定解鎖。
+  // ★ 這行必須在下面第一次呼叫 renderList() 之前宣告（renderList 會用到它），
+  //   不然會因為 const 的 TDZ 直接讓整頁噴錯、學生名單頁全白。
+  const openBadgePanels = new Set(); // 記住哪些學生的面板是展開的，重畫列表時不要自動收合
+
   let students = await listStudents();
   renderStudentNav(students, null);
   renderList();
+
+  function unlockedBadgesOf(s) {
+    const map = (s && s.badges) || {};
+    return BADGES
+      .filter((b) => map[b.id])
+      .map((b) => ({ ...b, unlockedDate: map[b.id] }))
+      .sort((a, b) => (b.unlockedDate || "").localeCompare(a.unlockedDate || ""));
+  }
+
+  function badgePanelHtml(s) {
+    const list = unlockedBadgesOf(s);
+    const open = openBadgePanels.has(s.id);
+    return `
+      <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:700; font-size:calc(13px * var(--font-scale,1));">
+            🏅 圖鑑管理 <span class="text-faint" style="font-weight:400;">（已解鎖 ${list.length} 個）</span>
+          </span>
+          <button class="btn btn-sm" data-toggle-badges="${s.id}">${open ? "收合" : "展開"}</button>
+        </div>
+        <div data-badges-panel="${s.id}" style="display:${open ? "block" : "none"}; margin-top:10px;">
+          ${list.length ? `
+            <div class="text-faint" style="font-size:calc(11px * var(--font-scale,1)); margin-bottom:8px;">
+              勾選要移除的徽章（例如測試時不小心解鎖的），移除後如果條件又符合，孩子模式會自動重新解鎖。
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto;">
+              ${list.map((b) => `
+                <label style="display:flex; align-items:center; gap:8px; font-size:calc(12px * var(--font-scale,1));">
+                  <input type="checkbox" data-badge-check="${s.id}" value="${b.id}" />
+                  <span>${b.hidden ? "❓" : b.i}</span>
+                  <span style="flex:1;">${escapeHtml(b.hidden ? b.n + "（隱藏版）" : b.n)}</span>
+                  <span class="text-faint" style="font-size:calc(10.5px * var(--font-scale,1));">${b.unlockedDate}</span>
+                </label>`).join("")}
+            </div>
+            <button class="btn btn-sm" style="margin-top:10px; color:var(--bad); border-color:var(--bad);" data-remove-badges="${s.id}">移除勾選的徽章</button>
+            <span class="text-faint" data-badges-msg="${s.id}" style="margin-left:10px; font-size:calc(12px * var(--font-scale, 1));"></span>
+          ` : '<div class="text-faint" style="font-size:calc(12px * var(--font-scale,1));">目前還沒有解鎖任何徽章</div>'}
+        </div>
+      </div>`;
+  }
+
+  function bindBadgePanel(s) {
+    const root = document.getElementById("studentList");
+
+    const toggleBtn = root.querySelector(`[data-toggle-badges="${s.id}"]`);
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        if (openBadgePanels.has(s.id)) openBadgePanels.delete(s.id);
+        else openBadgePanels.add(s.id);
+        renderList();
+      });
+    }
+
+    const removeBtn = root.querySelector(`[data-remove-badges="${s.id}"]`);
+    if (removeBtn) {
+      removeBtn.addEventListener("click", async () => {
+        const checked = [...root.querySelectorAll(`[data-badge-check="${s.id}"]:checked`)].map((c) => c.value);
+        const msg = root.querySelector(`[data-badges-msg="${s.id}"]`);
+        if (!checked.length) {
+          msg.style.color = "var(--bad)";
+          msg.textContent = "請先勾選要移除的徽章";
+          return;
+        }
+        const ok = await confirmDialog(
+          `確定要移除這 ${checked.length} 個徽章嗎？如果之後條件又符合，會自動重新解鎖。`,
+          { title: "移除徽章", confirmText: "移除" }
+        );
+        if (!ok) return;
+        removeBtn.disabled = true;
+        removeBtn.textContent = "移除中...";
+        try {
+          await removeBadges(s.id, checked);
+          checked.forEach((id) => { if (s.badges) delete s.badges[id]; });
+          openBadgePanels.add(s.id);
+          renderList();
+        } catch (err) {
+          msg.style.color = "var(--bad)";
+          msg.textContent = "移除失敗：" + err.message;
+          removeBtn.disabled = false;
+          removeBtn.textContent = "移除勾選的徽章";
+        }
+      });
+    }
+  }
 
   function profileFormHtml(s) {
     return `
@@ -63,6 +153,7 @@
           <span data-del="${s.id}" style="cursor:pointer; color:var(--bad); font-size:calc(13px * var(--font-scale, 1));">刪除</span>
         </div>
         ${profileFormHtml(s)}
+        ${badgePanelHtml(s)}
       </div>`
       )
       .join("");
@@ -123,6 +214,8 @@
         }
       });
     });
+
+    students.forEach((s) => bindBadgePanel(s));
   }
 
   document.getElementById("addStudentBtn").addEventListener("click", async () => {

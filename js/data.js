@@ -495,6 +495,8 @@ async function saveEffectSettings(settings) {
 //   dailyTasks            [{ id, name, xpReward }]（舊資料的 foodReward+coinReward 會自動換算成 xpReward）
 //   dailyTaskCompletions  { "2026-07-31": ["taskId1", ...] }
 //   badges                { "badgeId": "2026-07-31", ... } 徽章解鎖日期
+//   moodLog               { "2026-07-31": "great", ... } 每日心情打卡
+//   moodStreakBest         number：連續選心情的最佳紀錄（只增不減），供「心情系列」徽章判定用
 //   ※ 舊版的 pet / currency 欄位一律保留不刪除（改版前的備份還原時才不會遺失），只是不再讀取。
 
 const SHIELD_EVERY = 7;   // 每連續打卡滿幾天送 1 張護盾卡
@@ -732,7 +734,10 @@ async function saveUnlockedBadges(studentId, badgeMap) {
 // ------------------------------------------------------------------
 // 【2026-07-31 U1】每日心情打卡：每天第一次進孩子模式首頁時，強制先選一個心情
 // 才會看到首頁內容。存在 students/{id}.moodLog = { "2026-07-31": "great", ... }，
-// 純粹是給孩子的小儀式感與家長參考用，完全不影響任何獎金／XP／徽章判定。
+// 不影響任何獎金判定。
+// 【2026-08-01 改版】原本選完心情之後完全沒有後續效果（純寫入、家長也看不到），
+// 這次補上兩個看得到的回饋：①最近 28 天打卡月曆合併顯示每天的心情表情
+// ②連續選心情的天數（moodStreakBest，只增不減的滾動型最佳紀錄）拿去判定「心情系列」徽章。
 const MOOD_OPTIONS = [
   { id: "great", emoji: "😄", label: "超開心" },
   { id: "good", emoji: "🙂", label: "還不錯" },
@@ -743,9 +748,42 @@ const MOOD_OPTIONS = [
 function hasMoodToday(student) {
   return !!((student && student.moodLog) || {})[todayStr()];
 }
-async function saveMoodToday(studentId, moodId) {
-  const field = "moodLog." + todayStr();
-  await db.collection("students").doc(studentId).update({ [field]: moodId });
+/** 從今天回推，連續每天都有選心情的天數（含今天）。純粹用 moodLog 掃描，不需要額外存欄位。 */
+function computeMoodStreakCount(moodLog) {
+  const log = moodLog || {};
+  let count = 0;
+  let d = new Date();
+  while (log[localDateStr(d)]) {
+    count++;
+    d = new Date(d.getTime() - 86400000);
+  }
+  return count;
+}
+/**
+ * 儲存今天的心情，同步更新 moodStreakBest（連續選心情的最佳紀錄，只增不減）。
+ * 回傳 { moodLog, moodStreakBest } 給呼叫端更新本地 ctx.student，避免重新整頁讀取。
+ */
+async function saveMoodToday(studentId, moodId, currentMoodLog, currentBest) {
+  const today = todayStr();
+  const newLog = { ...(currentMoodLog || {}), [today]: moodId };
+  const count = computeMoodStreakCount(newLog);
+  const moodStreakBest = Math.max(Number(currentBest) || 0, count);
+  await updateStudent(studentId, {
+    ["moodLog." + today]: moodId,
+    moodStreakBest,
+  });
+  return { moodLog: newLog, moodStreakBest };
+}
+
+// ------------------------------------------------------------------
+// 【2026-08-01】圖鑑（徽章）重置：父母管理「學生名單」頁使用，讓家長能把測試時
+// 誤解鎖、或想重來的徽章移除。移除後如果條件又符合，evaluateBadges 會重新判定解鎖。
+async function removeBadges(studentId, badgeIds) {
+  const ids = Array.isArray(badgeIds) ? badgeIds : [];
+  if (!ids.length) return;
+  const fields = {};
+  ids.forEach((id) => { fields["badges." + id] = firebase.firestore.FieldValue.delete(); });
+  await updateStudent(studentId, fields);
 }
 
 // ------------------------------------------------------------------

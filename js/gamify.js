@@ -59,11 +59,12 @@ function themeUnlocked(themeId, totalXp) {
 // ------------------------------------------------------------------
 // 徽章判定用的資料整理：把考試紀錄、打卡、任務等原始資料整理成一份 ctx，
 // 每個徽章的 test(ctx) 只做單純的數值比較，方便測試與除錯。
-function buildBadgeContext({ rows, totalBonus, student, streak, taskStats, totalXp }) {
+function buildBadgeContext({ rows, totalBonus, student, streak, taskStats, totalXp, moodStreak }) {
   const R = Array.isArray(rows) ? rows : [];          // 新到舊
   const oldestFirst = [...R].reverse();
   const st = streak || {};
   const ts = taskStats || {};
+  const ms = moodStreak || {};
   const wl = (student && student.wishlist) || [];
 
   const progressCount = R.reduce(
@@ -164,6 +165,8 @@ function buildBadgeContext({ rows, totalBonus, student, streak, taskStats, total
     nightOwl: !!ts.nightOwl,
     weekendCount: ts.weekendCount || 0,
     birthdayCheckIn: !!ts.birthdayCheckIn,
+    // 心情打卡（U1+：連續選心情的最佳紀錄，滾動型，斷了可以再挑戰）
+    moodStreakBest: ms.best || 0,
   };
 }
 
@@ -176,6 +179,7 @@ const BADGE_GROUPS = [
   { key: "streak", label: "打卡系列" },
   { key: "score", label: "成績系列" },
   { key: "task", label: "任務系列" },
+  { key: "mood", label: "心情系列" },
   { key: "secret", label: "隱藏版" },
 ];
 
@@ -239,6 +243,10 @@ const BADGES = [
   { id: "t_xp5k", g: "task", i: "🔆", n: "XP 5000", r: 2, d: "累計獲得 5,000 XP", t: (c) => c.totalXp >= 5000 },
   { id: "t_xp20k", g: "task", i: "🪐", n: "XP 20000", r: 3, d: "累計獲得 20,000 XP", t: (c) => c.totalXp >= 20000 },
   { id: "t_lv20", g: "task", i: "🎚️", n: "等級 20", r: 2, d: "XP 等級達到 Lv.20", t: (c) => c.level >= 20 },
+
+  // ===== 心情系列 2（U1+：連續選心情打卡，滾動型，斷了可以再挑戰）=====
+  { id: "m_7", g: "mood", i: "🌈", n: "心情小達人", r: 1, d: "連續 7 天都有選今天的心情", t: (c) => c.moodStreakBest >= 7 },
+  { id: "m_30", g: "mood", i: "🎇", n: "心情月冠軍", r: 2, d: "連續 30 天都有選今天的心情", t: (c) => c.moodStreakBest >= 30 },
 
   // ===== 隱藏版 6（未解鎖時只顯示 ???）=====
   { id: "x_birthday", g: "secret", i: "🎂", n: "生日快樂", r: 3, hidden: true, d: "在自己生日當天完成打卡", t: (c) => c.birthdayCheckIn },

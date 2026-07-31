@@ -229,12 +229,23 @@
         if (gate.dataset.busy) return;
         gate.dataset.busy = "1";
         const moodId = btn.dataset.mood;
+        let saved = false;
         try {
-          await saveMoodToday(ctx.student.id, moodId);
-          ctx.student.moodLog = { ...(ctx.student.moodLog || {}), [todayStr()]: moodId };
+          const prevBest = (ctx.student.moodStreak && ctx.student.moodStreak.best) || ctx.student.moodStreakBest || 0;
+          const r = await saveMoodToday(ctx.student.id, moodId, ctx.student.moodLog, prevBest);
+          ctx.student.moodLog = r.moodLog;
+          ctx.student.moodStreak = { best: r.moodStreakBest };
+          saved = true;
         } catch (e) { /* 離線時先不擋，明天再問一次即可 */ }
         gate.classList.add("fading-out");
-        setTimeout(() => gate.remove(), 260);
+        setTimeout(async () => {
+          gate.remove();
+          if (saved) {
+            // 選完心情後：①判定並可能解鎖「心情系列」徽章 ②重畫首頁讓月曆立刻顯示今天的表情
+            await refreshBadges(ctx, { celebrate: true });
+            renderHome(ctx);
+          }
+        }, 260);
       });
     });
   }
@@ -244,9 +255,10 @@
     const tasks = tasksOf(ctx);
     const taskStats = buildTaskStats(ctx.student, tasks);
     const streak = normalizeStreak(ctx.student.streak);
+    const moodStreak = ctx.student.moodStreak || { best: ctx.student.moodStreakBest || 0 };
     const bctx = buildBadgeContext({
       rows: ctx.rows, totalBonus: ctx.totalBonus, student: ctx.student,
-      streak, taskStats, totalXp: xpOf(ctx),
+      streak, taskStats, totalXp: xpOf(ctx), moodStreak,
     });
     ctx.badgeCtx = bctx; // U5「即將解鎖」要用這份數值算進度
     const res = evaluateBadges(bctx, ctx.student.badges || {}, todayStr());
@@ -361,6 +373,7 @@
         <div class="kid-cal-legend">
           <span><i class="kid-dot" style="background:var(--k-warm-grad)"></i>有打卡</span>
           <span><i class="kid-dot" style="background:var(--k-soft-bg2)"></i>沒打卡</span>
+          <span>😊 當天心情</span>
         </div>
       </div>
     `;
@@ -405,13 +418,17 @@
 
   function calendarHtml(ctx) {
     const comp = ctx.student.dailyTaskCompletions || {};
+    const moodLog = ctx.student.moodLog || {};
     const today = todayStr();
     let html = "";
     for (let i = 27; i >= 0; i--) {
       const d = new Date(Date.now() - i * 86400000);
       const key = localDateStr(d);
       const hit = (comp[key] || []).length > 0;
-      html += `<div class="kid-cal-day ${hit ? "hit" : ""} ${key === today ? "today" : ""}">${d.getDate()}</div>`;
+      const mood = MOOD_OPTIONS.find((m) => m.id === moodLog[key]);
+      html += `<div class="kid-cal-day ${hit ? "hit" : ""} ${key === today ? "today" : ""}">
+        ${d.getDate()}${mood ? `<span class="kid-cal-mood" title="${escapeHtml(mood.label)}">${mood.emoji}</span>` : ""}
+      </div>`;
     }
     return html;
   }
@@ -823,6 +840,7 @@
     t_read30: "readingDone", t_chore30: "choreDone",
     t_xp1k: "totalXp", t_xp5k: "totalXp", t_xp20k: "totalXp", t_lv20: "level",
     x_semester3: "semesterCount", x_wish3: "redeemedCount",
+    m_7: "moodStreakBest", m_30: "moodStreakBest",
   };
   const NEAR_UNLOCK_NEED = {
     s_3: 3, s_7: 7, s_14: 14, s_30: 30, s_50: 50, s_100: 100, s_180: 180, s_365: 365,
@@ -830,6 +848,7 @@
     c_prog5: 5, c_def5: 5, c_nopunish3: 3, c_rec10: 10, c_combo3: 3, c_halfyear: 182, c_money5k: 5000, c_master3: 3,
     t_10: 10, t_50: 50, t_100: 100, t_500: 500, t_perfect7: 7, t_perfect30: 30, t_read30: 30, t_chore30: 30,
     t_xp1k: 1000, t_xp5k: 5000, t_xp20k: 20000, t_lv20: 20, x_semester3: 3, x_wish3: 3,
+    m_7: 7, m_30: 30,
   };
   function nearUnlockList(ctx, groupKey) {
     const bctx = ctx.badgeCtx || {};
