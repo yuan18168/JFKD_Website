@@ -10,27 +10,55 @@
 
   let activeId = students[0] && students[0].id;
 
-  renderGallery();
-  renderTabs();
-  renderEditor();
-
   // ---- 主題庫預覽（跟每位學生的設定無關，純展示所有可選主題）----
+  // 【2026-07-31 修正】原本只用 zoro / 其他 二選一決定配色，galaxy/lava/aurora/gold 這 4 個
+  // 後來新增的 XP 解鎖主題都會誤用「其他」分支（babymonster 的紅色系），改成完整的每主題配色表。
+  const THEME_PREVIEW_STYLE = {
+    zoro: {
+      swatches: ["#04160d", "#0d3b24", "#00e676", "#ffd200", "#eafff2"],
+      bannerBg: "linear-gradient(120deg,#04160d,#0d3b24 38%,#145c38 68%,#1f7a4d)",
+      bannerBorder: "2px solid #00e676",
+      taglineColor: "#7dffb8",
+    },
+    babymonster: {
+      swatches: ["#0c0c0e", "#3a0a10", "#ff1744", "#d8dbe2", "#ffffff"],
+      bannerBg: "linear-gradient(120deg,#0c0c0e,#3a0a10 38%,#6e131f 68%,#8f1826)",
+      bannerBorder: "2px solid #ff1744",
+      taglineColor: "#ff8fa3",
+    },
+    galaxy: {
+      swatches: ["#0E0A2E", "#3B1F7A", "#A855F7", "#E4D9FF", "#FFE9A8"],
+      bannerBg: "linear-gradient(120deg,#0E0A2E,#3B1F7A 45%,#7B2FA8 75%,#A855F7)",
+      bannerBorder: "2px solid #A855F7",
+      taglineColor: "#E4D9FF",
+    },
+    lava: {
+      swatches: ["#2B0A00", "#8A2200", "#FF6B00", "#FFC93C", "#FFE2CC"],
+      bannerBg: "linear-gradient(120deg,#2B0A00,#8A2200 45%,#FF6B00 75%,#FFC93C)",
+      bannerBorder: "2px solid #FF8A3D",
+      taglineColor: "#FFE2CC",
+    },
+    aurora: {
+      swatches: ["#031B18", "#0B5C4A", "#19C79A", "#7DF9D6", "#D6FFF4"],
+      bannerBg: "linear-gradient(120deg,#031B18,#0B5C4A 45%,#19C79A 75%,#7DF9D6)",
+      bannerBorder: "2px solid #19C79A",
+      taglineColor: "#D6FFF4",
+    },
+    gold: {
+      swatches: ["#2B1F00", "#8A6A00", "#FFC93C", "#FFE9A8", "#FFF6D6"],
+      bannerBg: "linear-gradient(120deg,#2B1F00,#8A6A00 45%,#FFC93C 75%,#FFE9A8)",
+      bannerBorder: "2px solid #FFC93C",
+      taglineColor: "#FFF6D6",
+    },
+  };
   function renderGallery() {
     const gallery = document.getElementById("themeGallery");
     gallery.innerHTML = Object.values(STUDENT_THEMES)
       .map((theme) => {
         const bannerClass = theme.bodyClass;
-        const swatches =
-          theme.id === "zoro"
-            ? ["#04160d", "#0d3b24", "#00e676", "#ffd200", "#eafff2"]
-            : ["#0c0c0e", "#3a0a10", "#ff1744", "#d8dbe2", "#ffffff"];
-        const bannerBg =
-          theme.id === "zoro"
-            ? "linear-gradient(120deg,#04160d,#0d3b24 38%,#145c38 68%,#1f7a4d)"
-            : "linear-gradient(120deg,#0c0c0e,#3a0a10 38%,#6e131f 68%,#8f1826)";
-        const bannerBorder = theme.id === "zoro" ? "2px solid #00e676" : "2px solid #ff1744";
+        const style = THEME_PREVIEW_STYLE[theme.id] || THEME_PREVIEW_STYLE.babymonster;
+        const { swatches, bannerBg, bannerBorder, taglineColor } = style;
         const nameColor = "#ffffff";
-        const taglineColor = theme.id === "zoro" ? "#7dffb8" : "#ff8fa3";
         return `
         <div class="card theme-gallery-card">
           <div class="theme-preview-banner ${bannerClass}" style="background:${bannerBg}; border:${bannerBorder};">
@@ -174,4 +202,11 @@
       });
     }
   }
+
+  // 【2026-07-31 修正】renderGallery/renderTabs/renderEditor 都要等 THEME_PREVIEW_STYLE
+  // 這個 const 已經宣告完才能呼叫，所以移到檔案最後（原本放在檔案開頭會踩到 TDZ，
+  // 讓整頁一載入就 ReferenceError 崩潰，導致主題造型頁完全打不開）。
+  renderGallery();
+  renderTabs();
+  renderEditor();
 })();

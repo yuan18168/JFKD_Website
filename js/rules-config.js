@@ -76,10 +76,10 @@
   function ruleConfigFieldsHtml(rule) {
     if (rule.type === "punctuality") {
       return `
-        <label class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">規定時間
-          <input type="time" data-rule-field="deadlineTime" value="${escapeHtml(rule.config.deadlineTime || "07:35")}" style="width:120px;" />
+        <label class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); flex-shrink:0;">規定時間
+          <input type="time" data-rule-field="deadlineTime" value="${escapeHtml(rule.config.deadlineTime || "07:35")}" style="width:170px; min-width:170px; flex-shrink:0;" />
         </label>
-        <label class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">倍率（分鐘 × 倍率 = 開合跳）
+        <label class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); flex-shrink:0;">倍率（分鐘 × 倍率 = 開合跳）
           <input type="number" min="1" data-rule-field="multiplier" value="${rule.config.multiplier || 10}" style="width:70px;" />
         </label>`;
     }
@@ -122,9 +122,10 @@
           ${templatePickerHtml(student.id)}
         </div>
 
-        <div style="margin-top:16px;">
+        <div style="margin-top:16px; display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
           <button class="btn btn-primary" data-save-rules="${student.id}">儲存這位學生的規矩</button>
-          <span class="text-faint" style="margin-left:10px; font-size:calc(12px * var(--font-scale, 1));" data-save-msg="${student.id}"></span>
+          <span class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));" data-save-msg="${student.id}"></span>
+          ${rules.length ? `<button class="btn btn-sm" style="margin-left:auto;" data-force-settle="${student.id}" title="不用等到週五，用現在這個時刻立刻結算目前累積的淨值">⏩ 手動提前結算本週</button>` : ""}
         </div>
       </div>`;
   }
@@ -200,6 +201,35 @@
         saveBtn.disabled = false;
       }
     });
+
+    const forceBtn = card.querySelector(`[data-force-settle="${student.id}"]`);
+    if (forceBtn) {
+      forceBtn.addEventListener("click", async () => {
+        const ok = await confirmDialog(
+          `確定要立刻結算「${student.name}」目前累積的淨值嗎？不用等到週五，會用「現在」當作這次的截止時刻。`,
+          { title: "手動提前結算本週", confirmText: "立刻結算", danger: false }
+        );
+        if (!ok) return;
+        forceBtn.disabled = true;
+        try {
+          const { student: updated, newSettlement } = await forceSettleNow(student);
+          Object.assign(student, updated);
+          students = students.map((s) => (s.id === student.id ? updated : s));
+          if (!newSettlement) {
+            showToast("目前沒有累積任何淨值，不需要結算");
+          } else if (newSettlement.netJumpingJacks > 0) {
+            showToast(`已結算：${student.name} 待罰 ${newSettlement.punishmentCount} 下開合跳`);
+          } else {
+            showToast(`已結算：${student.name} 獲得獎金 ${fmtMoney(newSettlement.bonusAmount)}`);
+          }
+          renderPending();
+        } catch (err) {
+          alert("結算失敗：" + err.message);
+        } finally {
+          forceBtn.disabled = false;
+        }
+      });
+    }
   }
 
   wrap.innerHTML = students.map((s) => cardHtml(s)).join("");
