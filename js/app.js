@@ -26,9 +26,10 @@
     return;
   }
 
-  const LAST_KEY = "jfkd_kid_last_student";
-  let currentId = localStorage.getItem(LAST_KEY);
-  if (!students.some((s) => s.id === currentId)) currentId = students[0].id;
+  // 【2026-08-01】App 重新開啟時（iOS 桌面圖示每次啟動）一律固定先顯示「ㄎㄎ」的首頁，
+  // 不記住上次瀏覽的學生。找不到叫這個名字的學生時，退回第一位學生。
+  const DEFAULT_STUDENT_NAME = "ㄎㄎ";
+  let currentId = (students.find((s) => s.name === DEFAULT_STUDENT_NAME) || students[0]).id;
 
   // 每位學生的資料快取（避免切換分頁重複讀 Firestore）
   const cache = {};
@@ -1207,7 +1208,6 @@
     el.querySelectorAll("[data-student]").forEach((b) =>
       b.addEventListener("click", async () => {
         currentId = b.dataset.student;
-        localStorage.setItem(LAST_KEY, currentId);
         renderSwitcher();
         await renderTab();
       }));

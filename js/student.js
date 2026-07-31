@@ -90,7 +90,6 @@
 
   renderStats(enriched);
   renderScoreProgress(enriched[0]);
-  renderTargetGoal(student, enriched[0]);
   renderWishlist(student, totalBonus);
   renderChart(enriched);
   setupRecordFilters(enriched);
@@ -134,89 +133,6 @@
           <div class="score-progress-fill" style="width:${pct}%;"></div>
         </div>
       </div>`;
-  }
-
-  // ---- 目標設定：家長可設定「下次考試目標平均分」，就地編輯（點筆狀圖示變成輸入框）----
-  function renderTargetGoal(studentDoc, latestRow) {
-    const el = document.getElementById("targetGoal");
-    if (!el) return;
-    const target = studentDoc.targetAvgScore;
-    const avg = latestRow ? latestRow.result.avgScore : null;
-
-    function draw() {
-      if (target == null) {
-        el.innerHTML = `
-          <div class="card score-progress-card target-goal-card">
-            <div class="score-progress-head">
-              <span class="text-dim">🎯 尚未設定目標平均分</span>
-              <button type="button" class="btn btn-sm" id="setTargetBtn">設定目標</button>
-            </div>
-          </div>`;
-        bindSetBtn();
-        return;
-      }
-      const reached = avg != null && avg >= target;
-      const pct = avg != null ? Math.max(4, Math.min(100, (avg / target) * 100)) : 0;
-      const diff = avg != null ? Math.round((target - avg) * 10) / 10 : null;
-      el.innerHTML = `
-        <div class="card score-progress-card target-goal-card">
-          <div class="score-progress-head">
-            <span>${reached ? "🎉 已達成目標！" : `🎯 距離目標平均 <strong>${target}</strong> 分還差 <strong>${diff}</strong> 分`}</span>
-            <span class="text-faint">
-              目標 ${target} 分
-              <button type="button" class="btn btn-sm" id="setTargetBtn" style="margin-left:8px;">編輯</button>
-            </span>
-          </div>
-          <div class="score-progress-track">
-            <div class="score-progress-fill ${reached ? "goal-reached" : ""}" style="width:${pct}%;"></div>
-          </div>
-        </div>`;
-      bindSetBtn();
-    }
-
-    function bindSetBtn() {
-      const btn = document.getElementById("setTargetBtn");
-      if (!btn) return;
-      btn.addEventListener("click", () => {
-        const input = document.createElement("input");
-        input.type = "number";
-        input.step = "0.1";
-        input.placeholder = "例如 95";
-        input.value = target != null ? target : "";
-        input.style.maxWidth = "120px";
-        const head = btn.closest(".score-progress-head");
-        head.innerHTML = "";
-        head.appendChild(input);
-        const saveBtn = document.createElement("button");
-        saveBtn.className = "btn btn-sm btn-primary";
-        saveBtn.textContent = "儲存";
-        head.appendChild(saveBtn);
-        input.focus();
-
-        saveBtn.addEventListener("click", async () => {
-          const val = input.value.trim();
-          try {
-            if (val === "") {
-              await updateStudent(studentDoc.id, { targetAvgScore: firebase.firestore.FieldValue.delete() });
-              studentDoc.targetAvgScore = null;
-            } else {
-              const num = Math.round(Number(val) * 10) / 10;
-              await updateStudent(studentDoc.id, { targetAvgScore: num });
-              studentDoc.targetAvgScore = num;
-            }
-            showToast("已儲存 ✓");
-            renderTargetGoal(studentDoc, latestRow);
-          } catch (err) {
-            alert("儲存失敗：" + err.message);
-          }
-        });
-        input.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") saveBtn.click();
-        });
-      });
-    }
-
-    draw();
   }
 
   // ---- 許願池：顯示每個願望項目的達成條件、金額來源拆分、達成/兌現狀態（項目本身在「學生名單」頁管理，

@@ -44,7 +44,7 @@
             <div style="display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto;">
               ${list.map((b) => `
                 <label style="display:flex; align-items:center; gap:8px; font-size:calc(12px * var(--font-scale,1));">
-                  <input type="checkbox" data-badge-check="${s.id}" value="${b.id}" />
+                  <input type="checkbox" data-badge-check="${s.id}" value="${b.id}" style="width:16px; height:16px; flex-shrink:0; margin:0;" />
                   <span>${b.hidden ? "❓" : b.i}</span>
                   <span style="flex:1;">${escapeHtml(b.hidden ? b.n + "（隱藏版）" : b.n)}</span>
                   <span class="text-faint" style="font-size:calc(10.5px * var(--font-scale,1));">${b.unlockedDate}</span>

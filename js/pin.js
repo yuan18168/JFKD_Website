@@ -28,7 +28,7 @@ async function requireParentPin() {
     gate.innerHTML = `
       <div class="pin-gate-lock">🔒</div>
       <h2>家長模式</h2>
-      <p>輸入 4 位數 PIN 碼才能進入<br>（預設 1234，可在「顯示設定」頁修改）</p>
+      <p>輸入 4 位數 PIN 碼才能進入<br>（可在「顯示設定」頁修改）</p>
       <div class="pin-dots">
         <div class="pin-dot"></div><div class="pin-dot"></div>
         <div class="pin-dot"></div><div class="pin-dot"></div>
