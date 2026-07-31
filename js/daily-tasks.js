@@ -22,11 +22,16 @@
   });
 
   function taskRowHtml(studentId, task) {
+    const days = Array.isArray(task.days) && task.days.length ? task.days : [0, 1, 2, 3, 4, 5, 6];
+    const dayBoxes = WEEKDAY_DISPLAY_ORDER
+      .map((d) => `<label class="task-day-chip"><input type="checkbox" data-task-day="${d}" ${days.includes(d) ? "checked" : ""}>${WEEKDAY_LABELS[d]}</label>`)
+      .join("");
     return `
-      <div class="card" data-task-row="${task.id}" data-owner="${studentId}" style="display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:10px 12px;">
-        <input type="text" value="${escapeHtml(task.name || "")}" data-task-name placeholder="任務名稱" style="flex:1;" />
+      <div class="card" data-task-row="${task.id}" data-owner="${studentId}" style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:8px; padding:10px 12px;">
+        <input type="text" value="${escapeHtml(task.name || "")}" data-task-name placeholder="任務名稱" style="flex:1; min-width:130px;" />
         <input type="number" min="0" value="${task.xpReward || 0}" data-task-xp placeholder="XP" style="width:80px;" />
         <span class="text-faint" style="font-size:calc(11px * var(--font-scale, 1));">XP</span>
+        <div class="task-days-row" title="適用星期幾（U9：不勾任何一天，視同每天都適用）">${dayBoxes}</div>
         <span data-task-del="${task.id}" data-owner-del="${studentId}" style="cursor:pointer; color:var(--bad); font-size:calc(12px * var(--font-scale, 1));">刪除</span>
       </div>`;
   }
@@ -71,11 +76,18 @@
   function readDraftFromDom(studentId) {
     const rows = wrap.querySelectorAll(`[data-task-row][data-owner="${studentId}"]`);
     return [...rows]
-      .map((row) => ({
-        id: row.dataset.taskRow,
-        name: row.querySelector("[data-task-name]").value.trim(),
-        xpReward: Number(row.querySelector("[data-task-xp]").value) || 0,
-      }))
+      .map((row) => {
+        const checked = [...row.querySelectorAll("[data-task-day]")]
+          .filter((cb) => cb.checked)
+          .map((cb) => Number(cb.dataset.taskDay));
+        return {
+          id: row.dataset.taskRow,
+          name: row.querySelector("[data-task-name]").value.trim(),
+          xpReward: Number(row.querySelector("[data-task-xp]").value) || 0,
+          // 一天都沒勾＝視同每天都適用（避免家長不小心把任務設成「永遠不出現」）
+          days: checked.length ? checked : [0, 1, 2, 3, 4, 5, 6],
+        };
+      })
       .filter((t) => t.name);
   }
 
@@ -103,6 +115,7 @@
         id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
         name,
         xpReward: Number(xpEl.value) || 0,
+        days: [0, 1, 2, 3, 4, 5, 6],
       };
       drafts[student.id] = [...readDraftFromDom(student.id), newTask];
       renderCard(student);

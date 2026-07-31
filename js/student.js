@@ -908,6 +908,13 @@
       : '<span class="badge badge-warn">尚未發放獎金</span>';
   }
 
+  // U8：獎金「尚未發放」時，直接在表格上一鍵標記已發放，不用進編輯表單改狀態再存檔
+  function bonusCell(r) {
+    if (!(r.total > 0)) return bonusBadge(r);
+    if (r.bonusStatus === "done") return bonusBadge(r);
+    return `${bonusBadge(r)} <button class="btn btn-sm" data-mark-bonus="${r.id}" style="margin-left:6px;">✓ 標記已發放</button>`;
+  }
+
   function renderTable(rows) {
     const tbody = document.querySelector("#recordsTable tbody");
     if (!rows.length) {
@@ -928,7 +935,7 @@
           <td class="num">${r.result.avgScore}</td>
           <td class="num">${fmtMoney(r.total)}</td>
           <td>${punishmentBadge(r)}</td>
-          <td>${bonusBadge(r)}</td>
+          <td style="white-space:nowrap;">${bonusCell(r)}</td>
           <td style="white-space:nowrap;">
             <button class="btn btn-sm" data-edit-id="${r.id}">編輯</button>
             <button class="btn btn-sm btn-danger" data-del-id="${r.id}">刪除</button>
@@ -950,6 +957,21 @@
       btn.addEventListener("click", () => {
         const record = rows.find((r) => r.id === btn.dataset.editId);
         if (record && window.__loadRecordIntoForm) window.__loadRecordIntoForm(record);
+      });
+    });
+
+    tbody.querySelectorAll("button[data-mark-bonus]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        btn.disabled = true;
+        btn.textContent = "更新中...";
+        try {
+          await updateExamRecord(btn.dataset.markBonus, { bonusStatus: "done" });
+          window.location.reload();
+        } catch (err) {
+          alert("更新失敗：" + err.message);
+          btn.disabled = false;
+          btn.textContent = "✓ 標記已發放";
+        }
       });
     });
   }

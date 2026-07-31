@@ -53,11 +53,23 @@
   function tasksOf(ctx) {
     return normalizeDailyTasks(ctx.student.dailyTasks);
   }
+  /** U9：孩子端「今日任務」只顯示今天適用星期幾的任務 */
+  function todaysTasksOf(ctx) {
+    return tasksOf(ctx).filter((t) => taskAppliesToday(t));
+  }
   function doneTodaySet(ctx) {
     return new Set((ctx.student.dailyTaskCompletions || {})[todayStr()] || []);
   }
   function initialOf(name) {
     return (name || "?").slice(0, 1);
+  }
+  /** 家長端可編輯的個人資料卡文字：「XX國小 302班 15號」，缺哪一項就自動省略 */
+  function profileMetaText(student) {
+    const parts = [];
+    if (student.schoolName) parts.push(student.schoolName);
+    if (student.className) parts.push(student.className + "班");
+    if (student.seatNumber) parts.push(student.seatNumber + "號");
+    return parts.join(" · ");
   }
 
   /** 套用該學生的主題造型到整個孩子模式（背景／卡片／火焰／XP條／分頁列全部換色） */
@@ -113,6 +125,97 @@
     }
   }
 
+  // ---- U11：溫和的錯誤提示，取代原生 alert() ----
+  function showErrorToast(msg) {
+    const el = document.createElement("div");
+    el.className = "badge-unlock-toast error-toast";
+    el.innerHTML = `<span style="font-size:1.3em">📡</span><span>${escapeHtml(msg)}</span>`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3800);
+  }
+  function friendlyErrorMsg(err) {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      return "目前沒有網路連線，請確認網路後再試一次，你剛剛的操作沒有遺失";
+    }
+    const code = err && err.code;
+    const msg = (err && err.message) || "";
+    if (code === "unavailable" || /network|offline/i.test(msg)) {
+      return "網路不太穩定，請稍後再試一次";
+    }
+    return "操作失敗：" + (msg || "請稍後再試一次");
+  }
+
+  // ---- U4：徽章解鎖全螢幕慶祝（比小 toast 更有儀式感），多個徽章依序播放 ----
+  const celebrateQueue = [];
+  let celebrating = false;
+  function queueBadgeCelebration(badges) {
+    celebrateQueue.push(...badges);
+    if (!celebrating) playNextCelebration();
+  }
+  function playNextCelebration() {
+    const badge = celebrateQueue.shift();
+    if (!badge) { celebrating = false; return; }
+    celebrating = true;
+    const overlay = document.createElement("div");
+    overlay.className = "badge-celebrate-overlay";
+    overlay.innerHTML = `
+      <div class="badge-celebrate-card">
+        <div class="badge-celebrate-label">🎉 解鎖新成就！</div>
+        <div class="badge-celebrate-icon">${badge.i || badge.icon}</div>
+        <div class="badge-celebrate-name">${escapeHtml(badge.n || badge.name)}</div>
+        ${badge.rarityName ? `<div class="badge-celebrate-rarity">${escapeHtml(badge.rarityName)}</div>` : ""}
+        <div class="badge-celebrate-hint">點一下繼續</div>
+      </div>`;
+    document.body.appendChild(overlay);
+    if (typeof confetti !== "undefined") {
+      confetti({ particleCount: 130, spread: 110, startVelocity: 48, origin: { y: 0.6 },
+        colors: [cssVar("--k-accent"), cssVar("--k-accent2"), "#FFD166", cssVar("--k-good"), "#ffffff"] });
+    }
+    let done = false;
+    const t = setTimeout(advance, 2600);
+    overlay.addEventListener("click", advance);
+    function advance() {
+      if (done) return;
+      done = true;
+      clearTimeout(t);
+      overlay.classList.add("fading-out");
+      setTimeout(() => { overlay.remove(); playNextCelebration(); }, 300);
+    }
+  }
+
+  // ---- U1：每日心情打卡強制彈窗（每天第一次進首頁才會出現，選完才能看到首頁）----
+  function moodGateHtml() {
+    return `<div class="mood-gate" id="moodGate">
+      <div class="mood-gate-card">
+        <div class="mood-gate-title">哈囉！今天過得如何呀？</div>
+        <div class="mood-gate-sub">選一個代表今天心情的表情吧</div>
+        <div class="mood-gate-options">
+          ${MOOD_OPTIONS.map((m) => `<button class="mood-opt" data-mood="${m.id}">
+            <span class="mood-emoji">${m.emoji}</span><span class="mood-label">${escapeHtml(m.label)}</span>
+          </button>`).join("")}
+        </div>
+      </div>
+    </div>`;
+  }
+  function maybeShowMoodGate(ctx) {
+    if (hasMoodToday(ctx.student) || document.getElementById("moodGate")) return;
+    document.body.insertAdjacentHTML("beforeend", moodGateHtml());
+    const gate = document.getElementById("moodGate");
+    gate.querySelectorAll("[data-mood]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (gate.dataset.busy) return;
+        gate.dataset.busy = "1";
+        const moodId = btn.dataset.mood;
+        try {
+          await saveMoodToday(ctx.student.id, moodId);
+          ctx.student.moodLog = { ...(ctx.student.moodLog || {}), [todayStr()]: moodId };
+        } catch (e) { /* 離線時先不擋，明天再問一次即可 */ }
+        gate.classList.add("fading-out");
+        setTimeout(() => gate.remove(), 260);
+      });
+    });
+  }
+
   /** 依最新資料重新判定徽章；有新解鎖就寫回 Firestore 並跳慶祝 */
   async function refreshBadges(ctx, { celebrate } = {}) {
     const tasks = tasksOf(ctx);
@@ -122,11 +225,13 @@
       rows: ctx.rows, totalBonus: ctx.totalBonus, student: ctx.student,
       streak, taskStats, totalXp: xpOf(ctx),
     });
+    ctx.badgeCtx = bctx; // U5「即將解鎖」要用這份數值算進度
     const res = evaluateBadges(bctx, ctx.student.badges || {}, todayStr());
     if (res.newlyUnlocked.length) {
       ctx.student.badges = res.unlockedMap;
       try { await saveUnlockedBadges(ctx.student.id, res.unlockedMap); } catch (e) { /* 離線也不影響瀏覽 */ }
-      if (celebrate) res.newlyUnlocked.slice(0, 3).forEach((b, i) => setTimeout(() => badgeToast(b), i * 800));
+      // U4：改成全螢幕慶祝（比小 toast 更有儀式感），依序播放不會同時疊在一起
+      if (celebrate) queueBadgeCelebration(res.newlyUnlocked);
     }
     ctx.badgeResult = res;
     return res;
@@ -153,11 +258,13 @@
     document.getElementById("homeAvatar").textContent = initialOf(s.name);
     document.getElementById("homeAvatar").style.background = s.color || "#4f7cff";
     document.getElementById("homeName").textContent = s.name || "";
+    const metaEl = document.getElementById("homeMeta");
+    if (metaEl) metaEl.textContent = profileMetaText(s);
 
     const streak = normalizeStreak(s.streak);
     const xp = xpOf(ctx);
     const lv = levelInfo(xp);
-    const tasks = tasksOf(ctx);
+    const tasks = todaysTasksOf(ctx); // U9：只顯示今天適用的任務
     const done = doneTodaySet(ctx);
 
     // 下一個連續打卡里程碑
@@ -188,13 +295,15 @@
         </div>
       </div>
 
+      ${comebackBannerHtml(streak)}
+
       <div class="kid-card" style="margin-top:13px">
         <div class="xp-head">
           <div class="xp-level">Lv.${lv.level} <span>${lv.title}</span></div>
           <div class="xp-total">${xp.toLocaleString()} XP</div>
         </div>
         <div class="xp-track"><div class="xp-fill" style="width:${lv.pct}%"></div></div>
-        <div class="xp-hint">${lv.next === null ? "已達最高等級 🎉" : `再 ${lv.toNext.toLocaleString()} XP 升到 Lv.${lv.level + 1}`}</div>
+        <div class="xp-hint">${lv.next === null ? "已達最高等級 🎉" : `⚡ 還差 <b>${lv.toNext.toLocaleString()}</b> XP 就升到 Lv.${lv.level + 1}！`}</div>
       </div>
 
       <div class="kid-card">
@@ -236,6 +345,27 @@
     bindTasks(ctx);
     document.querySelectorAll("[data-goto]").forEach((b) =>
       b.addEventListener("click", () => switchTab(b.dataset.goto)));
+
+    maybeShowMoodGate(ctx); // U1：每天第一次進首頁才會跳出
+  }
+
+  /** U2 復活賽提示條：斷線且護盾用完時顯示，鼓勵孩子今天多完成 1 項任務就能找回紀錄 */
+  function comebackBannerHtml(streak) {
+    const cb = streak.comeback;
+    if (!cb || !cb.active) return "";
+    const remain = Math.max(0, cb.need - (cb.tasksDone || 0));
+    const hoursLeft = Math.max(0, Math.ceil((cb.deadline - Date.now()) / 3600000));
+    return `<div class="comeback-banner">
+      <div class="comeback-banner-icon">⚡</div>
+      <div class="comeback-banner-text">
+        <div class="comeback-banner-title">復活賽進行中！</div>
+        <div class="comeback-banner-desc">${
+          remain > 0
+            ? `再完成 <b>${remain}</b> 項任務，就能把連續 <b>${cb.prevCount + 1}</b> 天的紀錄找回來！（剩 ${hoursLeft} 小時）`
+            : "馬上就要成功了！"
+        }</div>
+      </div>
+    </div>`;
   }
 
   function diffText(ctx) {
@@ -276,14 +406,14 @@
       el.addEventListener("click", async (ev) => {
         if (el.dataset.busy) return;
         el.dataset.busy = "1";
-        const tasks = tasksOf(ctx);
-        const task = tasks.find((t) => t.id === el.dataset.task);
+        const allTasks = tasksOf(ctx);
+        const task = allTasks.find((t) => t.id === el.dataset.task);
         if (!task) { delete el.dataset.busy; return; }
         const wasDone = el.classList.contains("done");
         try {
           if (!wasDone) {
             await markTaskFlags(ctx);
-            const r = await completeDailyTask(ctx.student, task, tasks);
+            const r = await completeDailyTask(ctx.student, task, allTasks);
             ctx.student = r.student;
             const rect = el.getBoundingClientRect();
             floatXp(rect.right - 40, rect.top, "+" + r.gainedXp);
@@ -293,14 +423,20 @@
             if (r.checkIn && r.checkIn.usedShield) {
               setTimeout(() => badgeToast({ i: "🛡️", n: "護盾卡幫你保住連續紀錄了！" }), 900);
             }
+            if (r.checkIn && r.checkIn.comebackStarted) {
+              setTimeout(() => badgeToast({ i: "⚡", n: "開啟復活賽！今天再完成 1 項任務就能找回紀錄" }), 900);
+            }
+            if (r.comebackResult && r.comebackResult.recovered) {
+              setTimeout(() => badgeToast({ i: "🎉", n: `復活成功！接回連續 ${r.comebackResult.count} 天紀錄` }), 900);
+            }
           } else {
-            const r = await uncompleteDailyTask(ctx.student, task, tasks);
+            const r = await uncompleteDailyTask(ctx.student, task, allTasks);
             ctx.student = r.student;
           }
           await refreshBadges(ctx, { celebrate: true });
           renderHome(ctx);
         } catch (err) {
-          alert("更新失敗：" + err.message);
+          showErrorToast(friendlyErrorMsg(err));
           delete el.dataset.busy;
         }
       });
@@ -324,6 +460,7 @@
 
     document.getElementById("scoreBody").innerHTML = `
       ${newRecordHtml(ctx, latest, isNew)}
+      ${scoreSummaryHtml(ctx)}
       <div class="kid-card">
         <div class="kid-card-title">成績趨勢</div>
         <div class="kid-chart-tabs" id="chartTabs"></div>
@@ -347,6 +484,35 @@
         if (cfg && cfg.enabled) playEffect(cfg.effect, card, cfg.duration, ctx.student.name);
       });
     });
+  }
+
+  /** U10：跟上次紀錄比較的整體摘要（幾科進步/退步/持平＋平均分變化），孩子只看單科容易看不到整體趨勢 */
+  function scoreSummaryHtml(ctx) {
+    const rows = ctx.rows;
+    if (rows.length < 2) return "";
+    const latest = rows[0], prev = rows[1];
+    let up = 0, down = 0, same = 0;
+    (latest.subjects || []).forEach((s) => {
+      if (typeof s.prevScore !== "number") return;
+      if (s.score > s.prevScore) up++;
+      else if (s.score < s.prevScore) down++;
+      else same++;
+    });
+    const avgDiff = Math.round((latest.result.avgScore - prev.result.avgScore) * 10) / 10;
+    const diffColor = avgDiff > 0 ? "var(--k-good)" : avgDiff < 0 ? "var(--k-pink)" : "var(--kid-soft)";
+    const diffIcon = avgDiff > 0 ? "▲" : avgDiff < 0 ? "▼" : "—";
+    return `<div class="kid-card score-summary">
+      <div class="kid-card-title">📊 這次表現摘要</div>
+      <div class="score-summary-row">
+        <div class="score-summary-diff" style="color:${diffColor}">${diffIcon} ${avgDiff > 0 ? "+" : ""}${avgDiff} 分</div>
+        <div class="score-summary-text">跟上次（${escapeHtml(prev.semester || "")}${escapeHtml(prev.examType || "")}）比起來</div>
+      </div>
+      ${up + down + same > 0 ? `<div class="score-summary-chips">
+        ${up ? `<span class="score-summary-chip up">▲ ${up} 科進步</span>` : ""}
+        ${down ? `<span class="score-summary-chip down">▼ ${down} 科退步</span>` : ""}
+        ${same ? `<span class="score-summary-chip same">— ${same} 科持平</span>` : ""}
+      </div>` : ""}
+    </div>`;
   }
 
   /** 判斷某一科要套用哪一條特效規則（與 student.js 相同的優先序：final100 > both > defense > progress） */
@@ -505,6 +671,58 @@
   let dexGroup = "streak";
   const RARITY_COLOR = { 1: "#9AA3B2", 2: "#3FA9F5", 3: "#A855F7", 4: "#FFA51F" };
 
+  // U5：即將解鎖——只對「有明確累計數字」的徽章算進度，二元條件（例如「曾經考100分」）不列入
+  const NEAR_UNLOCK_FIELD = {
+    s_3: "streakBest", s_7: "streakBest", s_14: "streakBest", s_30: "streakBest",
+    s_50: "streakBest", s_100: "streakBest", s_180: "streakBest", s_365: "streakBest",
+    s_weekend: "weekendCount", s_t50: "totalDays", s_t100: "totalDays", s_t200: "totalDays", s_t365: "totalDays",
+    c_prog5: "progressCount", c_def5: "defenseCount", c_nopunish3: "noPunishStreak", c_rec10: "recordCount",
+    c_combo3: "comboCount", c_halfyear: "longHaulDays", c_money5k: "totalBonus", c_master3: "masterCount",
+    t_10: "taskDone", t_50: "taskDone", t_100: "taskDone", t_500: "taskDone",
+    t_perfect7: "perfectDays", t_perfect30: "perfectDays",
+    t_read30: "readingDone", t_chore30: "choreDone",
+    t_xp1k: "totalXp", t_xp5k: "totalXp", t_xp20k: "totalXp", t_lv20: "level",
+    x_semester3: "semesterCount", x_wish3: "redeemedCount",
+  };
+  const NEAR_UNLOCK_NEED = {
+    s_3: 3, s_7: 7, s_14: 14, s_30: 30, s_50: 50, s_100: 100, s_180: 180, s_365: 365,
+    s_weekend: 8, s_t50: 50, s_t100: 100, s_t200: 200, s_t365: 365,
+    c_prog5: 5, c_def5: 5, c_nopunish3: 3, c_rec10: 10, c_combo3: 3, c_halfyear: 182, c_money5k: 5000, c_master3: 3,
+    t_10: 10, t_50: 50, t_100: 100, t_500: 500, t_perfect7: 7, t_perfect30: 30, t_read30: 30, t_chore30: 30,
+    t_xp1k: 1000, t_xp5k: 5000, t_xp20k: 20000, t_lv20: 20, x_semester3: 3, x_wish3: 3,
+  };
+  function nearUnlockList(ctx, groupKey) {
+    const bctx = ctx.badgeCtx || {};
+    const unlockedMap = ctx.student.badges || {};
+    return BADGES
+      .filter((b) => b.g === groupKey && !b.hidden && !unlockedMap[b.id] && NEAR_UNLOCK_FIELD[b.id])
+      .map((b) => {
+        const field = NEAR_UNLOCK_FIELD[b.id];
+        const need = NEAR_UNLOCK_NEED[b.id];
+        const have = Number(bctx[field]) || 0;
+        return { b, have, need, remain: Math.max(0, need - have), pct: Math.min(100, Math.round((have / need) * 100)) };
+      })
+      .filter((x) => x.remain > 0)
+      .sort((a, b) => a.remain - b.remain)
+      .slice(0, 3);
+  }
+  function nearUnlockHtml(ctx, groupKey) {
+    const list = nearUnlockList(ctx, groupKey);
+    if (!list.length) return "";
+    return `<div class="kid-card near-unlock-card">
+      <div class="kid-card-title">🎯 即將解鎖</div>
+      ${list.map(({ b, have, need, pct }) => `
+        <div class="near-unlock-row">
+          <div class="near-unlock-icon">${b.i}</div>
+          <div class="near-unlock-info">
+            <div class="near-unlock-name">${escapeHtml(b.n)}</div>
+            <div class="near-unlock-track"><div style="width:${pct}%"></div></div>
+            <div class="near-unlock-num">${have.toLocaleString()} / ${need.toLocaleString()}</div>
+          </div>
+        </div>`).join("")}
+    </div>`;
+  }
+
   async function renderDex(ctx) {
     const res = ctx.badgeResult || (await refreshBadges(ctx));
     const list = res.list;
@@ -541,6 +759,7 @@
         <div class="dex-hero-bar"><div style="width:${pct}%"></div></div>
       </div>
       <div class="dex-tabs">${tabs}</div>
+      ${nearUnlockHtml(ctx, dexGroup)}
       <div>${groups}</div>`;
 
     document.querySelectorAll("[data-dex]").forEach((b) =>
@@ -678,7 +897,7 @@
           applyTheme(ctx.student);
           renderTheme(ctx);
           showToast("已套用主題造型 ✓");
-        } catch (e) { alert("套用失敗：" + e.message); }
+        } catch (e) { showErrorToast(friendlyErrorMsg(e)); }
       }));
   }
 
@@ -832,6 +1051,15 @@
         renderSwitcher();
         await renderTab();
       }));
+  }
+
+  // U7：孩子模式加登出入口（原本只能從家長端才能登出）
+  const kidLogoutBtn = document.getElementById("kidLogoutBtn");
+  if (kidLogoutBtn) {
+    kidLogoutBtn.addEventListener("click", async () => {
+      const ok = await confirmDialog("確定要登出嗎？下次要重新用 Google 帳號登入喔。", { title: "登出", confirmText: "登出", danger: false });
+      if (ok) signOutUser();
+    });
   }
 
   // ---------------------------------------------------------------- 啟動

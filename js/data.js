@@ -503,7 +503,7 @@ const PERFECT_DAY_XP = 20; // 當天所有任務都完成的額外加成
 const STREAK_MILESTONES = { 7: 30, 14: 50, 30: 100, 50: 150, 100: 300, 180: 500, 365: 1000 };
 
 function defaultStreakState() {
-  return { count: 0, lastCheckInDate: null, best: 0, totalDays: 0, shields: 0 };
+  return { count: 0, lastCheckInDate: null, best: 0, totalDays: 0, shields: 0, comeback: null };
 }
 function normalizeStreak(raw) {
   const s = { ...defaultStreakState(), ...(raw || {}) };
@@ -512,8 +512,12 @@ function normalizeStreak(raw) {
   s.best = Math.max(Number(s.best) || 0, s.count);
   s.totalDays = Math.max(Number(s.totalDays) || 0, s.count);
   s.shields = Math.min(SHIELD_MAX, Number(s.shields) || 0);
+  // comeback（U2 復活賽）：只保留還「啟用中」的物件，過期或已結束的一律視為 null
+  s.comeback = s.comeback && s.comeback.active ? s.comeback : null;
   return s;
 }
+const COMEBACK_WINDOW_MS = 24 * 60 * 60 * 1000; // 復活賽時限：24 小時
+const COMEBACK_TASKS_NEEDED = 2; // 需完成「雙倍任務」＝當天累計完成 2 項任務（含觸發打卡的那一項）
 function todayStr() {
   return localDateStr(new Date());
 }
@@ -534,7 +538,9 @@ function daysBetween(aStr, bStr) {
   return Math.round((b - a) / 86400000);
 }
 
-/** 每日任務清單（相容舊的 foodReward / coinReward，一律換算成單一 xpReward） */
+/** 每日任務清單（相容舊的 foodReward / coinReward，一律換算成單一 xpReward）
+ * 【2026-07-31 U9】新增 days：適用星期幾，0=日 1=一 ... 6=六（對應 Date.getDay()）。
+ * 沒有設定（舊資料）視為「每天都適用」。 */
 function normalizeDailyTasks(list) {
   return (Array.isArray(list) ? list : []).map((t) => ({
     id: t.id,
@@ -543,8 +549,22 @@ function normalizeDailyTasks(list) {
       typeof t.xpReward === "number"
         ? t.xpReward
         : (Number(t.foodReward) || 0) + (Number(t.coinReward) || 0),
+    days:
+      Array.isArray(t.days) && t.days.length
+        ? t.days.map(Number).filter((n) => n >= 0 && n <= 6)
+        : [0, 1, 2, 3, 4, 5, 6],
   }));
 }
+
+/** 這項任務今天適不適用（依 days 星期幾設定，預設每天都適用） */
+function taskAppliesToday(task, dateObj) {
+  const d = dateObj || new Date();
+  if (!task || !Array.isArray(task.days) || task.days.length === 0) return true;
+  return task.days.includes(d.getDay());
+}
+
+const WEEKDAY_LABELS = ["日", "一", "二", "三", "四", "五", "六"]; // 對應 getDay() 0-6
+const WEEKDAY_DISPLAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // 畫面上習慣顯示「一二三四五六日」
 
 async function saveDailyTasks(studentId, tasks) {
   await updateStudent(studentId, { dailyTasks: tasks });
@@ -553,28 +573,45 @@ async function saveDailyTasks(studentId, tasks) {
 /**
  * 打卡：當天第一次完成任意任務時呼叫，回傳新的 streak 物件與本次額外獲得的里程碑 XP。
  * 會先處理「昨天沒打卡 → 自動消耗護盾卡」的補救，再累加今天。
+ *
+ * 【2026-07-31 U2 復活賽】護盾卡用完、連續紀錄真的斷掉時，不會直接讓孩子的努力歸零：
+ * 會開啟一個 24 小時的「復活賽」，只要在時限內累計完成 2 項任務（含這次觸發打卡的任務），
+ * 就能把原本的連續天數「找回來」（接續 prevCount+1，不是真的歸零重來）。
+ * 復活賽沒有在時限內達成才會維持歸零的結果——但完全不會扣任何東西，純粹是「多一次機會」。
  */
 function checkInToday(rawStreak) {
   const s = normalizeStreak(rawStreak);
   const today = todayStr();
-  if (s.lastCheckInDate === today) return { streak: s, bonusXp: 0, usedShield: false, milestone: null };
+  if (s.lastCheckInDate === today) return { streak: s, bonusXp: 0, usedShield: false, milestone: null, comebackStarted: false };
 
   const gap = daysBetween(s.lastCheckInDate, today);
   let usedShield = false;
+  let comebackStarted = false;
 
   if (gap === 1 || s.lastCheckInDate === null) {
     // 昨天有打卡（或第一次打卡）→ 正常累加
     s.count = (s.count || 0) + 1;
   } else if (gap !== null && gap > 1) {
-    // 中間有斷：每漏一天消耗一張護盾卡，護盾夠就把連續紀錄接回來，不夠就重新開始
+    // 中間有斷：每漏一天消耗一張護盾卡，護盾夠就把連續紀錄接回來，不夠就開啟復活賽
     const missed = gap - 1;
     if (s.shields >= missed) {
       s.shields -= missed;
       s.count = (s.count || 0) + 1;
       usedShield = true;
     } else {
+      const prevCount = s.count || 0;
       s.count = 1;
       s.shields = 0;
+      if (prevCount > 0) {
+        s.comeback = {
+          active: true,
+          prevCount,
+          deadline: Date.now() + COMEBACK_WINDOW_MS,
+          tasksDone: 1, // 這次觸發打卡的任務算第 1 項
+          need: COMEBACK_TASKS_NEEDED,
+        };
+        comebackStarted = true;
+      }
     }
   } else {
     s.count = (s.count || 0) + 1;
@@ -591,7 +628,33 @@ function checkInToday(rawStreak) {
 
   const milestone = STREAK_MILESTONES[s.count] ? s.count : null;
   const bonusXp = milestone ? STREAK_MILESTONES[milestone] : 0;
-  return { streak: s, bonusXp, usedShield, milestone };
+  return { streak: s, bonusXp, usedShield, milestone, comebackStarted };
+}
+
+/**
+ * 復活賽進度推進：每完成 1 項任務就呼叫一次（除了「剛開啟復活賽」的那一次，因為
+ * checkInToday() 已經把它算作第 1 項了，避免同一項任務被算兩次）。
+ * 時限到了還沒達成，復活賽直接關閉（不會有任何懲罰，只是機會用完）。
+ * 回傳 { streak, comebackResult }，comebackResult 為 null 或 { recovered:true, count }。
+ */
+function advanceComeback(streak, { skip } = {}) {
+  const s = streak;
+  if (!s.comeback || !s.comeback.active) return { streak: s, comebackResult: null };
+  if (Date.now() > s.comeback.deadline) {
+    s.comeback = null;
+    return { streak: s, comebackResult: null };
+  }
+  if (!skip) {
+    s.comeback.tasksDone = (s.comeback.tasksDone || 0) + 1;
+  }
+  if (s.comeback.tasksDone >= s.comeback.need) {
+    const restored = s.comeback.prevCount + 1;
+    s.count = restored;
+    s.best = Math.max(s.best || 0, restored);
+    s.comeback = null;
+    return { streak: s, comebackResult: { recovered: true, count: restored } };
+  }
+  return { streak: s, comebackResult: null };
 }
 
 /**
@@ -602,7 +665,7 @@ async function completeDailyTask(student, task, allTasks) {
   const today = todayStr();
   const completions = { ...(student.dailyTaskCompletions || {}) };
   const doneToday = new Set(completions[today] || []);
-  if (doneToday.has(task.id)) return { student, gainedXp: 0, checkIn: null };
+  if (doneToday.has(task.id)) return { student, gainedXp: 0, checkIn: null, comebackResult: null };
 
   const wasEmpty = doneToday.size === 0;
   doneToday.add(task.id);
@@ -610,8 +673,10 @@ async function completeDailyTask(student, task, allTasks) {
 
   let gained = Number(task.xpReward) || 0;
 
-  // 當天所有任務都完成 → 完美一天加成
-  const total = normalizeDailyTasks(allTasks || student.dailyTasks).length;
+  // 當天所有「今天適用」的任務都完成 → 完美一天加成（U9：星期幾篩選後才是今天真正要做的任務數）
+  const allNorm = normalizeDailyTasks(allTasks || student.dailyTasks);
+  const applicableToday = allNorm.filter((t) => taskAppliesToday(t));
+  const total = applicableToday.length;
   if (total > 0 && doneToday.size === total) gained += PERFECT_DAY_XP;
 
   // 當天第一次完成任務 → 打卡
@@ -623,10 +688,13 @@ async function completeDailyTask(student, task, allTasks) {
     gained += checkIn.bonusXp;
   }
 
+  // U2 復活賽：推進進度（剛開啟的那一次已經算過，這裡跳過避免重複計算）
+  const { comebackResult } = advanceComeback(streak, { skip: !!(checkIn && checkIn.comebackStarted) });
+
   const xpFromTasks = (Number(student.xpFromTasks) || 0) + gained;
   const fields = { dailyTaskCompletions: completions, xpFromTasks, streak };
   await updateStudent(student.id, fields);
-  return { student: { ...student, ...fields }, gainedXp: gained, checkIn };
+  return { student: { ...student, ...fields }, gainedXp: gained, checkIn, comebackResult };
 }
 
 /**
@@ -640,7 +708,8 @@ async function uncompleteDailyTask(student, task, allTasks) {
   const doneToday = new Set(completions[today] || []);
   if (!doneToday.has(task.id)) return { student, lostXp: 0 };
 
-  const total = normalizeDailyTasks(allTasks || student.dailyTasks).length;
+  const applicableToday = normalizeDailyTasks(allTasks || student.dailyTasks).filter((t) => taskAppliesToday(t));
+  const total = applicableToday.length;
   const wasPerfect = total > 0 && doneToday.size === total;
 
   doneToday.delete(task.id);
@@ -658,6 +727,25 @@ async function uncompleteDailyTask(student, task, allTasks) {
 /** 徽章解鎖狀態：{ badgeId: "YYYY-MM-DD" }，只會新增不會移除已解鎖的徽章 */
 async function saveUnlockedBadges(studentId, badgeMap) {
   await updateStudent(studentId, { badges: badgeMap });
+}
+
+// ------------------------------------------------------------------
+// 【2026-07-31 U1】每日心情打卡：每天第一次進孩子模式首頁時，強制先選一個心情
+// 才會看到首頁內容。存在 students/{id}.moodLog = { "2026-07-31": "great", ... }，
+// 純粹是給孩子的小儀式感與家長參考用，完全不影響任何獎金／XP／徽章判定。
+const MOOD_OPTIONS = [
+  { id: "great", emoji: "😄", label: "超開心" },
+  { id: "good", emoji: "🙂", label: "還不錯" },
+  { id: "okay", emoji: "😐", label: "普通" },
+  { id: "bad", emoji: "😣", label: "不太好" },
+  { id: "sad", emoji: "😢", label: "難過" },
+];
+function hasMoodToday(student) {
+  return !!((student && student.moodLog) || {})[todayStr()];
+}
+async function saveMoodToday(studentId, moodId) {
+  const field = "moodLog." + todayStr();
+  await db.collection("students").doc(studentId).update({ [field]: moodId });
 }
 
 // ------------------------------------------------------------------

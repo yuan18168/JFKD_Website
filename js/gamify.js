@@ -285,8 +285,15 @@ function buildTaskStats(student, dailyTasks) {
   Object.keys(comp).forEach((dateStr) => {
     const ids = comp[dateStr] || [];
     done += ids.length;
-    if (totalTasks > 0 && ids.length >= totalTasks) perfectDays++;
-    const day = new Date(dateStr + "T00:00:00").getDay();
+    // U9：任務可能限定星期幾才出現，所以「完美一天」要用「那一天實際適用的任務數」來比對，
+    // 而不是永遠用目前任務清單的總數（否則加了星期限定後，舊資料的完美天數會被誤判）。
+    const dObj = new Date(dateStr + "T00:00:00");
+    const dueThatDay =
+      typeof taskAppliesToday === "function"
+        ? tasks.filter((t) => taskAppliesToday(t, dObj)).length
+        : totalTasks;
+    if (dueThatDay > 0 && ids.length >= dueThatDay) perfectDays++;
+    const day = dObj.getDay();
     if (ids.length > 0 && (day === 0 || day === 6)) weekendCount++;
     ids.forEach((id) => {
       const nm = (byId[id] && byId[id].name) || "";
