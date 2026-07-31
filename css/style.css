@@ -2125,9 +2125,23 @@ body.kid-app[class*="theme-"] .theme-swatch-default { color: #2A2340; }
 .error-toast { background: linear-gradient(135deg, #FF5D8F, #FF7A2F); }
 
 /* ---------- U9 每日任務星期幾勾選（家長端）---------- */
-.task-days-row { display: flex; gap: 4px; flex-wrap: wrap; }
-.task-day-chip { display: inline-flex; align-items: center; gap: 3px; font-size: calc(11px * var(--font-scale,1)); color: var(--text-dim,#9aa5c3); }
-.task-day-chip input { margin: 0; }
+/* BUG 修正：iOS Chrome/Safari 的原生 checkbox 有自己的最小尺寸與內距，
+   跟後面的星期文字擠在一起時文字會被裁切或蓋住（只看得到最後一個「日」）。
+   改成每個星期幾都是一顆有底色的獨立藥丸，checkbox 用 accent-color 縮小內嵌，
+   文字有自己的 white-space:nowrap + 最小寬度，不會再被吃掉。 */
+.task-days-row { display: flex; gap: 5px; flex-wrap: wrap; }
+.task-day-chip {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  font-size: calc(12px * var(--font-scale,1)); font-weight: 700; color: var(--text-dim,#9aa5c3);
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+  padding: 5px 9px; border-radius: 999px; flex-shrink: 0; white-space: nowrap;
+  min-height: 30px; box-sizing: border-box;
+}
+.task-day-chip input {
+  margin: 0; flex-shrink: 0; width: 14px; height: 14px;
+  accent-color: var(--accent, #6c8cff); vertical-align: middle;
+}
+.task-day-chip span { display: inline-block; line-height: 1; }
 
 /* 深色主題下的新元件也要跟著換色 */
 body.kid-app[class*="theme-"] .mood-gate-card { background: var(--kid-card); color: var(--kid-ink); }
