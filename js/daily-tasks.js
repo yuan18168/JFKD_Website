@@ -24,7 +24,7 @@
   function taskRowHtml(studentId, task) {
     const days = Array.isArray(task.days) && task.days.length ? task.days : [0, 1, 2, 3, 4, 5, 6];
     const dayBoxes = WEEKDAY_DISPLAY_ORDER
-      .map((d) => `<label class="task-day-chip"><input type="checkbox" data-task-day="${d}" ${days.includes(d) ? "checked" : ""}>${WEEKDAY_LABELS[d]}</label>`)
+      .map((d) => `<label class="task-day-chip"><input type="checkbox" data-task-day="${d}" ${days.includes(d) ? "checked" : ""}><span>${WEEKDAY_LABELS[d]}</span></label>`)
       .join("");
     return `
       <div class="card" data-task-row="${task.id}" data-owner="${studentId}" style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:8px; padding:10px 12px;">
