@@ -1399,7 +1399,15 @@ body.kid-app {
   display: flex; align-items: center; gap: 10px; position: relative; overflow: hidden;
   cursor: pointer; min-height: 56px;
 }
-.fx-card > * { position: relative; z-index: 2; }
+/* 2026-07-31 修正：這條原意是把卡片內的靜態內容（emoji/文字/分數）疊在特效之上，
+   但選到的是「所有直接子元素」，連後來用 JS 動態 appendChild 進來的特效覆蓋層
+   （.subject-effect-rocket 等，本身需要 position:absolute + inset:0 撐滿卡片）也一起中獎，
+   position 被蓋回 relative 導致覆蓋層整個塌陷成 0x0、又被 overflow:hidden 裁光——
+   點下去完全沒有畫面。改成明確排除這些特效覆蓋層 class，不要影響它們自己的定位。 */
+.fx-card > *:not(.subject-effect-rocket):not(.subject-effect-starburst):not(.subject-effect-canvas):not(.subject-effect-emoji) {
+  position: relative;
+  z-index: 2;
+}
 .fx-emoji { font-size: calc(22px * var(--font-scale,1)); flex: 0 0 auto; }
 .fx-text { flex: 1; min-width: 0; }
 .fx-name { font-size: calc(13.5px * var(--font-scale,1)); font-weight: 800; }
@@ -2231,6 +2239,32 @@ body.kid-app[class*="theme-"] .near-unlock-card { background: var(--k-soft-bg2);
 .rule-settlement-tag.pending { background: #FFEEF3; color: var(--k-pink,#FF5D8F); }
 .rule-settlement-tag.done { background: var(--k-good-bg,#EAFBF4); color: var(--k-good,#1FAE7A); }
 .rule-settlement-tag.bonus { background: var(--k-warm-grad); color: #fff; }
+
+/* 處罰清單頁：超過兩週的舊紀錄依月份分組的可展開/收起區塊（家長端深色儀表板樣式） */
+.violation-month-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 14px;
+  margin-bottom: 10px;
+  background: var(--bg-card);
+}
+.violation-month-group summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 0;
+  font-weight: 700;
+  font-size: calc(13px * var(--font-scale, 1));
+  color: var(--text-dim);
+  user-select: none;
+}
+.violation-month-group summary::-webkit-details-marker { display: none; }
+.violation-month-group summary::before {
+  content: "▸ ";
+  color: var(--text-faint);
+}
+.violation-month-group[open] summary::before { content: "▾ "; }
+.violation-month-group[open] summary { border-bottom: 1px solid var(--border); }
+.violation-month-group > div { padding-bottom: 8px; }
 
 body.kid-app[class*="theme-"] .rule-card,
 body.kid-app[class*="theme-"] .rule-week-summary { background: var(--kid-card); border-color: var(--kid-line); color: var(--kid-ink); }
