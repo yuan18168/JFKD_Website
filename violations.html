@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/style.css?v=20260731j" />
+<link rel="stylesheet" href="css/style.css?v=20260731k" />
 </head>
 <body>
   <div class="app-shell">
@@ -56,7 +56,8 @@
         <div>
           <h1>處罰清單</h1>
           <div class="desc">
-            每一筆用「⚡快速登記處罰」或規矩打卡累積出來的違規紀錄，都會列在這裡。
+            每一筆用「⚡快速登記處罰」或「固定次數型」規矩單次登記的違規紀錄，都會列在這裡；
+            「出門紀律」等打卡時間累積型規矩，則是每週五自動彙整成一筆待執行處罰，顯示在「規矩」設定頁最上方，不會逐筆出現在這份清單。
             可以直接修改次數/原因、刪除登記錯誤的紀錄，或不用等到週五結算，
             當場執行完就把它標記成「已執行處罰」（標記後這筆會自動排除在下次週五的淨值結算之外，不會重複處罰）。
             兩週內的紀錄會直接展開顯示，更久的紀錄依月份分組、可展開/收起。
@@ -71,13 +72,13 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-config.js?v=20260731j"></script>
-  <script src="js/auth.js?v=20260731j"></script>
-  <script src="js/calc.js?v=20260731j"></script>
-  <script src="js/data.js?v=20260731j"></script>
-  <script src="js/gamify.js?v=20260731j"></script>
-  <script src="js/nav.js?v=20260731j"></script>
-  <script src="js/pin.js?v=20260731j"></script>
-  <script src="js/violations.js?v=20260731j"></script>
+  <script src="js/firebase-config.js?v=20260731k"></script>
+  <script src="js/auth.js?v=20260731k"></script>
+  <script src="js/calc.js?v=20260731k"></script>
+  <script src="js/data.js?v=20260731k"></script>
+  <script src="js/gamify.js?v=20260731k"></script>
+  <script src="js/nav.js?v=20260731k"></script>
+  <script src="js/pin.js?v=20260731k"></script>
+  <script src="js/violations.js?v=20260731k"></script>
 </body>
 </html>
