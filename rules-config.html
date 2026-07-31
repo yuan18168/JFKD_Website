@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>許願池｜【JFKD】成績記錄表</title>
+<title>規矩設定｜【JFKD】成績記錄表</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="manifest" href="manifest.json" />
@@ -31,12 +31,12 @@
       <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
 
       <div class="nav-section-label">學生管理</div>
-      <a href="wishlist.html" class="nav-link active">🎁 許願池</a>
+      <a href="wishlist.html" class="nav-link">🎁 許願池</a>
       <a href="themes.html" class="nav-link">🎨 主題造型</a>
 
       <div class="nav-section-label">父母管理</div>
       <a href="daily-tasks.html" class="nav-link">📝 每日任務設定</a>
-      <a href="rules-config.html" class="nav-link">📖 規矩設定</a>
+      <a href="rules-config.html" class="nav-link active">📖 規矩設定</a>
       <a href="rules.html" class="nav-link">📖 遊戲規則</a>
       <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則設定</a>
@@ -55,14 +55,22 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>許願池</h1>
-          <div class="desc">每位學生各自獨立設定願望項目、達成條件與金額來源；拖曳卡片可調整顯示順序，達成／未達成／兌現狀態也能在這裡直接標記。</div>
+          <h1>規矩設定</h1>
+          <div class="desc">
+            為每位學生建立「規矩」（例如出門紀律、安全帶規定），孩子只能在「規矩」分頁查看與打卡／回報，
+            實際規則內容（規定時間、倍率、每次罰則）只能由家長在這裡設定。
+            所有規矩的處罰都以「開合跳次數」為統一單位，每週五晚上系統會自動合併結算一次
+            （出門紀律的早/晚分鐘數 × 倍率 ＋ 固定次數型的違規次數），淨值為正就產生待執行的處罰，
+            淨值為負則自動換算成獎金（次數 ÷10）併入孩子的總獎金與經驗值。
+          </div>
         </div>
       </div>
 
-      <div class="student-tab-row" id="wishlistStudentTabs"></div>
+      <div class="section-title mt-0">待執行的處罰</div>
+      <div id="pendingPunishments" style="margin-bottom:18px;"></div>
 
-      <div id="wishlistPage"></div>
+      <div class="section-title">各學生的規矩</div>
+      <div id="studentRuleCards"><div class="empty-state">載入中...</div></div>
     </main>
   </div>
 
@@ -76,6 +84,6 @@
   <script src="js/gamify.js?v=20260731f"></script>
   <script src="js/nav.js?v=20260731f"></script>
   <script src="js/pin.js?v=20260731f"></script>
-  <script src="js/wishlist.js?v=20260731f"></script>
+  <script src="js/rules-config.js?v=20260731f"></script>
 </body>
 </html>
