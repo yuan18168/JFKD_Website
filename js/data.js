@@ -776,3 +776,307 @@ function themeBannerHtml(themeId, studentName, overrideTitle, overrideTagline) {
       </div>
     </div>`;
 }
+
+// ------------------------------------------------------------------
+// 【2026-07-31 出門紀律／規矩框架】
+//
+// ＝＝ 資料結構（students/{id} 新增欄位，全部選填）＝＝
+//   rules               [{ id, type:'punctuality'|'fixedCount', name, enabled, config }]
+//                        - punctuality.config = { deadlineTime:"07:35", multiplier:10 }
+//                        - fixedCount.config  = { defaultCount:100 }（快速登記時預帶的次數，仍可改）
+//   arrivalLog           { "<ruleId>_YYYY-MM-DD": { ruleId, date, time, deltaMinutes, source:'auto'|'manual' } }
+//                        deltaMinutes 正=遲到分鐘數、負=提早分鐘數
+//   ruleViolations       [{ id, ruleId(可為 null=雜項登記), count, reason, loggedAt(YYYY-MM-DD), loggedBy, settled }]
+//   ruleSettlements      [{ id, periodStart, periodEnd（週五結算日）, netJumpingJacks,
+//                            punishmentCount, punishmentStatus:'pending'|'done', bonusAmount, computedAt }]
+//   ruleBonusTotal       number：規矩結算累積發放的獎金（NT$），會併入孩子模式的「總獎金」計算（見 app.js ctx.totalBonus）
+//   lastRuleSettlementDate  最近一次已完成結算的週五日期字串（YYYY-MM-DD），null = 從未結算過
+//
+// ＝＝ 全部規矩統一以「開合跳次數」為基礎單位，週五晚上 21:00 為結算截止時間 ＝＝
+// 網站是純靜態頁面、沒有後台排程，「自動結算」實際上是：任何人開啟孩子模式或家長模式時，
+// 偵測「已過上一個應結算的週五 21:00 但尚未結算」就自動補算，多週沒開也能一次追上。
+
+const RULE_WEEKLY_SETTLEMENT_HOUR = 21; // 週五晚上幾點視為結算截止
+const RULE_UNIT_LABEL = "開合跳";
+
+const RULE_TEMPLATES = {
+  punctuality: {
+    type: "punctuality",
+    label: "⏰ 出門紀律（時間損益型）",
+    desc: "設定每天規定出門準備好的時間，孩子打卡回報，遲到/提早依分鐘數×倍率換算開合跳",
+    defaultName: "出門紀律",
+    defaultConfig: { deadlineTime: "07:35", multiplier: 10 },
+  },
+  fixedCount: {
+    type: "fixedCount",
+    label: "📌 固定次數型（違規一次固定罰）",
+    desc: "例如沒繫安全帶、被長輩罵等，每次違規登記固定的開合跳次數",
+    defaultName: "生活常規",
+    defaultConfig: { defaultCount: 100 },
+  },
+};
+
+function defaultRuleConfig(type) {
+  const tpl = RULE_TEMPLATES[type];
+  return tpl ? { ...tpl.defaultConfig } : {};
+}
+
+/** 新增一條規矩用的預設物件（尚未存檔） */
+function newRuleDraft(type) {
+  const tpl = RULE_TEMPLATES[type] || RULE_TEMPLATES.punctuality;
+  return {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+    type: tpl.type,
+    name: tpl.defaultName,
+    enabled: true,
+    config: defaultRuleConfig(tpl.type),
+  };
+}
+
+/** 清理/補齊每條規矩的欄位，避免舊資料或手動改壞資料造成畫面出錯 */
+function normalizeRules(list) {
+  return (Array.isArray(list) ? list : [])
+    .filter((r) => r && RULE_TEMPLATES[r.type])
+    .map((r) => ({
+      id: r.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())),
+      type: r.type,
+      name: r.name || RULE_TEMPLATES[r.type].defaultName,
+      enabled: r.enabled !== false,
+      config: { ...defaultRuleConfig(r.type), ...(r.config || {}) },
+    }));
+}
+
+async function saveStudentRules(studentId, rules) {
+  await updateStudent(studentId, { rules: normalizeRules(rules) });
+}
+
+/** 把 "HH:MM" 轉成當天的分鐘數（00:00 起算），方便跟打卡時間比較 */
+function hhmmToMinutes(hhmm) {
+  const m = /^(\d{1,2}):(\d{2})$/.exec((hhmm || "").trim());
+  if (!m) return null;
+  return Number(m[1]) * 60 + Number(m[2]);
+}
+
+/**
+ * 出門紀律打卡：孩子按下「我準備好了」時呼叫。用目前時間跟該規矩設定的
+ * deadlineTime 比較，算出遲到/提早幾分鐘（正=遲到，負=提早），寫入 arrivalLog。
+ * 同一天同一條規矩只會記錄第一次打卡的時間（避免孩子重複點擊洗掉紀錄）；
+ * 家長如需修正才呼叫 correctArrivalTime()。
+ */
+async function recordArrivalCheckIn(student, rule) {
+  const today = todayStr();
+  const key = `${rule.id}_${today}`;
+  const log = { ...(student.arrivalLog || {}) };
+  if (log[key]) return { student, entry: log[key], alreadyLogged: true };
+
+  const now = new Date();
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const deadlineMinutes = hhmmToMinutes(rule.config && rule.config.deadlineTime) ?? hhmmToMinutes("07:35");
+  const deltaMinutes = nowMinutes - deadlineMinutes;
+  const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+  const entry = { ruleId: rule.id, date: today, time, deltaMinutes, source: "auto" };
+  log[key] = entry;
+  await updateStudent(student.id, { arrivalLog: log });
+  return { student: { ...student, arrivalLog: log }, entry, alreadyLogged: false };
+}
+
+/** 家長端修正某天的打卡時間（發現孩子忘記打卡或時間不對時使用） */
+async function correctArrivalTime(student, rule, dateStr, timeStr) {
+  const key = `${rule.id}_${dateStr}`;
+  const log = { ...(student.arrivalLog || {}) };
+  const deadlineMinutes = hhmmToMinutes(rule.config && rule.config.deadlineTime) ?? hhmmToMinutes("07:35");
+  const [hh, mm] = timeStr.split(":").map(Number);
+  const deltaMinutes = hh * 60 + mm - deadlineMinutes;
+  log[key] = { ruleId: rule.id, date: dateStr, time: timeStr, deltaMinutes, source: "manual" };
+  await updateStudent(student.id, { arrivalLog: log });
+  return { student: { ...student, arrivalLog: log } };
+}
+
+function hasArrivalToday(student, ruleId) {
+  const key = `${ruleId}_${todayStr()}`;
+  return !!((student && student.arrivalLog) || {})[key];
+}
+
+/**
+ * 登記處罰（固定次數型規矩的違規，或不綁規矩的雜項登記）。
+ * 家長模式常駐工具、孩子模式規矩頁的 PIN 登記入口都呼叫這支。
+ */
+async function logRuleViolation(student, { ruleId = null, count, reason, loggedBy }) {
+  const list = [...(student.ruleViolations || [])];
+  const entry = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+    ruleId: ruleId || null,
+    count: Number(count) || 0,
+    reason: reason || "",
+    loggedAt: todayStr(),
+    loggedBy: loggedBy || (auth.currentUser ? auth.currentUser.email : "kid"),
+    settled: false,
+  };
+  list.push(entry);
+  await updateStudent(student.id, { ruleViolations: list });
+  return { student: { ...student, ruleViolations: list }, entry };
+}
+
+/** 週五 21:00 為界，找出「以 now 這個時間點來看，最近一個已經過了結算時間的週五」日期字串 */
+function mostRecentDueSettlementFriday(now) {
+  const day = now.getDay(); // 0=日...5=五...6=六
+  const diffToFriday = (day - 5 + 7) % 7; // 本週（或今天）五距離 now 幾天前
+  const fri = new Date(now);
+  fri.setDate(now.getDate() - diffToFriday);
+  fri.setHours(RULE_WEEKLY_SETTLEMENT_HOUR, 0, 0, 0);
+  if (now.getTime() < fri.getTime()) {
+    fri.setDate(fri.getDate() - 7); // 這週五 21:00 還沒到，退回上週五
+  }
+  return localDateStr(fri);
+}
+
+/** 找出某個週五日期字串「之後」的下一個週五日期字串 */
+function nextFridayStr(fridayDateStr) {
+  const d = new Date(fridayDateStr + "T21:00:00");
+  d.setDate(d.getDate() + 7);
+  return localDateStr(d);
+}
+
+/**
+ * 計算某個結算區間（periodStartExclusive < 日期 <= periodEnd）的淨開合跳數，
+ * 並回傳這次要寫回 Firestore 的欄位（不含 lastRuleSettlementDate，由呼叫端統一設定）。
+ */
+function computeSettlementForPeriod(student, rules, periodStartExclusive, periodEnd) {
+  const inPeriod = (dateStr) => dateStr > (periodStartExclusive || "0000-00-00") && dateStr <= periodEnd;
+  const ruleById = Object.fromEntries((rules || []).map((r) => [r.id, r]));
+
+  let net = 0;
+  Object.values(student.arrivalLog || {}).forEach((entry) => {
+    if (!inPeriod(entry.date)) return;
+    const rule = ruleById[entry.ruleId];
+    if (!rule || rule.type !== "punctuality" || !rule.enabled) return;
+    const multiplier = Number(rule.config && rule.config.multiplier) || 10;
+    net += entry.deltaMinutes * multiplier;
+  });
+
+  const settledViolationIds = [];
+  (student.ruleViolations || []).forEach((v) => {
+    if (v.settled) return;
+    if (!inPeriod(v.loggedAt)) return;
+    net += Number(v.count) || 0;
+    settledViolationIds.push(v.id);
+  });
+
+  const settlement = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+    periodStart: periodStartExclusive || null,
+    periodEnd,
+    netJumpingJacks: net,
+    punishmentCount: net > 0 ? net : 0,
+    punishmentStatus: net > 0 ? "pending" : null,
+    bonusAmount: net < 0 ? Math.floor(-net / 10) : 0,
+    computedAt: localDateStr(new Date()),
+  };
+  return { settlement, settledViolationIds };
+}
+
+/**
+ * 開啟 App（孩子或家長模式）時呼叫：檢查是否有錯過的週五結算，有就自動補算並寫回 Firestore。
+ * 支援一次補算多個錯過的週次（例如整週都沒開 App）。回傳 { student, newSettlements }，
+ * newSettlements 為這次新產生的結算結果陣列，供畫面顯示 toast 用。
+ */
+async function runWeeklySettlementIfDue(student) {
+  const dueFriday = mostRecentDueSettlementFriday(new Date());
+  const rules = normalizeRules(student.rules);
+  if (!rules.length) return { student, newSettlements: [] };
+
+  let cursor = student.lastRuleSettlementDate || null;
+  // 第一次結算：不追溯太久遠，直接從「現在」開始只結這一次，避免舊資料造成離譜的第一筆結算
+  if (!cursor) {
+    const { settlement, settledViolationIds } = computeSettlementForPeriod(student, rules, null, dueFriday);
+    return applySettlements(student, [settlement], settledViolationIds, dueFriday);
+  }
+  if (cursor >= dueFriday) return { student, newSettlements: [] };
+
+  const settlements = [];
+  const allSettledIds = [];
+  let periodStart = cursor;
+  let guard = 0;
+  while (periodStart < dueFriday && guard < 12) {
+    const periodEnd = nextFridayStr(periodStart);
+    const endToUse = periodEnd <= dueFriday ? periodEnd : dueFriday;
+    const { settlement, settledViolationIds } = computeSettlementForPeriod(student, rules, periodStart, endToUse);
+    settlements.push(settlement);
+    allSettledIds.push(...settledViolationIds);
+    periodStart = endToUse;
+    guard++;
+  }
+  return applySettlements(student, settlements, allSettledIds, dueFriday);
+}
+
+async function applySettlements(student, settlements, settledViolationIds, dueFriday) {
+  const meaningful = settlements.filter((s) => s.netJumpingJacks !== 0);
+  const ruleSettlements = [...(student.ruleSettlements || []), ...meaningful];
+  const settledSet = new Set(settledViolationIds);
+  const ruleViolations = (student.ruleViolations || []).map((v) =>
+    settledSet.has(v.id) ? { ...v, settled: true } : v
+  );
+  const addedBonus = meaningful.reduce((a, s) => a + (s.bonusAmount || 0), 0);
+  const ruleBonusTotal = (Number(student.ruleBonusTotal) || 0) + addedBonus;
+
+  const fields = { ruleSettlements, ruleViolations, ruleBonusTotal, lastRuleSettlementDate: dueFriday };
+  await updateStudent(student.id, fields);
+  return { student: { ...student, ...fields }, newSettlements: meaningful };
+}
+
+/** 家長端：把某筆結算的處罰標記為已執行 */
+async function markRulePunishmentDone(student, settlementId) {
+  const ruleSettlements = (student.ruleSettlements || []).map((s) =>
+    s.id === settlementId ? { ...s, punishmentStatus: "done" } : s
+  );
+  await updateStudent(student.id, { ruleSettlements });
+  return { student: { ...student, ruleSettlements } };
+}
+
+/**
+ * 本週（尚未結算，從 lastRuleSettlementDate 之後到現在）即時進度，供孩子模式規矩頁顯示，
+ * 不會寫入 Firestore，純粹即時運算。回傳每條規矩的分項統計＋合併淨開合跳數。
+ */
+function computeLiveWeekProgress(student, rules) {
+  const periodStartExclusive = student.lastRuleSettlementDate || null;
+  const today = todayStr();
+  const inPeriod = (dateStr) => dateStr > (periodStartExclusive || "0000-00-00") && dateStr <= today;
+
+  const perRule = {};
+  (rules || []).forEach((r) => {
+    perRule[r.id] = { ruleId: r.id, lateMinutes: 0, earlyMinutes: 0, violationCount: 0, jumpingJacks: 0 };
+  });
+
+  Object.values(student.arrivalLog || {}).forEach((entry) => {
+    if (!inPeriod(entry.date)) return;
+    const stat = perRule[entry.ruleId];
+    if (!stat) return;
+    if (entry.deltaMinutes > 0) stat.lateMinutes += entry.deltaMinutes;
+    else stat.earlyMinutes += -entry.deltaMinutes;
+  });
+  (student.ruleViolations || []).forEach((v) => {
+    if (v.settled || !inPeriod(v.loggedAt)) return;
+    if (!v.ruleId || !perRule[v.ruleId]) return;
+    perRule[v.ruleId].violationCount += Number(v.count) || 0;
+  });
+
+  let netJumpingJacks = 0;
+  (rules || []).forEach((r) => {
+    const stat = perRule[r.id];
+    if (r.type === "punctuality") {
+      const multiplier = Number(r.config && r.config.multiplier) || 10;
+      stat.jumpingJacks = (stat.lateMinutes - stat.earlyMinutes) * multiplier;
+    } else {
+      stat.jumpingJacks = stat.violationCount;
+    }
+    netJumpingJacks += stat.jumpingJacks;
+  });
+  // 不歸屬任何規矩的雜項登記，也算進淨值
+  (student.ruleViolations || []).forEach((v) => {
+    if (v.settled || !inPeriod(v.loggedAt) || v.ruleId) return;
+    netJumpingJacks += Number(v.count) || 0;
+  });
+
+  return { perRule, netJumpingJacks };
+}

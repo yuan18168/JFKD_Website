@@ -35,14 +35,37 @@
 
   async function loadStudent(id) {
     if (cache[id]) return cache[id];
-    const [student, records] = await Promise.all([getStudent(id), listExamRecords(id)]);
+    let [student, records] = await Promise.all([getStudent(id), listExamRecords(id)]);
+
+    // 【規矩框架】每次真正重新載入這位學生時，順便檢查是否有錯過的週五結算，有就自動補算
+    try {
+      const settled = await runWeeklySettlementIfDue(student);
+      student = settled.student;
+      if (settled.newSettlements.length) {
+        setTimeout(() => showRuleSettlementToasts(settled.newSettlements), 700);
+      }
+    } catch (e) { /* 離線時先不擋畫面，之後開啟時再補算 */ }
+
     const enriched = (records || []).map((r) => {
       const result = calcExamRecord(r.subjects || [], pickRulesForRecord(r, profiles, defaultProfileId));
       return { ...r, result, total: result.total };
     });
-    const totalBonus = enriched.reduce((a, r) => a + r.total, 0);
+    // ruleBonusTotal（規矩結算累積的獎金）併入總獎金，XP 計算會自動同步（見 xpOf）
+    const totalBonus = enriched.reduce((a, r) => a + r.total, 0) + (Number(student.ruleBonusTotal) || 0);
     cache[id] = { student, rows: enriched, totalBonus };
     return cache[id];
+  }
+
+  function showRuleSettlementToasts(settlements) {
+    settlements.forEach((s, i) => {
+      setTimeout(() => {
+        if (s.netJumpingJacks > 0) {
+          badgeToast({ i: "⚡", n: `上週結算：要罰 ${s.punishmentCount} 下開合跳，等家長執行` });
+        } else if (s.bonusAmount > 0) {
+          badgeToast({ i: "🎉", n: `上週結算：早到表現優秀，獲得獎金 ${fmtMoney(s.bonusAmount)}！` });
+        }
+      }, i * 1400);
+    });
   }
 
   // ---------------------------------------------------------------- 共用小工具
@@ -441,6 +464,115 @@
         }
       });
     });
+  }
+
+  // ================================================================ 規矩
+  function ruleCardHtml(rule, ctx, liveStat) {
+    const checkedIn = rule.type === "punctuality" && hasArrivalToday(ctx.student, rule.id);
+    const todayEntry = checkedIn ? ctx.student.arrivalLog[`${rule.id}_${todayStr()}`] : null;
+
+    let bodyHtml = "";
+    if (rule.type === "punctuality") {
+      if (checkedIn) {
+        const d = todayEntry.deltaMinutes;
+        const cls = d > 0 ? "late" : d < 0 ? "early" : "ontime";
+        const text = d > 0 ? `今天遲到 ${d} 分鐘（${todayEntry.time} 打卡）`
+          : d < 0 ? `今天提早 ${-d} 分鐘（${todayEntry.time} 打卡）🎉`
+          : `準時打卡（${todayEntry.time}）👍`;
+        bodyHtml = `<div class="rule-checkin-result ${cls}">${text}</div>`;
+      } else {
+        bodyHtml = `<button class="rule-checkin-btn" data-checkin="${rule.id}">✅ 我準備好了！</button>
+          <div class="rule-card-type">規定時間：${escapeHtml(rule.config.deadlineTime)} 前</div>`;
+      }
+    } else {
+      bodyHtml = `<div class="rule-card-type">違規一次固定罰 ${rule.config.defaultCount} 下（由家長登記）</div>`;
+    }
+
+    const stat = liveStat && liveStat.perRule[rule.id];
+    const jj = stat ? stat.jumpingJacks : 0;
+    const jjText = jj > 0 ? `本週目前：+${jj} 下（待罰）` : jj < 0 ? `本週目前：${jj} 下（可抵）` : "本週目前：持平";
+
+    return `<div class="rule-card">
+      <div class="rule-card-head">
+        <div style="flex:1;min-width:0">
+          <div class="rule-card-name">${escapeHtml(rule.name)}</div>
+        </div>
+      </div>
+      ${bodyHtml}
+      <div class="rule-progress-row">
+        <span>${jjText}</span>
+        <span class="rule-progress-net ${jj > 0 ? "pos" : jj < 0 ? "neg" : ""}">${jj > 0 ? "+" : ""}${jj}</span>
+      </div>
+    </div>`;
+  }
+
+  function settlementHistoryHtml(ctx) {
+    const list = [...(ctx.student.ruleSettlements || [])].reverse().slice(0, 8);
+    if (!list.length) return "";
+    return `<div class="rule-week-summary">
+      <div class="kid-card-title">📅 過去結算紀錄</div>
+      ${list.map((s) => {
+        if (s.netJumpingJacks > 0) {
+          const tag = s.punishmentStatus === "done"
+            ? '<span class="rule-settlement-tag done">已執行</span>'
+            : '<span class="rule-settlement-tag pending">待執行</span>';
+          return `<div class="rule-settlement-row"><span>${escapeHtml(s.periodEnd)} 結算</span>
+            <span style="margin-left:auto">罰 ${s.punishmentCount} 下</span>${tag}</div>`;
+        }
+        return `<div class="rule-settlement-row"><span>${escapeHtml(s.periodEnd)} 結算</span>
+          <span style="margin-left:auto">獲得獎金 ${fmtMoney(s.bonusAmount)}</span><span class="rule-settlement-tag bonus">🎉</span></div>`;
+      }).join("")}
+    </div>`;
+  }
+
+  function renderRules(ctx) {
+    const rules = normalizeRules(ctx.student.rules).filter((r) => r.enabled);
+    if (!rules.length) {
+      document.getElementById("rulesBody").innerHTML =
+        '<div class="kid-card"><div class="kid-empty">還沒有設定規矩<br>請家長到「家長模式 → 規矩設定」新增</div></div>';
+      return;
+    }
+    const liveStat = computeLiveWeekProgress(ctx.student, rules);
+    document.getElementById("rulesBody").innerHTML = `
+      ${rules.map((r) => ruleCardHtml(r, ctx, liveStat)).join("")}
+      <div class="rule-week-summary">
+        <div class="kid-card-title">本週目前合計</div>
+        <div class="rule-progress-row">
+          <span>淨開合跳數（每週五晚上自動結算）</span>
+          <span class="rule-progress-net ${liveStat.netJumpingJacks > 0 ? "pos" : liveStat.netJumpingJacks < 0 ? "neg" : ""}">
+            ${liveStat.netJumpingJacks > 0 ? "+" : ""}${liveStat.netJumpingJacks}
+          </span>
+        </div>
+      </div>
+      <button class="rule-violation-log-btn" id="ruleQuickLogBtn">🔒 登記處罰（需家長 PIN）</button>
+      ${settlementHistoryHtml(ctx)}
+    `;
+
+    document.querySelectorAll("[data-checkin]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (btn.dataset.busy) return;
+        btn.dataset.busy = "1";
+        btn.disabled = true;
+        const rule = rules.find((r) => r.id === btn.dataset.checkin);
+        try {
+          const { student } = await recordArrivalCheckIn(ctx.student, rule);
+          ctx.student = student;
+          renderRules(ctx);
+        } catch (err) {
+          showErrorToast(friendlyErrorMsg(err));
+          delete btn.dataset.busy;
+          btn.disabled = false;
+        }
+      });
+    });
+
+    const logBtn = document.getElementById("ruleQuickLogBtn");
+    if (logBtn) {
+      logBtn.addEventListener("click", async () => {
+        const ok = await requireParentPin();
+        if (ok) openQuickViolationModal([ctx.student]);
+      });
+    }
   }
 
   // ================================================================ 成績
@@ -1031,6 +1163,7 @@
     const ctx = await loadStudent(currentId);
     applyTheme(ctx.student);
     if (activeTab === "home") renderHome(ctx);
+    else if (activeTab === "rules") renderRules(ctx);
     else if (activeTab === "score") renderScore(ctx);
     else if (activeTab === "dex") await renderDex(ctx);
     else if (activeTab === "wish") renderWish(ctx);
@@ -1060,6 +1193,12 @@
       const ok = await confirmDialog("確定要登出嗎？下次要重新用 Google 帳號登入喔。", { title: "登出", confirmText: "登出", danger: false });
       if (ok) signOutUser();
     });
+  }
+
+  // 【規矩框架】原本底部「造型」分頁改成從首頁按鈕進入，維持底部只有 5 個常用分頁
+  const kidThemeEntryBtn = document.getElementById("kidThemeEntryBtn");
+  if (kidThemeEntryBtn) {
+    kidThemeEntryBtn.addEventListener("click", () => switchTab("theme"));
   }
 
   // ---------------------------------------------------------------- 啟動

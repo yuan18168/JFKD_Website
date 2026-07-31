@@ -1,21 +1,129 @@
 /* nav.js — 側邊欄「學生」清單渲染（共用於各頁） */
 function renderStudentNav(students, activeStudentId) {
   const el = document.getElementById("studentNavLinks");
-  if (!el) return;
-  if (!students.length) {
-    el.innerHTML = '<div class="text-faint" style="padding:8px 12px;font-size:calc(12px * var(--font-scale, 1));">尚未新增學生，請至「獎懲規則設定」新增</div>';
-    return;
+  if (el) {
+    if (!students.length) {
+      el.innerHTML = '<div class="text-faint" style="padding:8px 12px;font-size:calc(12px * var(--font-scale, 1));">尚未新增學生，請至「獎懲規則設定」新增</div>';
+    } else {
+      el.innerHTML = students
+        .map((s) => {
+          const active = s.id === activeStudentId ? "active" : "";
+          const initial = (s.name || "?").slice(0, 1);
+          return `<a href="student.html?id=${s.id}" class="nav-link ${active}">
+            <span style="width:18px;height:18px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:calc(10px * var(--font-scale, 1));font-weight:700;color:#08122e;">${initial}</span>
+            ${escapeHtml(s.name)}
+          </a>`;
+        })
+        .join("");
+    }
   }
-  el.innerHTML = students
-    .map((s) => {
-      const active = s.id === activeStudentId ? "active" : "";
-      const initial = (s.name || "?").slice(0, 1);
-      return `<a href="student.html?id=${s.id}" class="nav-link ${active}">
-        <span style="width:18px;height:18px;border-radius:50%;background:${s.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:calc(10px * var(--font-scale, 1));font-weight:700;color:#08122e;">${initial}</span>
-        ${escapeHtml(s.name)}
-      </a>`;
-    })
-    .join("");
+  // 【2026-07-31 規矩框架】家長模式常駐的「快速登記處罰」浮動按鈕，
+  // renderStudentNav() 幾乎在每個父母管理頁都會被呼叫，順便掛上這個 widget 最省事。
+  mountQuickViolationWidget(students);
+}
+
+/* ---------- 快速登記處罰（家長模式常駐浮動按鈕；孩子模式規矩頁 PIN 通過後也會呼叫同一套邏輯）---------- */
+function studentRuleOptionsHtml(student) {
+  const rules = ((student && student.rules) || []).filter((r) => r.enabled);
+  const opts = ['<option value="">（不指定，雜項登記）</option>'].concat(
+    rules.map((r) => `<option value="${r.id}">${escapeHtml(r.name)}</option>`)
+  );
+  return opts.join("");
+}
+
+function mountQuickViolationWidget(students) {
+  window.__qvStudents = students || [];
+  if (document.getElementById("quickViolationFab") || !window.__qvStudents.length) return;
+  const fab = document.createElement("button");
+  fab.id = "quickViolationFab";
+  fab.className = "quick-violation-fab";
+  fab.title = "快速登記處罰";
+  fab.textContent = "⚡";
+  fab.addEventListener("click", () => openQuickViolationModal(window.__qvStudents));
+  document.body.appendChild(fab);
+}
+
+/** students 可另外傳入（例如孩子模式只想帶「目前這位孩子」），沒傳就用常駐 widget 記住的清單 */
+function openQuickViolationModal(students) {
+  const list = students || window.__qvStudents || [];
+  if (!list.length) return;
+  const overlay = document.createElement("div");
+  overlay.className = "confirm-overlay quick-violation-overlay";
+  overlay.innerHTML = `
+    <div class="confirm-card quick-violation-card">
+      <div class="confirm-title">⚡ 快速登記處罰</div>
+      <div class="qv-form">
+        <label>學生
+          <select id="qvStudent">${list.map((s) => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join("")}</select>
+        </label>
+        <label>歸屬規矩（可不選）
+          <select id="qvRule"></select>
+        </label>
+        <label>次數（開合跳）
+          <input type="number" id="qvCount" min="1" value="100" />
+        </label>
+        <label>原因
+          <input type="text" id="qvReason" placeholder="例如：沒繫安全帶" />
+        </label>
+      </div>
+      <div class="confirm-actions">
+        <button class="btn" data-act="cancel">取消</button>
+        <button class="btn btn-primary" data-act="ok">登記</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const studentSel = overlay.querySelector("#qvStudent");
+  const ruleSel = overlay.querySelector("#qvRule");
+  const countInput = overlay.querySelector("#qvCount");
+
+  function syncRuleOptions() {
+    const student = list.find((s) => s.id === studentSel.value);
+    ruleSel.innerHTML = studentRuleOptionsHtml(student);
+  }
+  syncRuleOptions();
+  studentSel.addEventListener("change", syncRuleOptions);
+  ruleSel.addEventListener("change", () => {
+    const student = list.find((s) => s.id === studentSel.value);
+    const rule = student && (student.rules || []).find((r) => r.id === ruleSel.value);
+    if (rule && rule.type === "fixedCount" && rule.config && rule.config.defaultCount) {
+      countInput.value = rule.config.defaultCount;
+    }
+  });
+
+  function cleanup() {
+    overlay.remove();
+  }
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) cleanup();
+  });
+  overlay.querySelector('[data-act="cancel"]').addEventListener("click", cleanup);
+  overlay.querySelector('[data-act="ok"]').addEventListener("click", async () => {
+    const student = list.find((s) => s.id === studentSel.value);
+    if (!student) return;
+    const count = Number(countInput.value) || 0;
+    if (count <= 0) {
+      alert("請輸入大於 0 的次數");
+      return;
+    }
+    const reason = overlay.querySelector("#qvReason").value.trim();
+    const ruleId = ruleSel.value || null;
+    const okBtn = overlay.querySelector('[data-act="ok"]');
+    okBtn.disabled = true;
+    try {
+      await logRuleViolation(student, {
+        ruleId,
+        count,
+        reason,
+        loggedBy: auth.currentUser ? auth.currentUser.email : "家長",
+      });
+      showToast(`已登記 ${student.name} ${count} 下`);
+      cleanup();
+    } catch (err) {
+      alert("登記失敗：" + err.message);
+      okBtn.disabled = false;
+    }
+  });
 }
 
 function escapeHtml(str) {
