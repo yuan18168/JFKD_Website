@@ -344,6 +344,11 @@ a { color: inherit; text-decoration: none; }
 .wishlist-card[draggable="true"]:active { cursor: grabbing; }
 .wishlist-card.dragging { opacity: .35; }
 .wishlist-card.drag-over { outline: 2px dashed var(--brand); outline-offset: 3px; }
+
+/* 【每日任務拖曳排序】共用的直向清單拖曳視覺回饋，跟許願池的橫向卡片格共用同一套 attachDragReorder() 邏輯 */
+[data-task-row].dragging { opacity: .35; }
+[data-task-row].drag-over { outline: 2px dashed var(--brand); outline-offset: 3px; }
+.task-drag-handle:active { cursor: grabbing; }
 .wishlist-drag-handle {
   cursor: grab;
   color: var(--text-faint);
@@ -1412,9 +1417,13 @@ body.kid-app {
 .fx-text { flex: 1; min-width: 0; }
 .fx-name { font-size: calc(13.5px * var(--font-scale,1)); font-weight: 800; }
 .fx-desc { font-size: calc(10.5px * var(--font-scale,1)); opacity: .72; margin-top: 1px; }
-.fx-score { font-size: calc(17px * var(--font-scale,1)); font-weight: 900; flex: 0 0 auto; }
+/* 【比較格式】原本只顯示單一數字（跟左邊 fx-name 重複），改成「上次 → 這次」，
+   文字變寬了所以字級略縮小、加 white-space:nowrap 避免箭頭跟數字被擠斷行。
+   進步＝綠、退步＝紅、持平／首次＝灰，三色一眼分辨方向。 */
+.fx-score { font-size: calc(14px * var(--font-scale,1)); font-weight: 900; flex: 0 0 auto; white-space: nowrap; }
 .fx-score.up { color: #7DF9D6; }
 .fx-score.down { color: #FFA9C2; }
+.fx-score.same { color: var(--kid-faint, #9aa6c4); opacity: .85; }
 
 /* ---------- 成績趨勢圖 ---------- */
 .kid-chart-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; }
@@ -1558,6 +1567,8 @@ body.kid-app {
   margin-bottom: 11px; border: 1.5px solid var(--kid-line,#EFE4D8);
 }
 .kid-wish.achieved { border-color: var(--k-good-line); background: #F6FFFC; }
+/* 「未達成／下次再挑戰」的願望卡片調整為更灰更暗，跟已達成／進行中明顯區隔（不分主題色都適用） */
+.kid-wish.not-achieved { filter: grayscale(0.55); opacity: .62; }
 .kid-wish-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .kid-wish-name { font-size: calc(14.5px * var(--font-scale,1)); font-weight: 900; }
 .kid-wish-amt { font-size: calc(13.5px * var(--font-scale,1)); font-weight: 900; color: var(--k-warm); flex: 0 0 auto; }
@@ -1835,6 +1846,22 @@ body.kid-app {
 .fx-card .subject-effect-emoji { font-size: 40px; }
 .fx-card .subject-effect-emoji.spin-effect { font-size: 56px; }
 .fx-card .starburst-core { font-size: 34px; }
+
+/* ---------- 修正：火箭特效跟衛冕（皇冠）特效最終停駐位置不一致 ----------
+   衛冕特效（.subject-effect-emoji）是靠 flex 置中撐滿整張卡片，動畫全程都停在卡片正中央；
+   火箭特效原本沿用「重新設計火箭停駐」那組通用 keyframe（rocket-fly-diagonal），
+   結束位置是 left:74%/bottom:64%（在大張正方形卡片上是刻意設計成停在右上角），
+   但套到這種窄扁的 fx-card 上就會偏離卡片中心，跟衛冕特效不對稱。
+   這裡只針對 .fx-card 這個情境另外定義一組「終點改成卡片正中央」的 keyframe，
+   不影響學生紀錄頁大張科目卡片原本的火箭停駐位置設計。 */
+@keyframes rocket-fly-diagonal-centered {
+  0%   { left: 4%;  bottom: 2%;  transform: translate(-50%, 50%) scale(0.5);  opacity: 0; }
+  10%  { opacity: 1; }
+  40%  { left: 50%; bottom: 50%; transform: translate(-50%, 50%) scale(1.08); opacity: 1; }
+  50%  { left: 50%; bottom: 50%; transform: translate(-50%, 50%) scale(1);    opacity: 1; }
+  100% { left: 50%; bottom: 50%; transform: translate(-50%, 50%) scale(1);    opacity: 1; }
+}
+.fx-card .rocket-unit { animation-name: rocket-fly-diagonal-centered; }
 
 /* ==========================================================================
    七個主題的孩子模式配色
