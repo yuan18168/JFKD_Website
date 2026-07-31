@@ -1370,12 +1370,19 @@ body.kid-app {
 /* ---------- 28 天打卡日曆 ---------- */
 .kid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 .kid-cal-day {
+  position: relative;
   aspect-ratio: 1; border-radius: 8px; background: var(--k-soft-bg2);
   display: grid; place-items: center; color: var(--kid-faint,#A9A2BC);
   font-size: calc(10px * var(--font-scale,1)); font-weight: 700;
 }
 .kid-cal-day.hit { background: var(--k-warm-grad); color: #fff; }
 .kid-cal-day.today { outline: 2.5px solid var(--k-accent); outline-offset: 1.5px; }
+/* 【2026-08-01】心情月曆：在打卡日曆的每一格右上角疊一個小心情表情，回顧當天心情用 */
+.kid-cal-mood {
+  position: absolute; top: -4px; right: -4px;
+  font-size: calc(12px * var(--font-scale,1)); line-height: 1;
+  filter: drop-shadow(0 1px 1.5px rgba(0,0,0,.45));
+}
 .kid-cal-legend { display: flex; gap: 14px; margin-top: 10px; font-size: calc(10.5px * var(--font-scale,1)); color: var(--kid-soft,#6B6480); font-weight: 600; }
 .kid-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; vertical-align: -1px; margin-right: 4px; }
 
