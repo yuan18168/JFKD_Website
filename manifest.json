@@ -2,7 +2,7 @@
   "name": "JFKD 成績記錄表",
   "short_name": "JFKD",
   "description": "JFKD Family 成績記錄表 — 家庭獎懲成績追蹤",
-  "start_url": "./index.html",
+  "start_url": "./app.html",
   "display": "standalone",
   "background_color": "#0b1120",
   "theme_color": "#0b1120",
