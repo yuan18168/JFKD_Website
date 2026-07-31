@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>學生名單｜【JFKD】成績記錄表</title>
+<title>處罰清單｜【JFKD】成績記錄表</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="manifest" href="manifest.json" />
@@ -31,12 +31,12 @@
       <div id="studentNavLinks"><div class="text-faint" style="padding:8px 12px;font-size:12px;">載入中...</div></div>
 
       <div class="nav-section-label">父母管理</div>
-      <a href="students.html" class="nav-link active">👤 學生名單</a>
+      <a href="students.html" class="nav-link">👤 學生名單</a>
       <a href="rules-config.html" class="nav-link">📖 規矩</a>
       <a href="daily-tasks.html" class="nav-link">📝 每日任務</a>
       <a href="wishlist.html" class="nav-link">🎁 許願池</a>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則</a>
-      <a href="violations.html" class="nav-link">🚨 處罰清單</a>
+      <a href="violations.html" class="nav-link active">🚨 處罰清單</a>
       <a href="rules.html" class="nav-link">📖 遊戲規則</a>
       <a href="themes.html" class="nav-link">🎨 主題造型</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
@@ -54,25 +54,17 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>學生名單</h1>
+          <h1>處罰清單</h1>
           <div class="desc">
-            管理學生的「新增／刪除」與基本資料（姓名／年級／學校／班級／座號）；刪除學生會一併刪除他的所有歷史考試紀錄，請小心操作。
-            基本資料只會在家長模式顯示與編輯，會出現在孩子模式首頁的個人卡片上，讓 App 更像是專屬於他們的。
-            許願池請到「許願池」頁管理，主題造型與標題請到「學生主題造型」頁設定。
+            每一筆用「⚡快速登記處罰」或規矩打卡累積出來的違規紀錄，都會列在這裡。
+            可以直接修改次數/原因、刪除登記錯誤的紀錄，或不用等到週五結算，
+            當場執行完就把它標記成「已執行處罰」（標記後這筆會自動排除在下次週五的淨值結算之外，不會重複處罰）。
+            兩週內的紀錄會直接展開顯示，更久的紀錄依月份分組、可展開/收起。
           </div>
         </div>
       </div>
 
-      <div class="section-title mt-0">目前的學生</div>
-      <div id="studentList" style="margin-bottom:18px;"></div>
-
-      <div class="card">
-        <label>新增學生</label>
-        <div style="display:flex; gap:10px;">
-          <input type="text" id="newStudentName" placeholder="輸入學生暱稱，例如：哈哈" style="max-width:260px;" />
-          <button class="btn btn-primary" id="addStudentBtn">新增學生</button>
-        </div>
-      </div>
+      <div id="violationsBody"><div class="empty-state">載入中...</div></div>
     </main>
   </div>
 
@@ -86,6 +78,6 @@
   <script src="js/gamify.js?v=20260731g"></script>
   <script src="js/nav.js?v=20260731g"></script>
   <script src="js/pin.js?v=20260731g"></script>
-  <script src="js/students.js?v=20260731g"></script>
+  <script src="js/violations.js?v=20260731g"></script>
 </body>
 </html>
