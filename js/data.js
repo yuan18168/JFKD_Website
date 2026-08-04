@@ -1150,6 +1150,33 @@ async function markRulePunishmentDone(student, settlementId) {
 }
 
 /**
+ * 【2026-08-04】家長端：修改某筆「週結算」紀錄的數字（登記錯誤或想手動調整時用）。
+ * 處罰型結算只給改 punishmentCount（同時同步 netJumpingJacks，維持兩者一致，
+ * 畫面上判斷「是處罰還是獎金」用的就是 netJumpingJacks > 0）；
+ * 獎金型結算只給改 bonusAmount，不動 netJumpingJacks（負值、獎金分支不受影響）。
+ */
+async function updateRuleSettlement(student, settlementId, fields) {
+  const ruleSettlements = (student.ruleSettlements || []).map((s) => {
+    if (s.id !== settlementId) return s;
+    const next = { ...s, ...fields };
+    if (typeof fields.punishmentCount === "number") {
+      next.punishmentCount = fields.punishmentCount;
+      next.netJumpingJacks = fields.punishmentCount;
+    }
+    return next;
+  });
+  await updateStudent(student.id, { ruleSettlements });
+  return { student: { ...student, ruleSettlements } };
+}
+
+/** 家長端：刪除某筆「週結算」紀錄（例如登記錯誤，整筆不該存在） */
+async function deleteRuleSettlement(student, settlementId) {
+  const ruleSettlements = (student.ruleSettlements || []).filter((s) => s.id !== settlementId);
+  await updateStudent(student.id, { ruleSettlements });
+  return { student: { ...student, ruleSettlements } };
+}
+
+/**
  * 本週（尚未結算，從 lastRuleSettlementMs 之後到現在）即時進度，供孩子模式規矩頁顯示，
  * 不會寫入 Firestore，純粹即時運算。回傳每條規矩的分項統計＋合併淨開合跳數。
  */

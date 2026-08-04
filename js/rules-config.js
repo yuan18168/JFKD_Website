@@ -38,29 +38,108 @@
     pendingWrap.innerHTML = rows
       .map(
         ({ student, settlement }) => `
-      <div class="card" style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:8px; padding:10px 14px;" data-pending-row="${settlement.id}">
+      <div class="card" style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:8px; padding:10px 14px;" data-pending-row="${settlement.id}" data-owner="${student.id}">
         <span style="width:22px;height:22px;border-radius:50%;background:${student.color || "#4f7cff"};display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#08122e;">${(student.name || "?").slice(0, 1)}</span>
         <span style="font-weight:700;">${escapeHtml(student.name)}</span>
-        <span class="badge badge-penalty">待執行 ${settlement.punishmentCount} 下開合跳</span>
+        <span data-view-mode style="display:inline-flex; align-items:center; gap:6px;">
+          <span class="badge badge-penalty">待執行 ${settlement.punishmentCount} 下開合跳</span>
+        </span>
+        <span data-edit-mode style="display:none; align-items:center; gap:6px;">
+          <input type="number" min="1" data-edit-count value="${settlement.punishmentCount}" style="width:70px;" /> 下開合跳
+        </span>
         <span class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">結算週期至 ${escapeHtml(settlement.periodEnd)}</span>
-        <button class="btn btn-sm btn-primary" style="margin-left:auto;" data-mark-done="${settlement.id}" data-owner="${student.id}">✓ 標記已執行</button>
+        <div style="margin-left:auto; display:flex; gap:6px; flex-wrap:wrap;" data-view-mode>
+          <button class="btn btn-sm btn-primary" data-mark-done="${settlement.id}">✓ 標記已執行</button>
+          <button class="btn btn-sm" data-edit-btn="${settlement.id}">編輯</button>
+          <button class="btn btn-sm" style="color:var(--bad);" data-del-btn="${settlement.id}">刪除</button>
+        </div>
+        <div style="margin-left:auto; display:none; gap:6px;" data-edit-mode>
+          <button class="btn btn-sm btn-primary" data-save-btn="${settlement.id}">儲存</button>
+          <button class="btn btn-sm" data-cancel-btn="${settlement.id}">取消</button>
+        </div>
       </div>`
       )
       .join("");
 
+    function ownerOf(settlementId) {
+      const row = pendingWrap.querySelector(`[data-pending-row="${settlementId}"]`);
+      return students.find((s) => s.id === (row && row.dataset.owner));
+    }
+
     pendingWrap.querySelectorAll("[data-mark-done]").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        const sid = btn.dataset.owner;
         const settlementId = btn.dataset.markDone;
-        const student = students.find((s) => s.id === sid);
+        const student = ownerOf(settlementId);
         btn.disabled = true;
         try {
           const { student: updated } = await markRulePunishmentDone(student, settlementId);
-          students = students.map((s) => (s.id === sid ? updated : s));
+          students = students.map((s) => (s.id === student.id ? updated : s));
           showToast("已標記執行完成 ✓");
           renderPending();
         } catch (err) {
           alert("標記失敗：" + err.message);
+          btn.disabled = false;
+        }
+      });
+    });
+
+    pendingWrap.querySelectorAll("[data-edit-btn]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = pendingWrap.querySelector(`[data-pending-row="${btn.dataset.editBtn}"]`);
+        row.querySelectorAll("[data-view-mode]").forEach((n) => (n.style.display = "none"));
+        row.querySelectorAll("[data-edit-mode]").forEach((n) => (n.style.display = "inline-flex"));
+      });
+    });
+
+    pendingWrap.querySelectorAll("[data-cancel-btn]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = pendingWrap.querySelector(`[data-pending-row="${btn.dataset.cancelBtn}"]`);
+        row.querySelectorAll("[data-edit-mode]").forEach((n) => (n.style.display = "none"));
+        row.querySelectorAll("[data-view-mode]").forEach((n) => (n.style.display = "inline-flex"));
+      });
+    });
+
+    pendingWrap.querySelectorAll("[data-save-btn]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const settlementId = btn.dataset.saveBtn;
+        const row = pendingWrap.querySelector(`[data-pending-row="${settlementId}"]`);
+        const count = Number(row.querySelector("[data-edit-count]").value) || 0;
+        if (count <= 0) {
+          alert("請輸入大於 0 的次數");
+          return;
+        }
+        const student = ownerOf(settlementId);
+        btn.disabled = true;
+        try {
+          const { student: updated } = await updateRuleSettlement(student, settlementId, { punishmentCount: count });
+          students = students.map((s) => (s.id === student.id ? updated : s));
+          showToast("已更新 ✓");
+          renderPending();
+        } catch (err) {
+          alert("更新失敗：" + err.message);
+          btn.disabled = false;
+        }
+      });
+    });
+
+    pendingWrap.querySelectorAll("[data-del-btn]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const settlementId = btn.dataset.delBtn;
+        const ok = await confirmDialog("確定要刪除這筆結算的處罰紀錄嗎？此動作無法復原。", {
+          title: "刪除結算紀錄",
+          confirmText: "刪除",
+          danger: true,
+        });
+        if (!ok) return;
+        const student = ownerOf(settlementId);
+        btn.disabled = true;
+        try {
+          const { student: updated } = await deleteRuleSettlement(student, settlementId);
+          students = students.map((s) => (s.id === student.id ? updated : s));
+          showToast("已刪除");
+          renderPending();
+        } catch (err) {
+          alert("刪除失敗：" + err.message);
           btn.disabled = false;
         }
       });

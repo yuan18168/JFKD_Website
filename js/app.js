@@ -573,22 +573,44 @@
     }).join("");
   }
 
-  function settlementHistoryHtml(ctx) {
-    const list = [...(ctx.student.ruleSettlements || [])].reverse().slice(0, 8);
-    if (!list.length) return "";
-    return `<div class="rule-week-summary">
-      <div class="kid-card-title">📅 過去結算紀錄</div>
-      ${list.map((s) => {
+  /**
+   * 【2026-08-04】原本這裡只顯示「週結算」（settlementHistoryHtml），
+   * 家長用「⚡快速登記處罰」單筆登記（不一定綁規矩）的項目完全沒地方在孩子模式出現，
+   * 孩子看不到爸媽剛剛登記了什麼。改成把「單筆登記」跟「週結算」按時間合併成一份清單，
+   * 格式跟家長模式「處罰清單」頁一致（次數/原因/執行狀態都顯示），全部（待執行＋已執行）都列出來。
+   */
+  function combinedHistoryHtml(ctx) {
+    const student = ctx.student;
+    const settlementItems = (student.ruleSettlements || []).map((s) => ({
+      ms: s.periodEndMs || 0,
+      html: (() => {
         if (s.netJumpingJacks > 0) {
           const tag = s.punishmentStatus === "done"
             ? '<span class="rule-settlement-tag done">已執行</span>'
             : '<span class="rule-settlement-tag pending">待執行</span>';
-          return `<div class="rule-settlement-row"><span>${escapeHtml(s.periodEnd)} 結算</span>
+          return `<div class="rule-settlement-row"><span>${escapeHtml(s.periodEnd)} 週結算</span>
             <span style="margin-left:auto">罰 ${s.punishmentCount} 下</span>${tag}</div>`;
         }
-        return `<div class="rule-settlement-row"><span>${escapeHtml(s.periodEnd)} 結算</span>
+        return `<div class="rule-settlement-row"><span>${escapeHtml(s.periodEnd)} 週結算</span>
           <span style="margin-left:auto">獲得獎金 ${fmtMoney(s.bonusAmount)}</span><span class="rule-settlement-tag bonus">🎉</span></div>`;
-      }).join("")}
+      })(),
+    }));
+    const violationItems = (student.ruleViolations || []).map((v) => {
+      const tag = v.executedStatus === "done"
+        ? '<span class="rule-settlement-tag done">已執行</span>'
+        : '<span class="rule-settlement-tag pending">待執行</span>';
+      const reasonText = v.reason ? `｜${escapeHtml(v.reason)}` : "";
+      return {
+        ms: entryInstantMs(v, "loggedAt", "loggedAtMs"),
+        html: `<div class="rule-settlement-row"><span>${escapeHtml(v.loggedAt || "")} 登記${reasonText}</span>
+          <span style="margin-left:auto">${v.count} 下</span>${tag}</div>`,
+      };
+    });
+    const list = [...settlementItems, ...violationItems].sort((a, b) => b.ms - a.ms).slice(0, 10);
+    if (!list.length) return "";
+    return `<div class="rule-week-summary">
+      <div class="kid-card-title">📅 處罰／結算紀錄</div>
+      ${list.map((item) => item.html).join("")}
     </div>`;
   }
 
@@ -613,7 +635,7 @@
       </div>
       ${weekArrivalHistoryHtml(ctx, rules)}
       <button class="rule-violation-log-btn" id="ruleQuickLogBtn">🔒 登記處罰（需家長 PIN）</button>
-      ${settlementHistoryHtml(ctx)}
+      ${combinedHistoryHtml(ctx)}
     `;
 
     document.querySelectorAll("[data-checkin]").forEach((btn) => {

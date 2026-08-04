@@ -87,15 +87,37 @@
               const pending = s.punishmentStatus !== "done";
               return `<div class="card" data-settlement-row="${s.id}" style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:8px; padding:10px 12px;">
                 <span class="badge badge-normal">週結算</span>
-                <span>${escapeHtml(s.periodEnd)} 結算　罰 ${s.punishmentCount} 下${RULE_UNIT_LABEL}</span>
+                <span data-view-mode style="display:inline-flex; align-items:center; gap:6px;">${escapeHtml(s.periodEnd)} 結算　罰 ${s.punishmentCount} 下${RULE_UNIT_LABEL}</span>
+                <span data-edit-mode style="display:none; align-items:center; gap:6px;">
+                  ${escapeHtml(s.periodEnd)} 結算　罰 <input type="number" min="1" data-edit-punishment value="${s.punishmentCount}" style="width:70px;" /> 下${RULE_UNIT_LABEL}
+                </span>
                 <span class="badge ${pending ? "badge-warn" : "badge-done"}">${pending ? "待執行" : "✓ 已執行"}</span>
-                ${pending ? `<button class="btn btn-sm btn-primary" style="margin-left:auto;" data-settlement-done="${s.id}">✓ 標記已執行</button>` : ""}
+                <div style="margin-left:auto; display:flex; gap:6px; flex-wrap:wrap;" data-view-mode>
+                  ${pending ? `<button class="btn btn-sm btn-primary" data-settlement-done="${s.id}">✓ 標記已執行</button>` : ""}
+                  <button class="btn btn-sm" data-settlement-edit-btn="${s.id}">編輯</button>
+                  <button class="btn btn-sm" style="color:var(--bad);" data-settlement-del-btn="${s.id}">刪除</button>
+                </div>
+                <div style="margin-left:auto; display:none; gap:6px;" data-edit-mode>
+                  <button class="btn btn-sm btn-primary" data-settlement-save-btn="${s.id}">儲存</button>
+                  <button class="btn btn-sm" data-settlement-cancel-btn="${s.id}">取消</button>
+                </div>
               </div>`;
             }
             return `<div class="card" data-settlement-row="${s.id}" style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:8px; padding:10px 12px;">
               <span class="badge badge-normal">週結算</span>
-              <span>${escapeHtml(s.periodEnd)} 結算　獲得獎金 ${fmtMoney(s.bonusAmount)}</span>
+              <span data-view-mode style="display:inline-flex; align-items:center; gap:6px;">${escapeHtml(s.periodEnd)} 結算　獲得獎金 ${fmtMoney(s.bonusAmount)}</span>
+              <span data-edit-mode style="display:none; align-items:center; gap:6px;">
+                ${escapeHtml(s.periodEnd)} 結算　獲得獎金 <input type="number" min="0" data-edit-bonus value="${s.bonusAmount}" style="width:80px;" /> 元
+              </span>
               <span class="badge badge-done">🎉 表現優秀</span>
+              <div style="margin-left:auto; display:flex; gap:6px; flex-wrap:wrap;" data-view-mode>
+                <button class="btn btn-sm" data-settlement-edit-btn="${s.id}">編輯</button>
+                <button class="btn btn-sm" style="color:var(--bad);" data-settlement-del-btn="${s.id}">刪除</button>
+              </div>
+              <div style="margin-left:auto; display:none; gap:6px;" data-edit-mode>
+                <button class="btn btn-sm btn-primary" data-settlement-save-btn="${s.id}">儲存</button>
+                <button class="btn btn-sm" data-settlement-cancel-btn="${s.id}">取消</button>
+              </div>
             </div>`;
           }).join("")}
         </div>
@@ -267,6 +289,81 @@
           renderSection(updated);
         } catch (err) {
           alert("標記失敗：" + err.message);
+          btn.disabled = false;
+        }
+      });
+    });
+
+    // 【2026-08-04】週結算紀錄的編輯/刪除——之前這個區塊只有「標記已執行」，
+    // 完全沒有辦法修正登記錯誤的數字或整筆刪掉，這裡補上跟上方單筆登記一樣的編輯/取消/刪除三顆按鈕。
+    section.querySelectorAll("[data-settlement-edit-btn]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = section.querySelector(`[data-settlement-row="${btn.dataset.settlementEditBtn}"]`);
+        row.querySelectorAll("[data-view-mode]").forEach((n) => (n.style.display = "none"));
+        row.querySelectorAll("[data-edit-mode]").forEach((n) => (n.style.display = "inline-flex"));
+      });
+    });
+
+    section.querySelectorAll("[data-settlement-cancel-btn]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = section.querySelector(`[data-settlement-row="${btn.dataset.settlementCancelBtn}"]`);
+        row.querySelectorAll("[data-edit-mode]").forEach((n) => (n.style.display = "none"));
+        row.querySelectorAll("[data-view-mode]").forEach((n) => (n.style.display = "inline-flex"));
+      });
+    });
+
+    section.querySelectorAll("[data-settlement-save-btn]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const settlementId = btn.dataset.settlementSaveBtn;
+        const row = section.querySelector(`[data-settlement-row="${settlementId}"]`);
+        const punishmentInput = row.querySelector("[data-edit-punishment]");
+        const bonusInput = row.querySelector("[data-edit-bonus]");
+        let fields;
+        if (punishmentInput) {
+          const count = Number(punishmentInput.value) || 0;
+          if (count <= 0) {
+            alert("請輸入大於 0 的次數");
+            return;
+          }
+          fields = { punishmentCount: count };
+        } else {
+          const amount = Number(bonusInput.value);
+          if (!(amount >= 0)) {
+            alert("請輸入不小於 0 的金額");
+            return;
+          }
+          fields = { bonusAmount: amount };
+        }
+        btn.disabled = true;
+        try {
+          const { student: updated } = await updateRuleSettlement(student, settlementId, fields);
+          students = students.map((s) => (s.id === student.id ? updated : s));
+          showToast("已更新 ✓");
+          renderSection(updated);
+        } catch (err) {
+          alert("更新失敗：" + err.message);
+          btn.disabled = false;
+        }
+      });
+    });
+
+    section.querySelectorAll("[data-settlement-del-btn]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const settlementId = btn.dataset.settlementDelBtn;
+        const ok = await confirmDialog("確定要刪除這筆結算紀錄嗎？此動作無法復原。", {
+          title: "刪除結算紀錄",
+          confirmText: "刪除",
+          danger: true,
+        });
+        if (!ok) return;
+        btn.disabled = true;
+        try {
+          const { student: updated } = await deleteRuleSettlement(student, settlementId);
+          students = students.map((s) => (s.id === student.id ? updated : s));
+          showToast("已刪除");
+          renderSection(updated);
+        } catch (err) {
+          alert("刪除失敗：" + err.message);
           btn.disabled = false;
         }
       });
