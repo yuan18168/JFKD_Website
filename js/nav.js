@@ -122,6 +122,11 @@ function openQuickViolationModal(students, onLogged) {
       // 同步更新常駐 widget 快取的學生清單，避免下一次開啟這個彈窗時用到登記前的舊資料
       window.__qvStudents = (window.__qvStudents || []).map((s) => (s.id === updated.id ? updated : s));
       if (typeof onLogged === "function") onLogged(updated);
+      // 【2026-08-04】這顆浮動按鈕是「常駐」在幾乎每個父母管理頁的（見 mountQuickViolationWidget），
+      // 但呼叫端大多沒有傳 onLogged（例如處罰清單頁）。改成同時廣播一個全域事件，
+      // 讓任何頁面（不只呼叫端知道的那一個）都能自行決定要不要重畫畫面，
+      // 不然登記其實有成功寫入 Firestore，畫面卻停在登記前的舊資料，會誤以為「沒有真的登記到」。
+      document.dispatchEvent(new CustomEvent("jfkd:violation-logged", { detail: updated }));
       showToast(`已登記 ${student.name} ${count} 下`);
       cleanup();
     } catch (err) {

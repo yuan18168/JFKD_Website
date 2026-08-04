@@ -275,4 +275,14 @@
 
   wrap.innerHTML = students.map((s) => sectionHtml(s)).join("");
   students.forEach((s) => bindSection(s));
+
+  // 【2026-08-04】右下角常駐的「⚡快速登記處罰」浮動按鈕在這一頁也會出現（見 nav.js），
+  // 但它不知道這一頁是「處罰清單」，登記成功後畫面停在舊資料，看起來像是沒登記到。
+  // 監聽 nav.js 廣播出來的全域事件，收到就把該學生的區塊重畫成最新資料。
+  document.addEventListener("jfkd:violation-logged", (e) => {
+    const updated = e.detail;
+    if (!updated || !findStudent(updated.id)) return;
+    students = students.map((s) => (s.id === updated.id ? updated : s));
+    renderSection(updated);
+  });
 })();
