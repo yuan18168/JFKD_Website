@@ -73,6 +73,35 @@
       </div>`;
   }
 
+  /** 【2026-08-04 UX】把「規矩」頁的週結算紀錄（ruleSettlements）也整合顯示在這裡，
+   *  純粹是畫面上兩份清單放在同一張卡片方便一次看到，資料結構完全不動、也不會互相影響。 */
+  function settlementSectionHtml(student) {
+    const list = [...(student.ruleSettlements || [])].reverse();
+    if (!list.length) return "";
+    return `
+      <details class="violation-month-group" style="margin-top:10px;">
+        <summary>📅 規矩週結算紀錄（${list.length} 筆，與上方單筆登記是不同機制）</summary>
+        <div style="margin-top:8px;">
+          ${list.map((s) => {
+            if (s.netJumpingJacks > 0) {
+              const pending = s.punishmentStatus !== "done";
+              return `<div class="card" data-settlement-row="${s.id}" style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:8px; padding:10px 12px;">
+                <span class="badge badge-normal">週結算</span>
+                <span>${escapeHtml(s.periodEnd)} 結算　罰 ${s.punishmentCount} 下${RULE_UNIT_LABEL}</span>
+                <span class="badge ${pending ? "badge-warn" : "badge-done"}">${pending ? "待執行" : "✓ 已執行"}</span>
+                ${pending ? `<button class="btn btn-sm btn-primary" style="margin-left:auto;" data-settlement-done="${s.id}">✓ 標記已執行</button>` : ""}
+              </div>`;
+            }
+            return `<div class="card" data-settlement-row="${s.id}" style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:8px; padding:10px 12px;">
+              <span class="badge badge-normal">週結算</span>
+              <span>${escapeHtml(s.periodEnd)} 結算　獲得獎金 ${fmtMoney(s.bonusAmount)}</span>
+              <span class="badge badge-done">🎉 表現優秀</span>
+            </div>`;
+          }).join("")}
+        </div>
+      </details>`;
+  }
+
   function sectionHtml(student) {
     const all = allViolationsOf(student);
     const header = `
@@ -127,6 +156,7 @@
         ${header}
         <div data-recent-list="${student.id}">${recentHtml}</div>
         ${groupsHtml}
+        ${settlementSectionHtml(student)}
       </div>`;
   }
 
@@ -218,6 +248,22 @@
           const { student: updated } = await setViolationExecuted(student, violationId, nextExecuted);
           students = students.map((s) => (s.id === student.id ? updated : s));
           showToast(nextExecuted ? "已標記為已執行 ✓" : "已改回待執行");
+          renderSection(updated);
+        } catch (err) {
+          alert("標記失敗：" + err.message);
+          btn.disabled = false;
+        }
+      });
+    });
+
+    section.querySelectorAll("[data-settlement-done]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const settlementId = btn.dataset.settlementDone;
+        btn.disabled = true;
+        try {
+          const { student: updated } = await markRulePunishmentDone(student, settlementId);
+          students = students.map((s) => (s.id === student.id ? updated : s));
+          showToast("已標記執行完成 ✓");
           renderSection(updated);
         } catch (err) {
           alert("標記失敗：" + err.message);

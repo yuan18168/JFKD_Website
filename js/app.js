@@ -87,12 +87,16 @@
   function initialOf(name) {
     return (name || "?").slice(0, 1);
   }
+  /** 座號欄位早期有些學生存的是預留文字「?」，一律當成「還沒填」處理，不要把裸露的問號顯示出來 */
+  function isUnsetSeat(v) {
+    return !v || String(v).trim() === "?";
+  }
   /** 家長端可編輯的個人資料卡文字：「XX國小 302班 15號」，缺哪一項就自動省略 */
   function profileMetaText(student) {
     const parts = [];
     if (student.schoolName) parts.push(student.schoolName);
     if (student.className) parts.push(student.className + "班");
-    if (student.seatNumber) parts.push(student.seatNumber + "號");
+    if (!isUnsetSeat(student.seatNumber)) parts.push(student.seatNumber + "號");
     return parts.join(" · ");
   }
 
@@ -530,6 +534,45 @@
     </div>`;
   }
 
+  /** 【2026-08-04 UX】規矩分頁下方留白填滿：本週（週一到今天）每天的打卡結果一覽小卡，
+   *  只針對「打卡時間累積型」（punctuality）規矩顯示，固定次數型規矩沒有每日打卡的概念。 */
+  function weekArrivalHistoryHtml(ctx, rules) {
+    const puncRules = rules.filter((r) => r.type === "punctuality");
+    if (!puncRules.length) return "";
+
+    const now = new Date();
+    const weekdayLabel = ["日", "一", "二", "三", "四", "五", "六"];
+    const dow = now.getDay();
+    const mondayOffset = dow === 0 ? 6 : dow - 1;
+    const days = [];
+    for (let i = 0; i <= mondayOffset; i++) {
+      days.push(new Date(now.getFullYear(), now.getMonth(), now.getDate() - (mondayOffset - i)));
+    }
+    const dateKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const todayKey = dateKey(now);
+
+    return puncRules.map((rule) => {
+      const cells = days.map((d) => {
+        const key = `${rule.id}_${dateKey(d)}`;
+        const entry = (ctx.student.arrivalLog || {})[key];
+        let cls = "empty", icon = "－", title = "還沒打卡";
+        if (entry) {
+          if (entry.deltaMinutes > 0) { cls = "late"; icon = "！"; title = `遲到 ${entry.deltaMinutes} 分`; }
+          else if (entry.deltaMinutes < 0) { cls = "early"; icon = "✓"; title = `提早 ${-entry.deltaMinutes} 分`; }
+          else { cls = "ontime"; icon = "✓"; title = "準時"; }
+        }
+        return `<div class="rule-week-cell ${cls}${dateKey(d) === todayKey ? " is-today" : ""}" title="${escapeHtml(title)}">
+          <div class="rule-week-cell-day">${weekdayLabel[d.getDay()]}</div>
+          <div class="rule-week-cell-icon">${icon}</div>
+        </div>`;
+      }).join("");
+      return `<div class="rule-week-summary">
+        <div class="kid-card-title">📅 ${escapeHtml(rule.name)}｜本週打卡紀錄</div>
+        <div class="rule-week-cells">${cells}</div>
+      </div>`;
+    }).join("");
+  }
+
   function settlementHistoryHtml(ctx) {
     const list = [...(ctx.student.ruleSettlements || [])].reverse().slice(0, 8);
     if (!list.length) return "";
@@ -568,6 +611,7 @@
           </span>
         </div>
       </div>
+      ${weekArrivalHistoryHtml(ctx, rules)}
       <button class="rule-violation-log-btn" id="ruleQuickLogBtn">🔒 登記處罰（需家長 PIN）</button>
       ${settlementHistoryHtml(ctx)}
     `;
@@ -802,7 +846,9 @@
     const box = document.getElementById("chartBox");
     if (pts.length === 0) { box.innerHTML = '<div class="kid-empty">這個科目還沒有紀錄</div>'; return; }
 
-    const W = 480, H = 210, PT = 34, PB = 40, PL = 30, PR = 12;
+    // 【2026-08-04 UX】PR（右側留白）從 12 加大到 28：字級調到「大」/「特大」時，
+    // 最後一個資料點的分數標籤（文字置中對齊在點上）常會往右超出，貼近甚至裁切到卡片邊緣。
+    const W = 480, H = 210, PT = 34, PB = 40, PL = 30, PR = 28;
     const min = Number(cs.yMin) || 0, max = Number(cs.yMax) || 100;
     const span = Math.max(1, max - min);
     const n = pts.length;

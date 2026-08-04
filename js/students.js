@@ -7,6 +7,13 @@
 
   const GRADE_OPTIONS = ["", "小一", "小二", "小三", "小四", "小五", "小六", "國一", "國二", "國三", "高一", "高二", "高三"];
 
+  // 【2026-08-04 UX】早期有些學生的座號存的是預留文字「?」，表單上會直接顯示裸露的問號，
+  // 容易讓人誤會是系統故障。統一把它當成「還沒填」處理：輸入框顯示空白＋柔和提示文字，
+  // 家長可以隨時補上真正的座號；不會強制覆寫既有資料，只影響顯示。
+  function isUnsetSeatNumber(v) {
+    return !v || String(v).trim() === "?";
+  }
+
   // 【2026-08-01】圖鑑（徽章）重置：測試時常常會不小心解鎖到不是孩子真正達成的徽章，
   // 這裡讓家長可以逐一勾選、移除；移除後如果條件又符合，孩子模式會自動重新判定解鎖。
   // ★ 這行必須在下面第一次呼叫 renderList() 之前宣告（renderList 會用到它），
@@ -125,7 +132,7 @@
           </div>
           <div style="flex:1;">
             <label style="font-size:calc(11px * var(--font-scale,1));">座號</label>
-            <input type="text" data-f-seat value="${escapeHtml(s.seatNumber || "")}" placeholder="例如：15" />
+            <input type="text" data-f-seat value="${escapeHtml(isUnsetSeatNumber(s.seatNumber) ? "" : s.seatNumber)}" placeholder="未設定，例如：15" />
           </div>
         </div>
       </div>
