@@ -207,7 +207,10 @@
     }
   }
 
-  // ---- U1：每日心情打卡強制彈窗（每天第一次進首頁才會出現，選完才能看到首頁）----
+  // ---- U1：每日心情打卡強制彈窗
+  // 【2026-08-04 改版】不再是「一進首頁就問」，改成完成當天第一項每日任務後才跳出；
+  // 如果跳出當下沒有實際選擇，之後每完成一項任務都會再問一次，直到當天有選過心情為止
+  // （靠 hasMoodToday(ctx.student) 判斷是否已經問過/填過）。----
   function moodGateHtml() {
     return `<div class="mood-gate" id="moodGate">
       <div class="mood-gate-card">
@@ -382,8 +385,6 @@
     bindTasks(ctx);
     document.querySelectorAll("[data-goto]").forEach((b) =>
       b.addEventListener("click", () => switchTab(b.dataset.goto)));
-
-    maybeShowMoodGate(ctx); // U1：每天第一次進首頁才會跳出
   }
 
   /** U2 復活賽提示條：斷線且護盾用完時顯示，鼓勵孩子今天多完成 1 項任務就能找回紀錄 */
@@ -451,11 +452,13 @@
         const task = allTasks.find((t) => t.id === el.dataset.task);
         if (!task) { delete el.dataset.busy; return; }
         const wasDone = el.classList.contains("done");
+        let justCompleted = false;
         try {
           if (!wasDone) {
             await markTaskFlags(ctx);
             const r = await completeDailyTask(ctx.student, task, allTasks);
             ctx.student = r.student;
+            justCompleted = true;
             const rect = el.getBoundingClientRect();
             floatXp(rect.right - 40, rect.top, "+" + r.gainedXp);
             if (r.checkIn && r.checkIn.milestone) {
@@ -476,6 +479,9 @@
           }
           await refreshBadges(ctx, { celebrate: true });
           renderHome(ctx);
+          // 【2026-08-04】U1 改版：不再是「一進首頁就問」，改成完成當天任一項每日任務後才詢問心情，
+          // 若那次沒有實際選擇，maybeShowMoodGate 內部的 hasMoodToday 判斷會讓它在下一次完成任務時再問一次。
+          if (justCompleted) maybeShowMoodGate(ctx);
         } catch (err) {
           showErrorToast(friendlyErrorMsg(err));
           delete el.dataset.busy;
@@ -588,7 +594,12 @@
     if (logBtn) {
       logBtn.addEventListener("click", async () => {
         const ok = await requireParentPin();
-        if (ok) openQuickViolationModal([ctx.student]);
+        if (ok) {
+          openQuickViolationModal([ctx.student], (updated) => {
+            ctx.student = updated;
+            renderRules(ctx);
+          });
+        }
       });
     }
   }

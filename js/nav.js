@@ -43,8 +43,10 @@ function mountQuickViolationWidget(students) {
   document.body.appendChild(fab);
 }
 
-/** students 可另外傳入（例如孩子模式只想帶「目前這位孩子」），沒傳就用常駐 widget 記住的清單 */
-function openQuickViolationModal(students) {
+/** students 可另外傳入（例如孩子模式只想帶「目前這位孩子」），沒傳就用常駐 widget 記住的清單。
+ *  onLogged(updatedStudent) 是選填的回呼：登記成功後會把最新的學生資料傳回去，
+ *  讓呼叫端（例如孩子模式的 ctx.student）能同步更新，不會停留在登記前的舊畫面。 */
+function openQuickViolationModal(students, onLogged) {
   const list = students || window.__qvStudents || [];
   if (!list.length) return;
   const overlay = document.createElement("div");
@@ -111,16 +113,20 @@ function openQuickViolationModal(students) {
     const okBtn = overlay.querySelector('[data-act="ok"]');
     okBtn.disabled = true;
     try {
-      await logRuleViolation(student, {
+      const { student: updated } = await logRuleViolation(student, {
         ruleId,
         count,
         reason,
         loggedBy: auth.currentUser ? auth.currentUser.email : "家長",
       });
+      // 同步更新常駐 widget 快取的學生清單，避免下一次開啟這個彈窗時用到登記前的舊資料
+      window.__qvStudents = (window.__qvStudents || []).map((s) => (s.id === updated.id ? updated : s));
+      if (typeof onLogged === "function") onLogged(updated);
       showToast(`已登記 ${student.name} ${count} 下`);
       cleanup();
     } catch (err) {
-      alert("登記失敗：" + err.message);
+      console.error("登記處罰失敗：", err);
+      alert("登記失敗：" + (err && err.message ? err.message : "請檢查網路連線後再試一次"));
       okBtn.disabled = false;
     }
   });

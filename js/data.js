@@ -9,7 +9,6 @@
     students/{id}           { name, color, order,
                                chartOverride（可選，覆寫全域圖表顯示設定，欄位同 config/chartSettings）,
                                themeId（可選，'zoro'|'babymonster'，套用學生主題造型）,
-                               targetAvgScore（可選，數字，下次考試的目標平均分）,
                                wishlist（可選，陣列 [{id,name,amount}]，兌換許願池項目）}
     examRecords/{id}        { studentId, semester, examType, date, subjects:[{name,score,prevScore}],
                                ruleProfileId（套用的設定檔）, note,
@@ -946,7 +945,6 @@ function hasArrivalToday(student, ruleId) {
  * 家長模式常駐工具、孩子模式規矩頁的 PIN 登記入口都呼叫這支。
  */
 async function logRuleViolation(student, { ruleId = null, count, reason, loggedBy }) {
-  const list = [...(student.ruleViolations || [])];
   const now = Date.now();
   const entry = {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
@@ -960,8 +958,12 @@ async function logRuleViolation(student, { ruleId = null, count, reason, loggedB
     // executedStatus：家長是否已經「當場」執行過這筆處罰（跟每週五的淨值結算是兩件事，見 setViolationExecuted）
     executedStatus: "pending",
   };
-  list.push(entry);
-  await updateStudent(student.id, { ruleViolations: list });
+  // 【2026-08-04 修正】改用 arrayUnion 原子寫入，不再依賴記憶體裡可能過期的 student.ruleViolations
+  // 快照做「整包覆寫」——常駐浮動按鈕的 widget 是頁面載入時就快取好學生清單，
+  // 如果頁面停留較久、中途有其他裝置或結算流程動過這位學生的處罰紀錄，
+  // 整包覆寫會把那些變動蓋掉，新登記的這筆也可能因此跟著被覆寫回舊狀態。
+  await updateStudent(student.id, { ruleViolations: firebase.firestore.FieldValue.arrayUnion(entry) });
+  const list = [...(student.ruleViolations || []), entry];
   return { student: { ...student, ruleViolations: list }, entry };
 }
 
