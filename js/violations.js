@@ -136,7 +136,11 @@
       </div>`;
 
     if (!all.length) {
-      return `<div class="card" data-student-section="${student.id}" style="margin-bottom:18px;">${header}<div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">目前沒有任何處罰登記 🎉</div></div>`;
+      // 【2026-08-04 修正】原本這裡完全 return，導致就算學生還有「週結算」紀錄
+      // （ruleSettlements，跟這裡的單筆登記 ruleViolations 是不同陣列），
+      // 只要單筆登記數量剛好是 0（例如全部單筆登記都已刪除），週結算區塊就會整個消失不顯示——
+      // 資料其實還在 Firestore 裡，只是畫面上看不到，很容易被誤以為「結算紀錄不見了」。
+      return `<div class="card" data-student-section="${student.id}" style="margin-bottom:18px;">${header}<div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">目前沒有任何單筆處罰登記 🎉</div>${settlementSectionHtml(student)}</div>`;
     }
 
     const now = Date.now();
