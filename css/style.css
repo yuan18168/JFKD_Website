@@ -2272,6 +2272,21 @@ body.kid-app[class*="theme-"] .near-unlock-card { background: var(--k-soft-bg2);
 .rule-settlement-tag.done { background: var(--k-good-bg,#EAFBF4); color: var(--k-good,#1FAE7A); }
 .rule-settlement-tag.bonus { background: var(--k-warm-grad); color: #fff; }
 
+/* 【2026-08-04 UX】規矩分頁：本週打卡歷史一覽小卡（週一到今天，每天一格） */
+.rule-week-cells { display: flex; gap: 6px; }
+.rule-week-cell {
+  flex: 1; min-width: 0; border-radius: 12px; padding: 8px 2px; text-align: center;
+  background: var(--k-soft-bg, #F6F3FB);
+}
+.rule-week-cell.is-today { box-shadow: 0 0 0 2px var(--k-accent, #7B5CFF) inset; }
+.rule-week-cell-day { font-size: calc(11px * var(--font-scale,1)); font-weight: 700; color: var(--kid-faint,#A9A2BC); margin-bottom: 4px; }
+.rule-week-cell-icon { font-size: calc(13px * var(--font-scale,1)); font-weight: 900; color: var(--kid-faint,#C9C3D6); }
+.rule-week-cell.ontime .rule-week-cell-icon,
+.rule-week-cell.early .rule-week-cell-icon { color: var(--k-good,#1FAE7A); }
+.rule-week-cell.late .rule-week-cell-icon { color: var(--k-pink,#FF5D8F); }
+.rule-week-cell.ontime, .rule-week-cell.early { background: var(--k-good-bg,#EAFBF4); }
+.rule-week-cell.late { background: #FFEEF3; }
+
 /* 處罰清單頁：超過兩週的舊紀錄依月份分組的可展開/收起區塊（家長端深色儀表板樣式） */
 .violation-month-group {
   border: 1px solid var(--border);
