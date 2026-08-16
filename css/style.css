@@ -1,4 +1,286 @@
 /* ==========================================================================
+   結算記錄頁（violations.html）— 2026-08-16 以「週」為主軸改版
+   （這一區放在檔頭：所有選擇器都是新類別名稱，唯一與既有規則同名的
+     .kid-tab-icon 只補上 position/display，既有規則沒設定這兩個屬性，不會互相覆蓋）
+   ========================================================================== */
+
+/* ---------- 需要你處理：跨學生的行動清單 ---------- */
+.settle-todo {
+  background: linear-gradient(180deg, rgba(255,180,84,0.10), rgba(255,180,84,0.03));
+  border: 1px solid rgba(255,180,84,0.42);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.settle-todo-head {
+  font-weight: 800;
+  color: var(--warn);
+  font-size: calc(14px * var(--font-scale, 1));
+  margin-bottom: 10px;
+}
+.settle-todo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(255,180,84,0.16);
+}
+.settle-todo-row:first-of-type { border-top: none; }
+.settle-todo-name { font-weight: 700; font-size: calc(13px * var(--font-scale, 1)); }
+.settle-todo-title { font-weight: 800; font-size: calc(13.5px * var(--font-scale, 1)); }
+.settle-todo-title.is-punish { color: var(--bad); }
+.settle-todo-title.is-bonus { color: var(--good); }
+.settle-todo-sub { color: var(--text-faint); font-size: calc(12px * var(--font-scale, 1)); }
+.settle-todo-btn { margin-left: auto; }
+.settle-clear {
+  color: var(--text-dim);
+  font-size: calc(13px * var(--font-scale, 1));
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 18px;
+}
+.settle-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: calc(11px * var(--font-scale, 1)); font-weight: 700; color: #08122e;
+  flex: none;
+}
+
+/* ---------- 區段標題 ---------- */
+.settle-section-label {
+  font-size: calc(12px * var(--font-scale, 1));
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-faint);
+  margin: 22px 0 10px;
+}
+
+/* ---------- 週卡片：左側色條區分結果類型 ---------- */
+.settle-week {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 12px;
+  padding-left: 18px;
+}
+.settle-week::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--border);
+}
+.settle-week.is-punish::before { background: var(--bad); }
+.settle-week.is-bonus::before { background: var(--good); }
+.settle-week.is-current::before { background: var(--brand); }
+.settle-week.is-current { border-color: var(--brand-dim); }
+
+.settle-week-head {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin-bottom: 10px;
+}
+.settle-week-range {
+  font-weight: 700;
+  font-size: calc(13.5px * var(--font-scale, 1));
+}
+.settle-week-countdown {
+  margin-left: auto;
+  color: var(--text-faint);
+  font-size: calc(12px * var(--font-scale, 1));
+}
+.settle-week-body {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+}
+.settle-week-btns { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.settle-result {
+  font-weight: 800;
+  font-size: calc(14.5px * var(--font-scale, 1));
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.settle-result.is-punish { color: var(--bad); }
+.settle-result.is-bonus { color: var(--good); }
+
+/* ---------- 本週進行中：即時淨值與分項 ---------- */
+.settle-week-net {
+  font-weight: 700;
+  font-size: calc(14px * var(--font-scale, 1));
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  margin-bottom: 10px;
+}
+.settle-week-net.is-punish { color: var(--bad); }
+.settle-week-net.is-bonus { color: var(--good); }
+.settle-week-net.is-neutral { color: var(--text-dim); }
+.settle-live-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; }
+.settle-live-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  font-size: calc(12.5px * var(--font-scale, 1));
+}
+.settle-live-row:nth-child(odd) { background: rgba(255,255,255,0.02); }
+.settle-live-name { font-weight: 600; min-width: 96px; }
+.settle-live-desc { color: var(--text-dim); }
+.settle-live-jacks { margin-left: auto; font-family: var(--mono); font-weight: 700; }
+.settle-live-jacks.is-punish { color: var(--bad); }
+.settle-live-jacks.is-bonus { color: var(--good); }
+.settle-week-actions { display: flex; justify-content: flex-end; }
+
+/* ---------- 週卡片展開明細 ---------- */
+.settle-details { margin-top: 10px; }
+.settle-details > summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: calc(12.5px * var(--font-scale, 1));
+  padding: 6px 0;
+  list-style: none;
+}
+.settle-details > summary::-webkit-details-marker { display: none; }
+.settle-details > summary::before { content: "▸ "; }
+.settle-details[open] > summary::before { content: "▾ "; }
+.settle-details > summary:hover { color: var(--text); }
+.settle-details-empty {
+  margin-top: 8px;
+  color: var(--text-faint);
+  font-size: calc(12px * var(--font-scale, 1));
+}
+.settle-detail-list {
+  margin-top: 6px;
+  border-top: 1px solid var(--border);
+}
+.settle-detail-row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 8px 4px;
+  border-bottom: 1px solid rgba(38,51,84,0.5);
+  font-size: calc(12.5px * var(--font-scale, 1));
+}
+.settle-detail-row:last-child { border-bottom: none; }
+.settle-detail-row.is-skipped { opacity: 0.55; }
+.settle-detail-kind { font-weight: 600; min-width: 110px; }
+.settle-detail-desc { color: var(--text-dim); }
+.settle-detail-jacks { margin-left: auto; font-family: var(--mono); font-weight: 700; }
+.settle-detail-jacks.is-punish { color: var(--bad); }
+.settle-detail-jacks.is-bonus { color: var(--good); }
+.settle-detail-tag {
+  font-size: calc(11px * var(--font-scale, 1));
+  color: var(--text-faint);
+  min-width: 84px;
+  text-align: right;
+}
+
+/* ---------- 尚未結算的單筆登記 ---------- */
+.settle-pending-box {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.settle-pending-head {
+  font-weight: 700;
+  font-size: calc(13px * var(--font-scale, 1));
+  margin-bottom: 4px;
+}
+.settle-pending-note {
+  font-size: calc(11.5px * var(--font-scale, 1));
+  margin-bottom: 10px;
+}
+.settle-pending-row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(38,51,84,0.6);
+}
+.settle-pending-main { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.settle-pending-time { color: var(--text-faint); font-size: calc(11.5px * var(--font-scale, 1)); }
+.settle-pending-btns { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ---------- 規矩設定頁的摘要提示條 ---------- */
+.settle-summary-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255,180,84,0.10), rgba(255,180,84,0.03));
+  border: 1px solid rgba(255,180,84,0.42);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.settle-summary-bar:hover { border-color: var(--warn); transform: translateY(-1px); }
+.settle-summary-icon { font-size: calc(16px * var(--font-scale, 1)); }
+.settle-summary-text {
+  font-weight: 700;
+  color: var(--warn);
+  font-size: calc(13.5px * var(--font-scale, 1));
+}
+.settle-summary-cta {
+  margin-left: auto;
+  color: var(--brand);
+  font-weight: 600;
+  font-size: calc(12.5px * var(--font-scale, 1));
+}
+
+/* ---------- 學生頁籤上的待辦數字 ---------- */
+.student-tab .tab-dot {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  margin-left: 6px;
+  border-radius: 9px;
+  background: var(--warn);
+  color: #2a1b00;
+  font-size: calc(11px * var(--font-scale, 1));
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .settle-week { padding-left: 14px; }
+  .settle-week-countdown { margin-left: 0; width: 100%; }
+  .settle-todo-btn, .settle-week-btns, .settle-pending-btns { margin-left: 0; width: 100%; }
+  .settle-detail-jacks { margin-left: 0; }
+  .settle-detail-tag { text-align: left; min-width: 0; }
+  .settle-live-name { min-width: 0; }
+}
+
+/* ---------- 孩子模式：待執行處罰橫幅 ＋ 底部導覽紅點 ---------- */
+.kid-pending-banner {
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, #FFD9A8, #FFC078);
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 16px rgba(255,160,60,0.22);
+}
+.kid-pending-icon { font-size: calc(26px * var(--font-scale, 1)); flex: none; }
+.kid-pending-title {
+  font-weight: 900;
+  color: #6B3E00;
+  font-size: calc(15px * var(--font-scale, 1));
+}
+.kid-pending-sub {
+  color: #8A5A16;
+  font-size: calc(12px * var(--font-scale, 1));
+  margin-top: 2px;
+}
+.kid-tab-icon { position: relative; display: inline-block; }
+.kid-tab-dot {
+  position: absolute;
+  top: -2px; right: -5px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #FF5A4E;
+  box-shadow: 0 0 0 2px var(--kid-bg, #FFF7EE);
+}
+.kid-tab-dot[hidden] { display: none; }
+
+/* 主題化：橫幅在深色系主題下改用該主題的卡片底色，避免亮橘色破壞整體氛圍 */
+body.kid-app[class*="theme-"] .kid-pending-banner {
+  background: var(--k-soft-bg2, rgba(255,255,255,0.08));
+  border: 1px solid var(--kid-line, rgba(255,255,255,0.18));
+  box-shadow: none;
+}
+body.kid-app[class*="theme-"] .kid-pending-title { color: var(--kid-ink, #fff); }
+body.kid-app[class*="theme-"] .kid-pending-sub { color: var(--kid-ink-dim, rgba(255,255,255,0.7)); }
+
+/* ==========================================================================
    【JFKD】家規獎懲系統 — 儀表板數據風格
    ========================================================================== */
 
