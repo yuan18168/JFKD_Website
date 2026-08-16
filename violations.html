@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>處罰清單｜【JFKD】成績記錄表</title>
+<title>結算記錄｜【JFKD】成績記錄表</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="manifest" href="manifest.json" />
@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/style.css?v=20260731p" />
+<link rel="stylesheet" href="css/style.css?v=20260816a" />
 </head>
 <body>
   <div class="app-shell">
@@ -36,7 +36,7 @@
       <a href="daily-tasks.html" class="nav-link">📝 每日任務</a>
       <a href="wishlist.html" class="nav-link">🎁 許願池</a>
       <a href="config.html" class="nav-link">⚙️ 獎懲規則</a>
-      <a href="violations.html" class="nav-link active">🚨 處罰清單</a>
+      <a href="violations.html" class="nav-link active">📅 結算記錄</a>
       <a href="rules.html" class="nav-link">📖 遊戲規則</a>
       <a href="themes.html" class="nav-link">🎨 主題造型</a>
       <a href="subjects.html" class="nav-link">📚 科目對照表</a>
@@ -54,13 +54,12 @@
     <main class="main">
       <div class="topbar">
         <div>
-          <h1>處罰清單</h1>
+          <h1>結算記錄</h1>
           <div class="desc">
-            每一筆用「⚡快速登記處罰」或「固定次數型」規矩單次登記的違規紀錄，都會列在這裡；
-            「出門紀律」等打卡時間累積型規矩，則是每週五自動彙整成一筆待執行處罰，顯示在「規矩」設定頁最上方，不會逐筆出現在這份清單。
-            可以直接修改次數/原因、刪除登記錯誤的紀錄，或不用等到週五結算，
-            當場執行完就把它標記成「已執行處罰」（標記後這筆會自動排除在下次週五的淨值結算之外，不會重複處罰）。
-            兩週內的紀錄會直接展開顯示，更久的紀錄依月份分組、可展開/收起。
+            規矩以「一週一結」運作：每週五晚上 18:00 自動把這一週的出門紀律打卡與處罰登記合併算出淨值——
+            淨值為正就是要執行的處罰，為負代表表現優於標準，每 10 下自動換算成 NT$1 獎金。
+            最上方是需要你處理的事項，接著是本週正在累積的即時淨值，下面則是每一週的結算結果，展開可以看到這一週實際被算進去的每一筆紀錄。
+            兩週內的週次直接展開，更早的依月份分組收起。
           </div>
         </div>
       </div>
@@ -72,13 +71,13 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-config.js?v=20260731p"></script>
-  <script src="js/auth.js?v=20260731p"></script>
-  <script src="js/calc.js?v=20260731p"></script>
-  <script src="js/data.js?v=20260731p"></script>
-  <script src="js/gamify.js?v=20260731p"></script>
-  <script src="js/nav.js?v=20260731p"></script>
-  <script src="js/pin.js?v=20260731p"></script>
-  <script src="js/violations.js?v=20260731p"></script>
+  <script src="js/firebase-config.js?v=20260816a"></script>
+  <script src="js/auth.js?v=20260816a"></script>
+  <script src="js/calc.js?v=20260816a"></script>
+  <script src="js/data.js?v=20260816a"></script>
+  <script src="js/gamify.js?v=20260816a"></script>
+  <script src="js/nav.js?v=20260816a"></script>
+  <script src="js/pin.js?v=20260816a"></script>
+  <script src="js/violations.js?v=20260816a"></script>
 </body>
 </html>
