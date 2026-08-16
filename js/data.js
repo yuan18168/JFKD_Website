@@ -1065,11 +1065,22 @@ function computeSettlementForPeriod(student, rules, startMsExclusive, endMs) {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
     periodStart: startMsExclusive === null ? null : fmtSettlementInstant(startMsExclusive),
     periodEnd: fmtSettlementInstant(endMs),
+    // 【2026-08-16】periodStartMs：結算區間的起點時間戳。原本只存顯示用字串，
+    // 但「結算記錄」頁要以週為主軸把原始登記歸戶回各自的區間，需要可運算的數值。
+    periodStartMs: startMsExclusive,
     periodEndMs: endMs,
     netJumpingJacks: net,
     punishmentCount: net > 0 ? net : 0,
     punishmentStatus: net > 0 ? "pending" : null,
     bonusAmount: net < 0 ? Math.floor(-net / 10) : 0,
+    // 【2026-08-16】bonusStatus：獎金是否已實際發放給孩子。純粹是家長端的備忘標記，
+    // 不影響 ruleBonusTotal——獎金在結算當下就已入帳，孩子的總獎金／XP／許願池進度
+    // 不會因為家長還沒按這個按鈕而延後。
+    bonusStatus: net < 0 && Math.floor(-net / 10) > 0 ? "pending" : null,
+    // 【2026-08-16】settledViolationIds：這次結算實際捲進淨值的單筆登記 id。
+    // 有了它，週卡片展開明細時就能精準列出「這一週算了哪幾筆」，而不必靠時間戳推算
+    // （推算會把「當場執行、未計入淨值」的那幾筆也一起算進來）。
+    settledViolationIds: [...settledViolationIds],
     computedAt: localDateStr(new Date()),
   };
   return { settlement, settledViolationIds };
@@ -1140,10 +1151,27 @@ async function forceSettleNow(student) {
   return { student: result.student, newSettlement: settlement.netJumpingJacks !== 0 ? settlement : null };
 }
 
-/** 家長端：把某筆結算的處罰標記為已執行 */
-async function markRulePunishmentDone(student, settlementId) {
+/**
+ * 家長端：切換某筆結算的處罰執行狀態。
+ * 【2026-08-16】改成可雙向切換（原本只能標記成已執行、不能反悔），
+ * 跟單筆登記的 setViolationExecuted() 對稱——按錯的機會不小，不該只有單行道。
+ */
+async function markRulePunishmentDone(student, settlementId, done = true) {
   const ruleSettlements = (student.ruleSettlements || []).map((s) =>
-    s.id === settlementId ? { ...s, punishmentStatus: "done" } : s
+    s.id === settlementId ? { ...s, punishmentStatus: done ? "done" : "pending" } : s
+  );
+  await updateStudent(student.id, { ruleSettlements });
+  return { student: { ...student, ruleSettlements } };
+}
+
+/**
+ * 【2026-08-16】家長端：切換某筆結算的「獎金已發放」標記。
+ * 注意這只是備忘用途——獎金早在結算當下就已累加進 ruleBonusTotal，
+ * 孩子看到的總獎金／XP／許願池進度都不受這個狀態影響。
+ */
+async function markRuleBonusPaid(student, settlementId, paid = true) {
+  const ruleSettlements = (student.ruleSettlements || []).map((s) =>
+    s.id === settlementId ? { ...s, bonusStatus: paid ? "done" : "pending" } : s
   );
   await updateStudent(student.id, { ruleSettlements });
   return { student: { ...student, ruleSettlements } };
@@ -1231,9 +1259,138 @@ function unsettledViolationsOf(student) {
     .sort((a, b) => entryInstantMs(b, "loggedAt", "loggedAtMs") - entryInstantMs(a, "loggedAt", "loggedAtMs"));
 }
 
-/** 列出某學生「全部」處罰登記（含已結算／未結算），供「處罰清單」頁顯示，新到舊排序 */
+/** 列出某學生「全部」處罰登記（含已結算／未結算），供「結算記錄」頁顯示，新到舊排序 */
 function allViolationsOf(student) {
   return (student.ruleViolations || [])
     .slice()
     .sort((a, b) => entryInstantMs(b, "loggedAt", "loggedAtMs") - entryInstantMs(a, "loggedAt", "loggedAtMs"));
+}
+
+
+// ------------------------------------------------------------------
+// 【2026-08-16 結算記錄頁改版】以「週」為主軸的查詢工具
+//
+// 歸戶方式有兩層 fallback：
+//   1. settledViolationIds（2026-08-16 以後產生的結算才有）→ 精準對號入座
+//   2. 時間戳落在 (periodStartMs, periodEndMs] 區間 → 給舊資料用的推算
+// 推算會把「被家長當場標記已執行、因此沒有計入淨值」的登記也一起撈進來，
+// 所以每一筆明細都會標示 countedInNet，避免使用者納悶「明細加起來怎麼跟淨值對不上」。
+// ------------------------------------------------------------------
+
+/** 結算週期的起訖時間戳；舊資料沒有 periodStartMs 時，用前一筆結算的 periodEndMs 補 */
+function settlementRangeMs(settlement, prevSettlement) {
+  const endMs = typeof settlement.periodEndMs === "number" ? settlement.periodEndMs : null;
+  let startMs = typeof settlement.periodStartMs === "number" ? settlement.periodStartMs : null;
+  if (startMs === null && prevSettlement && typeof prevSettlement.periodEndMs === "number") {
+    startMs = prevSettlement.periodEndMs;
+  }
+  return { startMs, endMs };
+}
+
+/** 取得某筆結算涵蓋的所有原始明細，統一格式方便畫面直接渲染，舊到新排序 */
+function settlementDetailsOf(student, settlement, prevSettlement, rules) {
+  const ruleList = normalizeRules(rules || student.rules);
+  const ruleById = Object.fromEntries(ruleList.map((r) => [r.id, r]));
+  const { startMs, endMs } = settlementRangeMs(settlement, prevSettlement);
+  const inPeriod = (ms) =>
+    endMs === null ? false : ms > (startMs === null ? -Infinity : startMs) && ms <= endMs;
+
+  const rows = [];
+  Object.values(student.arrivalLog || {}).forEach((entry) => {
+    const ms = entryInstantMs(entry, "date", "atMs");
+    if (!inPeriod(ms)) return;
+    const rule = ruleById[entry.ruleId];
+    if (!rule || rule.type !== "punctuality") return;
+    const multiplier = Number(rule.config && rule.config.multiplier) || 10;
+    const delta = Number(entry.deltaMinutes) || 0;
+    rows.push({
+      kind: "arrival",
+      label: rule.name,
+      detail:
+        delta > 0
+          ? `${entry.date} ${entry.time}　遲到 ${delta} 分`
+          : delta < 0
+          ? `${entry.date} ${entry.time}　提早 ${-delta} 分`
+          : `${entry.date} ${entry.time}　準時`,
+      jumpingJacks: delta * multiplier,
+      countedInNet: rule.enabled !== false,
+      ms,
+      raw: entry,
+    });
+  });
+
+  const idSet = Array.isArray(settlement.settledViolationIds)
+    ? new Set(settlement.settledViolationIds)
+    : null;
+  (student.ruleViolations || []).forEach((v) => {
+    const ms = entryInstantMs(v, "loggedAt", "loggedAtMs");
+    const byId = idSet ? idSet.has(v.id) : false;
+    const byTime = idSet ? false : inPeriod(ms);
+    const extraByTime = idSet && !byId && inPeriod(ms);
+    if (!byId && !byTime && !extraByTime) return;
+    rows.push({
+      kind: "violation",
+      label: v.ruleId ? (ruleById[v.ruleId] ? ruleById[v.ruleId].name : "（規矩已刪除）") : "臨時登記",
+      detail: `${v.loggedAt}　${v.reason || "（無原因）"}`,
+      jumpingJacks: Number(v.count) || 0,
+      countedInNet: idSet ? byId : v.settledBy !== "manualExecute",
+      ms,
+      raw: v,
+    });
+  });
+
+  return rows.sort((a, b) => a.ms - b.ms);
+}
+
+/** 把結算紀錄整理成「新到舊」的週卡片資料，並附上每張卡片的明細 */
+function settlementWeeksOf(student, rules) {
+  const list = [...(student.ruleSettlements || [])].sort(
+    (a, b) => (a.periodEndMs || 0) - (b.periodEndMs || 0)
+  );
+  const weeks = list.map((s, i) => {
+    const prev = i > 0 ? list[i - 1] : null;
+    const { startMs, endMs } = settlementRangeMs(s, prev);
+    return { settlement: s, details: settlementDetailsOf(student, s, prev, rules), startMs, endMs };
+  });
+  return weeks.reverse();
+}
+
+/** 這位學生「需要家長處理」的事項：未執行的結算處罰、未發放的結算獎金、未執行的單筆登記 */
+function pendingActionsOf(student) {
+  const out = [];
+  (student.ruleSettlements || []).forEach((s) => {
+    if (s.netJumpingJacks > 0 && s.punishmentStatus !== "done") {
+      out.push({ type: "punishment", id: s.id, amount: s.punishmentCount,
+        title: `待執行 ${s.punishmentCount} 下${RULE_UNIT_LABEL}`, sub: `${s.periodEnd} 結算`,
+        studentId: student.id, studentName: student.name });
+    }
+    if ((s.bonusAmount || 0) > 0 && s.bonusStatus !== "done") {
+      out.push({ type: "bonus", id: s.id, amount: s.bonusAmount,
+        title: `待發放 NT$${(s.bonusAmount || 0).toLocaleString()}`, sub: `${s.periodEnd} 結算`,
+        studentId: student.id, studentName: student.name });
+    }
+  });
+  (student.ruleViolations || []).forEach((v) => {
+    if (v.executedStatus === "done") return;
+    // 已被週結算捲進去的登記，處罰責任已轉移到那筆結算上，再列一次會變成要求家長做兩遍
+    if (v.settled) return;
+    out.push({ type: "violation", id: v.id, amount: Number(v.count) || 0,
+      title: `待執行 ${v.count} 下${RULE_UNIT_LABEL}`,
+      sub: `${v.loggedAt} 單筆登記${v.reason ? "・" + v.reason : ""}`,
+      studentId: student.id, studentName: student.name });
+  });
+  return out;
+}
+
+/** 孩子模式用：這位學生總共還有幾下開合跳沒執行完（結算處罰 ＋ 單筆登記，不重複計算） */
+function pendingPunishmentTotalOf(student) {
+  let total = 0;
+  (student.ruleSettlements || []).forEach((s) => {
+    if (s.netJumpingJacks > 0 && s.punishmentStatus !== "done") total += Number(s.punishmentCount) || 0;
+  });
+  (student.ruleViolations || []).forEach((v) => {
+    if (v.settled || v.executedStatus === "done") return;
+    total += Number(v.count) || 0;
+  });
+  return total;
 }
