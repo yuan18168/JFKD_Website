@@ -614,15 +614,43 @@
     </div>`;
   }
 
+  /**
+   * 【2026-08-16】還沒執行完的處罰橫幅。放在規矩分頁最上方（那本來就是這件事的家），
+   * 用暖橘色而不是刺眼的紅——目的是讓孩子清楚知道「還有事情沒做完」，不是製造罪惡感。
+   * 孩子只能看不能自己按完成：處罰執行需要家長在場見證，讓孩子自己標記會失去意義。
+   */
+  function pendingPunishBannerHtml(ctx) {
+    const total = pendingPunishmentTotalOf(ctx.student);
+    if (total <= 0) return "";
+    return `
+      <div class="kid-pending-banner">
+        <div class="kid-pending-icon">💪</div>
+        <div class="kid-pending-text">
+          <div class="kid-pending-title">還有 ${total} 下${RULE_UNIT_LABEL}要完成</div>
+          <div class="kid-pending-sub">做完後請爸爸媽媽幫你確認打勾</div>
+        </div>
+      </div>`;
+  }
+
+  /** 底部導覽「規矩」分頁的小紅點：有未執行的處罰才亮 */
+  function syncRulesTabDot(ctx) {
+    const dot = document.getElementById("rulesTabDot");
+    if (!dot) return;
+    dot.hidden = pendingPunishmentTotalOf(ctx.student) <= 0;
+  }
+
   function renderRules(ctx) {
+    syncRulesTabDot(ctx);
     const rules = normalizeRules(ctx.student.rules).filter((r) => r.enabled);
     if (!rules.length) {
       document.getElementById("rulesBody").innerHTML =
+        pendingPunishBannerHtml(ctx) +
         '<div class="kid-card"><div class="kid-empty">還沒有設定規矩<br>請家長到「家長模式 → 規矩設定」新增</div></div>';
       return;
     }
     const liveStat = computeLiveWeekProgress(ctx.student, rules);
     document.getElementById("rulesBody").innerHTML = `
+      ${pendingPunishBannerHtml(ctx)}
       ${rules.map((r) => ruleCardHtml(r, ctx, liveStat)).join("")}
       <div class="rule-week-summary">
         <div class="kid-card-title">本週目前合計</div>
@@ -1269,6 +1297,8 @@
   async function renderTab() {
     const ctx = await loadStudent(currentId);
     applyTheme(ctx.student);
+    // 紅點每次切分頁都重算：孩子不一定會進規矩分頁，但底部導覽隨時看得到
+    syncRulesTabDot(ctx);
     if (activeTab === "home") renderHome(ctx);
     else if (activeTab === "rules") renderRules(ctx);
     else if (activeTab === "score") renderScore(ctx);
@@ -1312,5 +1342,6 @@
   const ctx0 = await loadStudent(currentId);
   applyTheme(ctx0.student);
   await refreshBadges(ctx0, { celebrate: false });
+  syncRulesTabDot(ctx0);
   renderHome(ctx0);
 })();
