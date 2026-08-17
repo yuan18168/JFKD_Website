@@ -592,7 +592,7 @@
             <span style="margin-left:auto">罰 ${s.punishmentCount} 下</span>${tag}</div>`;
         }
         return `<div class="rule-settlement-row"><span>${escapeHtml(s.periodEnd)} 週結算</span>
-          <span style="margin-left:auto">獲得獎金 ${fmtMoney(s.bonusAmount)}</span><span class="rule-settlement-tag bonus">🎉</span></div>`;
+          <span style="margin-left:auto">獲得獎金 ${fmtMoney(s.bonusAmount)}</span>${s.bonusStatus === "done" ? '<span class="rule-settlement-tag done">已發放</span>' : '<span class="rule-settlement-tag pending">尚未發放</span>'}</div>`;
       })(),
     }));
     const violationItems = (student.ruleViolations || []).map((v) => {
@@ -636,7 +636,32 @@
   function syncRulesTabDot(ctx) {
     const dot = document.getElementById("rulesTabDot");
     if (!dot) return;
-    dot.hidden = pendingPunishmentTotalOf(ctx.student) <= 0;
+    dot.hidden =
+      pendingPunishmentTotalOf(ctx.student) <= 0 && pendingBonusTotalOf(ctx.student) <= 0;
+  }
+
+  /**
+   * [2026-08-17] Banner for rule bonus the parent has not handed out yet.
+   * Green, to mirror the orange punishment banner: only nagging about punishments
+   * would make the app feel like it remembers penalties but forgets rewards.
+   * Kid can view only - marking it paid is the parent job.
+   */
+  function pendingBonusBannerHtml(ctx) {
+    const total = pendingBonusTotalOf(ctx.student);
+    if (total <= 0) return "";
+    return `
+      <div class="kid-pending-banner bonus">
+        <div class="kid-pending-icon">🎉</div>
+        <div class="kid-pending-text">
+          <div class="kid-pending-title">有 ${fmtMoney(total)} 獎金還沒發放</div>
+          <div class="kid-pending-sub">請爸爸媽媽幫你確認發放</div>
+        </div>
+      </div>`;
+  }
+
+  /** Top of the rules tab: punishment banner first, bonus banner below; both can show at once */
+  function rulesBannersHtml(ctx) {
+    return pendingPunishBannerHtml(ctx) + pendingBonusBannerHtml(ctx);
   }
 
   function renderRules(ctx) {
@@ -644,13 +669,13 @@
     const rules = normalizeRules(ctx.student.rules).filter((r) => r.enabled);
     if (!rules.length) {
       document.getElementById("rulesBody").innerHTML =
-        pendingPunishBannerHtml(ctx) +
+        rulesBannersHtml(ctx) +
         '<div class="kid-card"><div class="kid-empty">還沒有設定規矩<br>請家長到「家長模式 → 規矩設定」新增</div></div>';
       return;
     }
     const liveStat = computeLiveWeekProgress(ctx.student, rules);
     document.getElementById("rulesBody").innerHTML = `
-      ${pendingPunishBannerHtml(ctx)}
+      ${rulesBannersHtml(ctx)}
       ${rules.map((r) => ruleCardHtml(r, ctx, liveStat)).join("")}
       <div class="rule-week-summary">
         <div class="kid-card-title">本週目前合計</div>
