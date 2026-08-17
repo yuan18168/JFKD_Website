@@ -1394,3 +1394,17 @@ function pendingPunishmentTotalOf(student) {
   });
   return total;
 }
+
+/**
+ * [2026-08-17] Kid mode: total rule bonus not yet handed out.
+ * Same rule as the bonus branch of pendingActionsOf (bonusStatus !== "done"),
+ * so settlements created before this feature (no bonusStatus field) count as unpaid
+ * until the parent ticks them off on the settlement page.
+ */
+function pendingBonusTotalOf(student) {
+  let total = 0;
+  (student.ruleSettlements || []).forEach((s) => {
+    if ((s.bonusAmount || 0) > 0 && s.bonusStatus !== "done") total += Number(s.bonusAmount) || 0;
+  });
+  return total;
+}
