@@ -2598,3 +2598,16 @@ body.kid-app[class*="theme-"] .near-unlock-card { background: var(--k-soft-bg2);
 body.kid-app[class*="theme-"] .rule-card,
 body.kid-app[class*="theme-"] .rule-week-summary { background: var(--kid-card); border-color: var(--kid-line); color: var(--kid-ink); }
 body.kid-app[class*="theme-"] .rule-progress-row { background: var(--k-soft-bg2); }
+
+/* [2026-08-17] Green variant of the kid pending banner, used for rule bonus that has
+   not been handed out yet. Hue deliberately far from the orange punishment banner so a
+   child can tell "something to do" from "something to collect" at a glance.
+   Appended at EOF on purpose: .kid-pending-banner.bonus (0,2,0) already outranks the
+   base .kid-pending-banner (0,1,0), and the themed override (0,3,2) still wins, so
+   source order does not change the outcome. */
+.kid-pending-banner.bonus {
+  background: linear-gradient(135deg, #B8EFC8, #86E0A6);
+  box-shadow: 0 6px 16px rgba(60,180,110,0.22);
+}
+.kid-pending-banner.bonus .kid-pending-title { color: #0E5230; }
+.kid-pending-banner.bonus .kid-pending-sub { color: #1C6E45; }
