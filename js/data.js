@@ -496,7 +496,6 @@ async function saveEffectSettings(settings) {
 //   badges                { "badgeId": "2026-07-31", ... } 徽章解鎖日期
 //   moodLog               { "2026-07-31": "great", ... } 每日心情打卡
 //   moodStreakBest         number：連續選心情的最佳紀錄（只增不減），供「心情系列」徽章判定用
-//   ※ 舊版的 pet / currency 欄位一律保留不刪除（改版前的備份還原時才不會遺失），只是不再讀取。
 
 const SHIELD_EVERY = 7;   // 每連續打卡滿幾天送 1 張護盾卡
 const SHIELD_MAX = 2;     // 護盾卡同時最多持有幾張
