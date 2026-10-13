@@ -61,20 +61,13 @@
         const nameColor = "#ffffff";
         return `
         <div class="card theme-gallery-card">
-          <div class="theme-preview-banner ${bannerClass}" style="background:${bannerBg}; border:${bannerBorder};">
-            <div style="display:flex; align-items:center; gap:14px;">
-              <div>${themeIconSvg(theme.id)}</div>
-              <div>
-                <div style="font-weight:800; font-size:calc(16px * var(--font-scale, 1)); color:${nameColor};">${escapeHtml(theme.name)}</div>
-                <div style="font-size:calc(12px * var(--font-scale, 1)); color:${taglineColor};">${escapeHtml(theme.tagline)}</div>
-              </div>
-            </div>
-          </div>
+          ${JDesign.themeArt(theme.id)}
+          <div class="theme-preview-info"><h3>${escapeHtml(JDesign.worlds[theme.id]?.label || theme.name)}</h3><p>${escapeHtml(JDesign.worlds[theme.id].description)}</p></div>
           <div class="theme-swatches">
             ${swatches.map((c) => `<span class="theme-swatch" style="background:${c};"></span>`).join("")}
           </div>
           <div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">
-            套用後會出現在該學生的學生紀錄頁最上方（橫幅＋配色＋圖標），僅此一頁換裝，不影響其他人。
+            專屬場景、收藏質感與主題配色。套用到這位孩子的介面，保留既有解鎖條件。
           </div>
         </div>`;
       })
@@ -121,8 +114,8 @@
     activeId = student.id;
     const theme = getStudentTheme(student.themeId);
     const hasTheme = !!theme;
-    const defaultTitle = hasTheme ? `${student.name} · ${theme.name}` : "";
-    const defaultTagline = hasTheme ? theme.tagline : "";
+    const defaultTitle = hasTheme ? JDesign.worlds[theme.id].label : "";
+    const defaultTagline = hasTheme ? JDesign.worlds[theme.id].description : "";
 
     el.innerHTML = `
       <div class="card" style="max-width:560px;">

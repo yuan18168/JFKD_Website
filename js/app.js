@@ -111,19 +111,7 @@
   }
 
   /** 主題橫幅：顯示大標題／小標題（可在家長端「主題造型」頁個別覆寫） */
-  function themeBannerBlock(student) {
-    const theme = getStudentTheme(student.themeId);
-    if (!theme) return "";
-    const title = student.bannerTitle || `${student.name} · ${theme.name}`;
-    const tagline = student.bannerTagline || theme.tagline || "";
-    return `<div class="kid-banner">
-      <div class="kid-banner-icon">${themeIconSvg(theme.id)}</div>
-      <div class="kid-banner-text">
-        <div class="kid-banner-title">${escapeHtml(title)}</div>
-        <div class="kid-banner-tagline">${escapeHtml(tagline)}</div>
-      </div>
-    </div>`;
-  }
+  function themeBannerBlock(student) { return JDesign.hero(student); }
 
   function floatXp(x, y, text, color) {
     const el = document.createElement("div");
@@ -143,7 +131,7 @@
   function badgeToast(badge) {
     const el = document.createElement("div");
     el.className = "badge-unlock-toast";
-    el.innerHTML = `<span style="font-size:1.5em">${badge.i || badge.icon}</span>
+    el.innerHTML = `<span style="font-size:1.5em">${badge.id ? JDesign.badge(badge.id) : (badge.i || badge.icon || "✨")}</span>
       <span>解鎖新徽章：${escapeHtml(badge.n || badge.name)}</span>`;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 3500);
@@ -189,7 +177,7 @@
     overlay.innerHTML = `
       <div class="badge-celebrate-card">
         <div class="badge-celebrate-label">🎉 解鎖新成就！</div>
-        <div class="badge-celebrate-icon">${badge.i || badge.icon}</div>
+        <div class="badge-celebrate-icon">${JDesign.badge(badge.id)}</div>
         <div class="badge-celebrate-name">${escapeHtml(badge.n || badge.name)}</div>
         ${badge.rarityName ? `<div class="badge-celebrate-rarity">${escapeHtml(badge.rarityName)}</div>` : ""}
         <div class="badge-celebrate-hint">點一下繼續</div>
@@ -320,6 +308,17 @@
 
     document.getElementById("homeBody").innerHTML = `
       ${themeBannerBlock(s)}
+      <div class="home-layout">
+      <div class="kid-card today-card">
+        <div class="kid-card-title">今日任務 <small>${done.size} / ${tasks.length} 完成</small></div>
+        <div id="taskList">${
+          tasks.length
+            ? tasks.map((t) => taskHtml(t, done.has(t.id))).join("")
+            : '<div class="kid-empty">還沒有設定每日任務<br>請家長到「家長模式 → 每日任務設定」新增</div>'
+        }</div>
+        ${tasks.length && done.size === tasks.length ? `<div class="kid-perfect">🎉 完美一天！額外 +${PERFECT_DAY_XP} XP</div>` : ""}
+      </div>
+
       <div class="streak-hero">
         <div class="streak-flame">🔥</div>
         <div class="streak-num">${streak.count}</div>
@@ -340,7 +339,7 @@
 
       ${comebackBannerHtml(streak)}
 
-      <div class="kid-card" style="margin-top:13px">
+      <div class="kid-card growth-card">
         <div class="xp-head">
           <div class="xp-level">Lv.${lv.level} <span>${lv.title}</span></div>
           <div class="xp-total">${xp.toLocaleString()} XP</div>
@@ -349,18 +348,8 @@
         <div class="xp-hint">${lv.next === null ? "已達最高等級 🎉" : `⚡ 還差 <b>${lv.toNext.toLocaleString()}</b> XP 就升到 Lv.${lv.level + 1}！`}</div>
       </div>
 
-      <div class="kid-card">
-        <div class="kid-card-title">今日任務 <small>${done.size} / ${tasks.length} 完成</small></div>
-        <div id="taskList">${
-          tasks.length
-            ? tasks.map((t) => taskHtml(t, done.has(t.id))).join("")
-            : '<div class="kid-empty">還沒有設定每日任務<br>請家長到「家長模式 → 每日任務設定」新增</div>'
-        }</div>
-        ${tasks.length && done.size === tasks.length ? `<div class="kid-perfect">🎉 完美一天！額外 +${PERFECT_DAY_XP} XP</div>` : ""}
-      </div>
-
       ${latest ? `
-      <div class="kid-card">
+      <div class="kid-card latest-card">
         <div class="kid-card-title">最新成績 <small>${escapeHtml(latest.semester || "")} ${escapeHtml(latest.examType || "")}</small></div>
         <div style="display:flex;align-items:center;gap:12px">
           <div style="font-size:calc(30px * var(--font-scale,1));font-weight:900;color:var(--k-accent)">${latest.result.avgScore}</div>
@@ -375,7 +364,7 @@
       </div>` : `
       <div class="kid-card"><div class="kid-empty">還沒有考試紀錄<br>請家長到「家長模式」新增第一筆</div></div>`}
 
-      <div class="kid-card">
+      <div class="kid-card calendar-card">
         <div class="kid-card-title">最近 28 天打卡</div>
         <div class="kid-cal">${calendarHtml(ctx)}</div>
         <div class="kid-cal-legend">
@@ -383,6 +372,7 @@
           <span><i class="kid-dot" style="background:var(--k-soft-bg2)"></i>沒打卡</span>
           <span>😊 當天心情</span>
         </div>
+      </div>
       </div>
     `;
 
@@ -1005,7 +995,7 @@
       <div class="kid-card-title">🎯 即將解鎖</div>
       ${list.map(({ b, have, need, pct }) => `
         <div class="near-unlock-row">
-          <div class="near-unlock-icon">${b.i}</div>
+          <div class="near-unlock-icon">${JDesign.badge(b.id)}</div>
           <div class="near-unlock-info">
             <div class="near-unlock-name">${escapeHtml(b.n)}</div>
             <div class="near-unlock-track"><div style="width:${pct}%"></div></div>
@@ -1034,8 +1024,8 @@
       const cells = L.map((b) => {
         const secret = b.hidden && !b.unlocked;
         return `<div class="dex-badge ${b.unlocked ? "r" + b.rarity : "locked"}" data-badge="${b.id}">
-          <div class="dex-badge-icon">${secret ? "❓" : b.icon}</div>
-          <div class="dex-badge-name">${secret ? "???" : escapeHtml(b.name)}</div>
+          <div class="dex-badge-icon">${JDesign.badge(b.id, secret)}</div>
+          <div class="dex-badge-name">${secret ? "???" : escapeHtml(b.name)}</div><div class="badge-card-number">${secret ? "SECRET" : "NO. " + String(BADGES.findIndex(x=>x.id===b.id)+1).padStart(3,"0")}</div>
         </div>`;
       }).join("");
       return `<div class="dex-rarity-head" style="color:${RARITY_COLOR[r]}">
@@ -1045,6 +1035,7 @@
     }).join("");
 
     document.getElementById("dexBody").innerHTML = `
+      <div class="collection-intro"><div><div class="eyebrow">YOUR LITTLE TREASURES</div><h2>努力，值得被珍藏。</h2><p>每一枚收藏，都記得你認真過的日子。</p></div><div class="collection-mark">${JDesign.badge("s_365")}</div></div>
       <div class="dex-hero">
         <div class="dex-hero-num">${res.stats.unlocked}<small> / ${res.stats.total}</small></div>
         <div class="dex-hero-label">已收集徽章</div>
@@ -1066,7 +1057,7 @@
     if (!b) return;
     const secret = b.hidden && !b.unlocked;
     document.getElementById("dexModalCard").innerHTML = `
-      <div class="dex-modal-icon" style="${b.unlocked ? "" : "filter:grayscale(1) brightness(1.5);opacity:.45"}">${secret ? "❓" : b.icon}</div>
+      <div class="dex-modal-icon" style="${b.unlocked ? "" : "filter:grayscale(1) brightness(1.5);opacity:.45"}">${JDesign.badge(b.id, secret)}</div>
       <div class="dex-modal-no">No. ${String(idx + 1).padStart(3, "0")}</div>
       <div class="dex-modal-name">${secret ? "神秘徽章" : escapeHtml(b.name)}</div>
       <div class="dex-modal-rarity" style="background:${RARITY_COLOR[b.rarity]}">${b.rarityName}</div>
@@ -1146,8 +1137,9 @@
       const pct = need > 0 ? Math.min(100, Math.round((xp / need) * 100)) : 100;
       return `<div class="theme-card ${THEME_SWATCH[id]} ${unlocked ? "" : "locked"} ${isCur ? "current" : ""}"
                    ${unlocked ? `data-theme="${id}"` : ""}>
-        <div class="theme-card-name">${THEME_ICON[id]} ${escapeHtml(theme.name)}${unlocked ? "" : " 🔒"}</div>
-        <div class="theme-card-desc">${escapeHtml(theme.tagline || "")}</div>
+        ${JDesign.themeArt(id)}
+        <div class="theme-card-name">${THEME_ICON[id]} ${escapeHtml(JDesign.worlds[id]?.label || theme.name)}${unlocked ? "" : " 🔒"}</div>
+        <div class="theme-card-desc">${escapeHtml(JDesign.worlds[id]?.description || theme.tagline || "")}</div>
         ${unlocked
           ? `<div class="theme-card-state">${isCur
               ? (themeUnlocked(id, xp) ? "✅ 使用中" : "✅ 使用中（家長指定）")
@@ -1173,8 +1165,8 @@
     }).join("");
 
     document.getElementById("themeBody").innerHTML = `
-      <div class="kid-note">累積 XP 解鎖新造型，套用後整個成績頁的配色都會跟著變 ✨</div>
-      ${cards}
+      <div class="kid-note">挑一個喜歡的世界，讓每天的努力換上新風景。累積 XP，讓下一個世界為你開啟。</div>
+      <div class="theme-grid">${cards}</div>
       <div class="kid-card" style="margin-top:16px">
         <div class="kid-card-title">✨ 我的特效收藏 <small>成績達標時自動播放</small></div>
         <div class="fx-collection">${fxItems}</div>

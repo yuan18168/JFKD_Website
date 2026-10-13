@@ -102,8 +102,8 @@
           datasets: [
             {
               data: avgScores,
-              borderColor: "#e7ecf7",
-              backgroundColor: "#e7ecf722",
+              borderColor: "#7461b8",
+              backgroundColor: "#7461b814",
               fill: true,
               tension: 0.3,
               spanGaps: true,
@@ -124,7 +124,7 @@
           },
         },
       });
-      chart.config._jfkdPointLabelOpts = { enabled: chartSettings.showPointLabels, fontSize: fontPx, color: "#e7ecf7" };
+      chart.config._jfkdPointLabelOpts = { enabled: chartSettings.showPointLabels, fontSize: fontPx, color: "#7461b8" };
     });
   }
 
@@ -252,3 +252,4 @@
     return arr.reduce((a, b) => a + b, 0);
   }
 })();
+
