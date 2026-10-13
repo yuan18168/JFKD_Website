@@ -1,7 +1,0 @@
-
-## 四世界主題 atlas
-
-`theme-worlds.png`，1672×941，2×2 均分；左上銀河、右上熔岩、左下極光森林、右下黃金殿堂。內建 image_gen 來源 `exec-e25db47b-942d-4ff8-9d17-47c8222ef2ea.png`。這是四套非角色主題，與寶可夢未完成請求無關。
-
-Use case: stylized-concept. Asset type: website fantasy theme background atlas. One wide 16:9 image subdivided into EXACTLY 2 columns and 2 rows of equal panels; each panel is also wide 16:9. Panels meet directly at the exact horizontal and vertical center, no gutters or drawn borders. Create four beautifully polished 3D miniature fantasy environments in a consistent premium soft vinyl / satin ceramic toy-world style with cinematic gentle light. Each panel puts its main small scene on its RIGHT HALF while its LEFT HALF is simple softly lit gradient with extremely subtle ambient detail, leaving calm space for website text to be overlaid. TOP LEFT: lavender-purple galaxy, elegant ringed planet and sparkling stardust on the right, pale lilac cosmic mist on left. TOP RIGHT: warm orange-red volcano and floating lava crystals on right, pale warm peach mist left; friendly wonder rather than scary destruction. BOTTOM LEFT: emerald aurora forest miniature with a tiny original forest deer and trees on right, turquoise northern lights, pale green mist left; NOT any existing character. BOTTOM RIGHT: luxurious miniature golden palace and jeweled golden crown on right, warm ivory glowing atmosphere left. Beautiful material detail, balanced playful sophisticated composition. No people. No words, numbers, letters, logos, borders, watermark or UI. Exact 2x2 four-panel atlas layout is essential.
-

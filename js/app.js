@@ -1115,7 +1115,8 @@
   }
 
   // ================================================================ 造型
-  const THEME_ORDER = ["", "zoro", "babymonster", "galaxy", "lava", "aurora", "gold"];
+  const THEME_ORDER = ["", ...Object.keys(STUDENT_THEMES)];
+  let selectedThemeSeries = 'all';
   const THEME_SWATCH = {
     "": "theme-swatch-default", zoro: "theme-swatch-zoro", babymonster: "theme-swatch-babymonster",
     galaxy: "theme-swatch-galaxy", lava: "theme-swatch-lava", aurora: "theme-swatch-aurora", gold: "theme-swatch-gold",
@@ -1135,10 +1136,10 @@
       // 正在使用中的主題一律視為已解鎖（家長可在管理頁直接指定，指定後就不該再被 XP 門檻擋住）
       const unlocked = isCur || themeUnlocked(id, xp);
       const pct = need > 0 ? Math.min(100, Math.round((xp / need) * 100)) : 100;
-      return `<div class="theme-card ${THEME_SWATCH[id]} ${unlocked ? "" : "locked"} ${isCur ? "current" : ""}"
+      return `<div class="theme-card ${THEME_SWATCH[id] || ""} ${unlocked ? "" : "locked"} ${isCur ? "current" : ""}" data-series="${theme.series || 'default'}"
                    ${unlocked ? `data-theme="${id}"` : ""}>
         ${JDesign.themeArt(id)}
-        <div class="theme-card-name">${THEME_ICON[id]} ${escapeHtml(JDesign.worlds[id]?.label || theme.name)}${unlocked ? "" : " 🔒"}</div>
+        <div class="theme-card-name">${THEME_ICON[id] || "✦"} ${escapeHtml(JDesign.worlds[id]?.label || theme.name)}${unlocked ? "" : " 🔒"}</div>
         <div class="theme-card-desc">${escapeHtml(JDesign.worlds[id]?.description || theme.tagline || "")}</div>
         ${unlocked
           ? `<div class="theme-card-state">${isCur
@@ -1165,13 +1166,20 @@
     }).join("");
 
     document.getElementById("themeBody").innerHTML = `
-      <div class="kid-note">挑一個喜歡的世界，讓每天的努力換上新風景。累積 XP，讓下一個世界為你開啟。</div>
+      <div class="kid-note">每累積 <b>2,000 XP</b>，就開啟下一位角色的世界。18 位夥伴，陪你一起成長。</div>
+      <div class="theme-series-tabs" aria-label="依系列篩選">${[['all','全部 19'],['onepiece','海賊王 6'],['stage','BABYMONSTER 6'],['pokemon','寶可夢 6']].map(([id,label])=>`<button type="button" data-series-filter="${id}" aria-pressed="${selectedThemeSeries===id}">${label}</button>`).join('')}</div>
       <div class="theme-grid">${cards}</div>
       <div class="kid-card" style="margin-top:16px">
         <div class="kid-card-title">✨ 我的特效收藏 <small>成績達標時自動播放</small></div>
         <div class="fx-collection">${fxItems}</div>
       </div>`;
 
+    const filterThemes = () => {
+      document.querySelectorAll('.theme-card[data-series]').forEach(el=>{el.hidden=selectedThemeSeries!=='all' && el.dataset.series!==selectedThemeSeries;});
+      document.querySelectorAll('[data-series-filter]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.seriesFilter===selectedThemeSeries)));
+    };
+    filterThemes();
+    document.querySelectorAll('[data-series-filter]').forEach(el=>el.addEventListener('click',()=>{selectedThemeSeries=el.dataset.seriesFilter;filterThemes();}));
     document.querySelectorAll("[data-theme]").forEach((el) =>
       el.addEventListener("click", async () => {
         const id = el.dataset.theme;

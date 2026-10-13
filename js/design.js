@@ -2,12 +2,7 @@
 const JDesign = (() => {
   const worlds = {
     '': {label:'小小冒險，大大成長',en:'A LITTLE BETTER, EVERY DAY',color:'#7261bd',description:'把每天的小努力，收進你的成長收藏。'},
-    zoro:{label:'劍士冒險航線',en:'THE SWORDSMAN’S JOURNEY',color:'#16745e',description:'帶著勇氣出發。今天，也向夢想前進一步。',image:'theme-zoro.webp'},
-    babymonster:{label:'我的閃耀舞台',en:'YOUR MOMENT TO SHINE',color:'#8f4f9c',description:'每一次練習，都讓明天的你更閃耀。',image:'theme-asa.webp'},
-    galaxy:{label:'銀河星空',en:'BEYOND THE STARS',color:'#685cbd',description:'在浩瀚星海裡，發現屬於你的光。'},
-    lava:{label:'熔岩烈焰',en:'IGNITE YOUR COURAGE',color:'#c36132',description:'把挑戰化成能量，點亮勇敢的自己。'},
-    aurora:{label:'極光森林',en:'GROW AT YOUR OWN PACE',color:'#167f79',description:'循著森林微光，每一天都在悄悄長大。'},
-    gold:{label:'黃金殿堂',en:'A LEGACY OF LITTLE WINS',color:'#a1782e',description:'所有認真的日子，都值得被珍藏。'}
+    ...Object.fromEntries(Object.values(typeof STUDENT_THEMES==='undefined'?{}:STUDENT_THEMES).map(t=>[t.id,{label:t.name,en:t.en,color:t.color,description:t.tagline,image:t.image,artPending:t.artPending,character:t.character,series:t.series}]))
   };
   const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const paths={home:'M3 10 12 3l9 7M5 9v11h5v-6h4v6h5V9',rules:'M5 3h14v18H5zM8 7h8M8 11h8M8 15h5',score:'M4 20V4m0 16h17M8 16v-5m5 5V7m5 9V3',wish:'M3 8h18v5H3zM5 13v8h14v-8M12 8v13M12 8C3 8 5 0 9 4l3 4Zm0 0c9 0 7-8 3-4l-3 4Z',dex:'M4 4h7v7H4zM14 4h7v7h-7zM4 14h7v7H4zM14 14h7v7h-7z',theme:'M12 3a9 9 0 1 0 0 18c2 0 2-2 1-3s0-3 2-3h3c5 0 3-12-6-12Z',parent:'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-3a8 8 0 0 1 16 0v3',logout:'M9 4H4v16h5m5-12 4 4-4 4m-5-4h12',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2',check:'m5 12 4 4L19 6',star:'m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z',arrow:'M5 12h14m-5-5 5 5-5 5',spark:'m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5Z'};
@@ -25,11 +20,11 @@ const JDesign = (() => {
     const title=student.bannerTitle||w.label;
     const pose=['zoro','babymonster'].includes(id)?`<span class="weekly-pose" aria-hidden="true" style="background-position:${d.week%3*50}% ${id==='zoro'?0:100}%"></span>`:'';
     return `<section class="world-hero world-${esc(id||'default')} season-${d.season} variation-${d.week%3}" aria-label="專屬主題">
-      ${artwork?`<img class="world-art" src="images/redesign/${artwork}" alt="" fetchpriority="high">`:'<div class="world-scenery" aria-hidden="true"><span></span><span></span><span></span></div>'}
+      ${artwork?`<img class="world-art" src="images/redesign/${artwork}?v=20261013b" alt="" fetchpriority="high">`:w.artPending?`<div class="pending-character"><span>${esc(w.character)}</span><small>角色圖片待補</small></div>`:'<div class="world-scenery" aria-hidden="true"><span></span><span></span><span></span></div>'}
       <div class="world-copy"><div class="eyebrow">${w.en}</div><h2>${esc(title)}</h2><p>${esc(student.bannerTagline||w.description)}</p><span class="world-date">${pose||icon('spark')}${d.day}</span></div>
     </section>`;
   }
-  function themeArt(id){const w=worlds[id]||worlds[''];return `<div class="theme-art world-${id||'default'}">${w.image?`<img src="images/redesign/${w.image}" alt="" loading="lazy">`:'<div class="world-scenery" aria-hidden="true"><span></span><span></span><span></span></div>'}<span class="theme-edition">${w.en}</span></div>`;}
+  function themeArt(id){const w=worlds[id]||worlds[''];return `<div class="theme-art world-${id||'default'}">${w.image?`<img src="images/redesign/${w.image}?v=20261013b" alt="" loading="lazy">`:w.artPending?`<div class="pending-character"><span>${esc(w.character)}</span><small>角色圖片待補</small></div>`:'<div class="world-scenery" aria-hidden="true"><span></span><span></span><span></span></div>'}<span class="theme-edition">${w.en}</span></div>`;}
   function polish(){
     document.querySelectorAll('.kid-tab').forEach(el=>{const i=el.querySelector('.kid-tab-icon');if(i&&!i.dataset.drawn){const dot=i.querySelector('.kid-tab-dot');i.innerHTML=icon(el.dataset.tab);if(dot)i.append(dot);i.dataset.drawn='1';}el.setAttribute('aria-current',el.classList.contains('active')?'page':'false');});
     [['kidThemeEntryBtn','theme','主題造型'],['parentLink','parent','家長模式'],['kidLogoutBtn','logout','登出']].forEach(([id,type,label])=>{const el=document.getElementById(id);if(el&&!el.dataset.drawn){el.innerHTML=icon(type);el.setAttribute('aria-label',label);el.dataset.drawn='1';}});

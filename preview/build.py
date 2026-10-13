@@ -4,14 +4,20 @@ import re, shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / '_preview'
+if OUT.resolve().parent != ROOT.resolve() or OUT.name != '_preview':
+    raise RuntimeError('Unexpected preview output path')
+if OUT.exists():
+    shutil.rmtree(OUT)
 OUT.mkdir(exist_ok=True)
 for folder in ('css', 'images'):
-    shutil.copytree(ROOT / folder, OUT / folder, dirs_exist_ok=True)
+    shutil.copytree(ROOT / folder, OUT / folder, dirs_exist_ok=True,
+                    ignore=lambda directory,names: [name for name in names if Path(directory).name == 'redesign' and name.endswith(('.png','.md'))])
 (OUT / 'js').mkdir(exist_ok=True)
 for file in (ROOT / 'js').glob('*.js'):
     if file.name not in ('firebase-config.js', 'auth.js', 'pin.js'):
         shutil.copy2(file, OUT / 'js' / file.name)
 shutil.copy2(ROOT / 'preview/mock.js', OUT / 'js/preview-mock.js')
+shutil.copy2(ROOT / 'preview/start.ps1', OUT / 'start-preview.ps1')
 for name in ('favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'):
     shutil.copy2(ROOT / name, OUT / name)
 for file in ROOT.glob('*.html'):

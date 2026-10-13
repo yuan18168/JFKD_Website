@@ -28,3 +28,9 @@ Use case: stylized-concept. Asset type: game UI achievement icon SPRITE ATLAS. G
 
 Use case: stylized-concept. Asset type: premium family achievements website wide 16:9 theme banner. Gorgeous collectible 3D chibi Pikachu and Eevee smiling together on the RIGHT HALF of a magical little blue-green island display. Pikachu at right-center with classic yellow body red cheeks black-tipped ears lightning tail, Eevee at far right with fluffy cream collar and brown fur. A couple of elegant holographic collectible card shapes with blank abstract star and lightning illustrations stand behind them, no text or logos. Tiny blue crystals, a red-and-white Pokeball and golden stars decorate their base. Refined tactile vinyl, translucent crystal, soft iridescent foil materials; inviting cinematic sunlight; sky blue, sea turquoise, lemon gold palette. LEFT 50% is calm pale blue sky gradient and soft distant clouds, plenty of negative space for website text added separately. High quality restrained collectible toy art, not busy. Full characters visible within frame. No words, numbers, letters, logos, watermark or UI.
 
+
+## 2026-10-13 預覽回饋：索隆閉眼修正
+使用內建 image_gen 編修既有 theme-zoro.png；來源 exec-0f998d43-b11a-4cb0-8689-dd45b755a335.png。已取代PNG並重壓WebP。
+Prompt: Precise edit of the existing 3D chibi Zoro harbor illustration. Correct ONLY Zoro's injured anatomical LEFT eye (viewer RIGHT under vertical scar) to FULLY CLOSED: one clean curved eyelid line, no eyeball, iris, pupil, white or gap. Keep the vertical scar crossing the eyelid, healthy right eye open, all other face details, pose, swords, clothing, harbor, lighting and wide composition unchanged.
+
+新版寶可夢單角色皮卡丘插畫也遭同一內建工具 moderation_blocked/output/other 拒絕，request ID ea3ea5c8-8b7d-478e-a992-976f79094a03；未產生可用圖，已停止此生成路徑。

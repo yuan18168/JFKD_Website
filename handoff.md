@@ -24,14 +24,16 @@
 - 新版共用視覺：css/redesign.css（在原 CSS 後載入）、js/design.js。
 - AI 原圖、WebP 網頁素材及生成 prompt：images/redesign/。
 - 隔離預覽：preview/build.py、preview/mock.js、preview/start.ps1。
-- 檢查腳本：preview/verify.cjs、preview/interactions.cjs。
+- 檢查腳本：preview/verify.cjs、preview/interactions.cjs、preview/themes.cjs。
 
-js/data.js、js/calc.js、js/gamify.js、js/auth.js、js/pin.js、js/firebase-config.js、firestore.rules 與正式基準完全相同。保留任務／XP／獎金／成就／主題解鎖及所有原有事件處理。沒有資料遷移、正式資料寫入或白名單變更。原碼 XP 包含 totalBonus 與 xpFromTasks，本次照原碼保留，不以舊說明推測規則。
+js/calc.js、js/auth.js、js/pin.js、js/firebase-config.js、firestore.rules 與正式基準完全相同。依使用者最新核准，js/data.js 擴充角色主題目錄與橫幅，js/gamify.js 僅調整主題 XP 門檻。保留任務／XP 取得／獎金／成就判定與原有事件處理。沒有資料遷移、正式資料寫入或白名單變更。原碼 XP 包含 totalBonus 與 xpFromTasks，本次照原碼保留，不以舊說明推測規則。
 
 ## 設計交付與限制
 
 - 首頁把今日任務提前，桌面雙欄、手機單欄與安全區底部導覽。
-- 保留預設及六個 theme ID；索隆海港、Asa 舞台、銀河、熔岩、極光森林、黃金殿堂各有場景。
+- 最新核准 C＋A：18 款角色主題加免費預設；每 2,000 XP 解鎖一款，最高 36,000 XP。三系列各六款、交錯排列，附系列篩選。
+- 舊 theme ID 保留相容：gold 現對應皮卡丘、aurora 對應伊布、lava 對應噴火龍、galaxy 對應超夢；zoro、babymonster 仍為索隆、Asa。舊 ID 的風景及門檻已由角色目錄取代。
+- 目前套用的主題仍沿用原本家長指定例外；換成另一主題後，舊主題須符合新門檻才能自行選回。
 - 主題收藏封面、鎖定進度與使用中狀態；保留家長自訂標題。
 - 62 個既有成就用 AI 立體收藏圖、卡冊、稀有度展示；秘密成就未解鎖仍遮蔽。
 - 64 格物件圖集由 JDesign.badge() 映射；部分同類成就共用圖案。
@@ -39,7 +41,7 @@ js/data.js、js/calc.js、js/gamify.js、js/auth.js、js/pin.js、js/firebase-co
 - 保留既有慶祝特效，加上輕量進場動畫；減少動態偏好停用 CSS 動畫。
 - 家長端深色導覽、淺色內容、清晰表單。保留全站字級設定，補鍵盤焦點與卡片 Enter／Space 操作。
 
-**尚缺寶可夢角色圖**：內建圖像服務拒絕該次生成，本版只有收藏卡展示風格，不含寶可夢指定角色。未改用其他工具繞過拒絕；不可宣稱已完整完成這項美術要求。
+**素材未完成：寶可夢六款。** 內建圖像服務再次拒絕皮卡丘單角色生成，已停止此路徑。六款在預覽明確標示「角色圖片待補」，未偽裝成完成品。待使用者決定提供素材或保留缺項；正式上線仍被驗收閘門阻擋。海賊王與 BABYMONSTER 十二款已完成主角插畫。索隆傷疤左眼已在主圖改成閉合。
 
 ## 開啟預覽
 
@@ -66,7 +68,8 @@ Chromium 檢查通過：
 - 16 頁無 JavaScript 例外，桌面無文件橫向溢出。
 - 手機主要分頁無橫向溢出。
 - 任務完成與取消、選心情、已解鎖主題套用、鎖定卡片不可套用、成就詳情。
-- 七種首頁主題，320／390／768／1024／1440 px，1.3 倍字級無文件溢出。
+- 18 款主題、320／390／768／1024／1440 px、1.3 倍字級共 90 組首頁布局無文件溢出；12 個已完成主圖能解碼載入。
+- 18 個門檻逐一檢查：差 1 XP 不解鎖、到達門檻解鎖；三系列篩選各 6 張，全列表 19 張。
 - 兩組檢查未發出正式 Firebase 請求。
 
 已人工檢視手機首頁、圖鑑、造型與 PC 總覽截圖。產物在 _qa/，不加入 Git。檢查腳本目前引用本機 Codex Playwright 路徑，換機需調整。
@@ -99,4 +102,27 @@ git ls-remote origin refs/tags/backup/pre-redesign-20261013 refs/heads/redesign-
 - https://blog.duolingo.com/streak-milestone-design-animation/
 - https://www.nintendo.com/au/apps/nintendo-today/
 - https://www.pokemon.com/uk/strategy/a-guide-to-collecting-cards-and-using-wonder-picks-in-pokemon-trading-card-game-pocket
+
+## 角色與門檻表（最新核准）
+
+| XP | 角色 | 場景 | 素材 |
+| --- | --- | --- | --- |
+| 2,000 | 索隆 | 劍士冒險航線 | 已完成 |
+| 4,000 | Asa | 我的閃耀舞台 | 已完成 |
+| 6,000 | 皮卡丘 | 電光向日原野 | 待補 |
+| 8,000 | 魯夫 | 草帽啟航日 | 已完成 |
+| 10,000 | Ruka | 霓虹節拍城市 | 已完成 |
+| 12,000 | 伊布 | 森林奇遇旅程 | 待補 |
+| 14,000 | 娜美 | 橘子島尋寶記 | 已完成 |
+| 16,000 | Ahyeon | 緋紅星光舞台 | 已完成 |
+| 18,000 | 胖丁 | 粉紅晚安樂章 | 待補 |
+| 20,000 | 喬巴 | 雪國暖心小屋 | 已完成 |
+| 22,000 | Rami | 月光水晶音樂廳 | 已完成 |
+| 24,000 | 噴火龍 | 烈焰山巔試煉 | 待補 |
+| 26,000 | 香吉士 | 海上星光餐廳 | 已完成 |
+| 28,000 | Rora | 玫瑰花園協奏曲 | 已完成 |
+| 30,000 | 路卡利歐 | 波導修練山谷 | 待補 |
+| 32,000 | 羅賓 | 古代書海秘境 | 已完成 |
+| 34,000 | Chiquita | 金色熱帶音浪 | 已完成 |
+| 36,000 | 超夢 | 星河覺醒之境 | 待補 |
 
