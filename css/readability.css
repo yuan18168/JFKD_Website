@@ -1,0 +1,20 @@
+/* Bridge legacy child components to the current light character palettes. */
+body.kid-app[class] {
+  --kid-ink: var(--kid-text);
+  --kid-ink-dim: var(--kid-dim);
+  --kid-soft: var(--kid-dim);
+  --kid-line: var(--kid-border);
+  --k-pink: #a52648;
+  --k-good: #226446;
+  --k-good-bg: #e5f3e9;
+  --k-good-bg2: #d9eddf;
+  --k-good-line: #8ab79a;
+}
+body.kid-app .rule-progress-row { color: var(--kid-text); }
+body.kid-app .rule-checkin-btn { background: var(--k-accent); color: #fff; }
+body.kid-app .rule-settlement-tag.bonus { background: var(--k-good-bg); color: var(--k-good); }
+body.kid-app .rule-week-cell:is(.early,.ontime) .rule-week-cell-day { color: var(--k-good); }
+
+body.kid-app .rule-week-cell-day,
+body.kid-app .rule-week-cell.empty .rule-week-cell-icon { color: var(--kid-text); }
+body.kid-app[class] .kid-pending-sub { color: var(--kid-text); }
