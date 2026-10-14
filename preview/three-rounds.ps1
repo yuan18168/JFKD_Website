@@ -1,6 +1,6 @@
 $ErrorActionPreference='Stop'
 $env:PLAYWRIGHT_BROWSERS_PATH=(Resolve-Path '../.tools/playwright-browsers').Path
-for ($round=1; $round -le 3; $round++) {
+for ($round=$(if ($env:QA_START) {[int]$env:QA_START} else {1}); $round -le 3; $round++) {
  $env:QA_ROUND=[string]$round
  New-Item -ItemType Directory -Force "_qa/live-round-$round" | Out-Null
  foreach ($test in @('verify','interactions','theme-copy','readability','check-theme-apply-all','palettes')) {
