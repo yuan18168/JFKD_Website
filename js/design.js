@@ -98,7 +98,7 @@ const JDesign = (() => {
     const framed=headTop!==undefined;
     // Crop only ~0.6% of source height beyond the hairline; keep the feet.
     const crop=framed?headTop+.006:0,scale=1/(1-crop);
-    const framing=framed?` style="--hero-art-height:${scale*100}%;--hero-art-top:${-crop*scale*100}%;--hero-scene:url('images/redesign/${esc(w.image)}?v=20261014a')"`:'';
+    const framing=framed?` style="--hero-art-height:${scale*100}%;--hero-art-top:${-crop*scale*100}%;--hero-scene:url('${esc(new URL('images/redesign/'+w.image,document.baseURI).href)}?v=20261014a')"`:'';
     const pose=w.series==='stage'?'<span class="mv-date-portrait" aria-hidden="true" style="background-image:url(images/redesign/'+w.image+')"></span>':['zoro'].includes(id)?`<span class="weekly-pose" aria-hidden="true" style="background-position:${d.week%3*50}% ${id==='zoro'?0:100}%"></span>`:'';
     return `<section class="world-hero ${framed?'world-framed ':''}world-${esc(id||'default')} world-series-${esc(w.series||'default')} season-${d.season} variation-${d.week%3}"${framing} aria-label="專屬主題">
       ${artworkHtml(w,true)}${signatureWorlds[id]?'<span class="hero-signature" aria-hidden="true">'+worldMark(id)+'</span>':''}
