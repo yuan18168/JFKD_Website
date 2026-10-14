@@ -2,13 +2,16 @@
 
 使用者已驗收十款 BABYMONSTER MV 主題與三十款精緻展示座，明確授權正式上線，GitHub 瀏覽器登入與推送預檢成功。下方較早的「待確認／未授權」均為歷史紀錄，不再適用。
 
-- 發布準備中：正式來源 main／根目錄，網址 https://yuan18168.github.io/JFKD_Website/ 。本節將於部署完成後補實際版本與結果。
+- 已正式上線：GitHub Pages 建置 built，發布合併提交 0d04c5d4aecb67c5af64818794393f710ed976fd；正式來源 main／根目錄，網址 https://yuan18168.github.io/JFKD_Website/ 。已核對 9 個正式頁面／腳本／樣式／圖片與 Git blob 完全一致，preview/mock.js 與 handoff.md 回傳 404。
 - 舊正式基準：7fd16864f5386de6b46dba0276fd27d551c684d0；備份標籤 backup/pre-redesign-20261013。
 - 上線前已從該基準重建並保存 44 張桌面／手機截圖於 _release/20261014/screenshots/before。使用同一組隔離示範資料，不是真實家庭紀錄；未讀寫正式 Firebase。
 - 交付包含 30 套角色配色、10 款 MV 服裝與場景、150 個專屬導覽道具、62 個獨立成就圖示、每日心情與 28 天回顧、每 1000 XP 三系列交錯解鎖。
 - 已驗證 30 主題實際套用與重新整理保存、150 導覽操作、多尺寸布局、文字對比、減少動態，以及零正式資料請求。Safari 真機未另行測試。
 - Pages 排除 preview 工具及交接文件；_preview、_qa、_release 不進 Git。正式頁面保留原 Firebase 連線；認證、計算、安全規則不變，無資料遷移。
-- 發布後產出本機 _release/20261014/report/index.html 前後對照報告，並補最新 Git bundle。截圖與報告不公開部署。
+- 已產出本機 _release/20261014/report/index.html 前後對照報告，前後各 44 張截圖（共 88 張）均無 JavaScript 例外與正式資料請求。相鄰目錄 JFKD_正式發布備份_20261014.bundle 保存最新歷史。截圖與報告不公開部署。
+- 遠端備份已驗證：backup/pre-redesign-20261013 指向 7fd1686，redesign-20261013 指向 c352f17。現在工作分支 main。
+- 回退方式：在 main 執行 git revert -m 1 0d04c5d4aecb67c5af64818794393f710ed976fd，再正常 push main，等待 Pages 建置；不要 force push，Firebase 資料無須回退。
+- 發布前補修登入頁未載入 STUDENT_THEMES 的共用設計腳本例外，16 頁重測全數通過。
 
 ---
 
