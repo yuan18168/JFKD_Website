@@ -65,10 +65,16 @@ const JDesign = (() => {
   Object.entries(typeof STUDENT_THEMES==='undefined'?{}:STUDENT_THEMES).filter(([,w])=>w.series==='stage').forEach(([id,w])=>{signatureWorlds[id]={label:w.character+' 的練習舞台',start:'每一次練習，都讓自己的光更明亮。',finish:'今天的努力值得掌聲，為自己喝采！',mark:'M5 13v6m5-11v16m6-20v24m6-20v16m5-11v6'};});
   function worldMark(id){const w=signatureWorlds[id];return w?'<svg class="signature-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="'+w.mark+'"/></svg>':'';}
   function taskWorld(student,done,total){
-    const id=student.themeId,w=signatureWorlds[id];if(!w)return '';
-    const complete=total>0&&done===total,pose=complete?2:done>0?1:0;
-    const character=STUDENT_THEMES[id]?.series==='stage'?'<span class="mv-companion" aria-hidden="true" style="background-image:url(images/redesign/'+STUDENT_THEMES[id].image+')"></span>':id==='gold'?'<img src="images/redesign/pokemon/pikachu.png" alt="" aria-hidden="true">':'<span class="companion-pose" aria-hidden="true" style="background-position:'+pose*50+'% '+(id==='zoro'?0:100)+'%"></span>';
+    const id=student.themeId,theme=worlds[id],w=signatureWorlds[id]||(theme?.character?{label:theme.character+' 的成長練習',start:'把今天的小努力，變成明天的新本領。',finish:'今天的努力完成了，為自己開心一下！'}:null);if(!w)return '';
+    const complete=total>0&&done===total;
+    const character=companion(student,'task');
     return '<div class="task-world task-world-'+id+(complete?' is-complete':'')+'"><div class="task-world-copy"><span class="task-world-label">'+worldMark(id)+w.label+'</span><p>'+ (complete?w.finish:w.start)+'</p><span class="world-energy" aria-hidden="true">'+[0,1,2,3,4].map(i=>'<i class="'+(total&&done/total*5>i?'lit':'')+'"></i>').join('')+'</span></div><div class="world-companion">'+character+'</div></div>';
+  }
+
+  function companion(student,slot){
+    const id=student.themeId;
+    if(!worlds[id]?.character||!['task','streak','growth'].includes(slot))return '';
+    return `<span class="character-stage character-stage-${slot}" aria-hidden="true"><img class="character-pose" src="images/redesign/poses-v1/${esc(id)}-${slot}.webp" width="320" height="360" alt="" loading="lazy" decoding="async"></span>`;
   }
 
   // Keep the quote stable during task rerenders; remember only its index locally.
@@ -115,5 +121,5 @@ const JDesign = (() => {
     document.querySelectorAll('button[title]:not([aria-label])').forEach(b=>b.setAttribute('aria-label',b.title));
   }
   document.addEventListener('DOMContentLoaded',()=>{polish();let scheduled=false;new MutationObserver(()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;polish();});}).observe(document.body,{childList:true,subtree:true});});
-  return {worlds,icon,badge,hero,themeArt,taskWorld};
+  return {worlds,icon,badge,hero,themeArt,taskWorld,companion};
 })();

@@ -1,0 +1,154 @@
+{
+  "prompt": "Create a premium chibi character SPRITE ATLAS for a family motivation app. Output exactly 3 columns x 5 rows, 15 separate full-body figurines, all cells equal size, transparent alpha background, no labels, no letters, no borders, no scene, no ground plane. Keep generous transparent margins within every cell, no figure crosses cell boundaries. Each row is ONE character with identical face, hair, outfit, accessories and proportions in all 3 columns, closely matching the supplied reference row. Reference is a vertical sheet of 5 existing approved heroes: use ONLY character identities/outfits/style, REMOVE scenery, create entirely NEW poses distinct from the reference. Column 1: focused practice / ready-to-start pose, holding a small book or checklist naturally when appropriate. Column 2: energetic encouraging pose, waving or stepping forward, for a daily streak card. Column 3: proud celebratory pose, victory gesture or raising a small golden star, for an XP growth card. Each column's silhouette clearly different, friendly age-appropriate expressions, family-friendly, fully clothed outfits as reference. All hair, feet, ears, tails, props fully inside each cell. Premium polished 3D/anime chibi render, crisp distinctive features. Preserve true transparent background and no baked checkerboard. Tall portrait canvas aspect ratio 3:5. ",
+  "rows": [
+    "Asa SHEESH black twin ponytails black pink skull stage outfit red buckle boots; Ruka DRIP coral cropped hoodie olive camo cargo trousers and tan boots; Ahyeon DRIP short black hair headphones yellow blue crop tee loose jeans; Rami SHEESH blonde hair black top black white laced pants red sneakers; Rora SHEESH dark twin buns black dress white lace collar and black boots.",
+    "Chiquita SHEESH blonde twin ponytails black lace stage outfit tall black boots; Pharita SHEESH black updo pearl ivory ruffled stage outfit white boots; Asa FOREVER long black side braid ivory ruffled mini dress pale blue belt white boots; Ruka BATTER UP black red hair black bomber jacket black shorts tall boots; Chiquita DRIP orange furry animal-ear hood cropped orange top loose blue jeans pink sneakers.",
+    "Roronoa Zoro green hair left eye scar three swords green robe red sash; Monkey D Luffy straw hat red vest blue shorts scar under eye; Nami orange long hair light blue and white striped blouse and blue jeans; Usopp very long nose curly dark hair goggles adventure overalls; Sanji blond hair covers one eye curly eyebrow elegant black suit chef.",
+    "Tony Tony Chopper tiny reindeer blue pink hat antlers; Nico Robin distinct long black hair blue eyes sunglasses on head blue short top and long orange floral skirt archaeologist, mature calm face; Franky cyan pompadour massive robot forearms red open shirt; Brook afro skeleton gentleman musician top hat and cane; Jinbe blue whale-shark fishman stout kimono karate master.",
+    "Pikachu yellow mouse red cheeks black tipped ears lightning tail; Eevee brown fox cream fluffy neck big ears; Venusaur wide quadruped turquoise plant dinosaur huge pink flower on back; Blastoise blue turtle brown shell twin water cannons; Dragonite orange dragon cream belly small teal wings antennae.",
+    "Gengar round purple ghost spiky back mischievous red eyes; Lucario blue black jackal aura warrior chest spike; Greninja ex blue ninja frog long pink tongue scarf; Mewtwo ex pale lavender psychic catlike creature long purple tail; Charizard ex orange dragon cream belly blue inner wings tail flame. Last three retain creature anatomy, tasteful tiny prismatic sparkle accents, no card frame."
+  ],
+  "sources": [
+    "preview/pose-source-0.png",
+    "preview/pose-source-1.png",
+    "preview/pose-source-2.png",
+    "preview/pose-source-3.png",
+    "preview/pose-source-4.png",
+    "preview/pose-source-5.png"
+  ],
+  "groups": [
+    [
+      {
+        "id": "babymonster",
+        "character": "Asa"
+      },
+      {
+        "id": "ruka",
+        "character": "Ruka"
+      },
+      {
+        "id": "ahyeon",
+        "character": "Ahyeon"
+      },
+      {
+        "id": "rami",
+        "character": "Rami"
+      },
+      {
+        "id": "rora",
+        "character": "Rora"
+      }
+    ],
+    [
+      {
+        "id": "chiquita",
+        "character": "Chiquita"
+      },
+      {
+        "id": "pharita",
+        "character": "Pharita"
+      },
+      {
+        "id": "asa-silver",
+        "character": "Asa"
+      },
+      {
+        "id": "ruka-graffiti",
+        "character": "Ruka"
+      },
+      {
+        "id": "chiquita-sunset",
+        "character": "Chiquita"
+      }
+    ],
+    [
+      {
+        "id": "zoro",
+        "character": "索隆"
+      },
+      {
+        "id": "luffy",
+        "character": "魯夫"
+      },
+      {
+        "id": "nami",
+        "character": "娜美"
+      },
+      {
+        "id": "usopp",
+        "character": "騙人布"
+      },
+      {
+        "id": "sanji",
+        "character": "香吉士"
+      }
+    ],
+    [
+      {
+        "id": "chopper",
+        "character": "喬巴"
+      },
+      {
+        "id": "robin",
+        "character": "羅賓"
+      },
+      {
+        "id": "franky",
+        "character": "佛朗基"
+      },
+      {
+        "id": "shanks",
+        "character": "布魯克"
+      },
+      {
+        "id": "jinbe",
+        "character": "吉貝爾"
+      }
+    ],
+    [
+      {
+        "id": "gold",
+        "character": "皮卡丘"
+      },
+      {
+        "id": "aurora",
+        "character": "伊布"
+      },
+      {
+        "id": "bulbasaur",
+        "character": "妙蛙花"
+      },
+      {
+        "id": "squirtle",
+        "character": "水箭龜"
+      },
+      {
+        "id": "dragonite",
+        "character": "快龍"
+      }
+    ],
+    [
+      {
+        "id": "gengar",
+        "character": "耿鬼"
+      },
+      {
+        "id": "lucario",
+        "character": "路卡利歐"
+      },
+      {
+        "id": "jigglypuff",
+        "character": "甲賀忍蛙 ex"
+      },
+      {
+        "id": "galaxy",
+        "character": "超夢 ex"
+      },
+      {
+        "id": "lava",
+        "character": "噴火龍 ex"
+      }
+    ]
+  ],
+  "correction": "Jinbe growth pose: full body matching bottom-row kimono, golden star at chest height and thumbs up, transparent with generous margins."
+}

@@ -339,7 +339,9 @@
         ${tasks.length && done.size === tasks.length ? `<div class="kid-perfect">🎉 完美一天！額外 +${PERFECT_DAY_XP} XP</div>` : ""}
       </div>
 
+      <div class="home-side">
       <div class="streak-hero">
+        ${JDesign.companion(s,'streak')}
         <div class="streak-flame">🔥</div>
         <div class="streak-num">${streak.count}</div>
         <div class="streak-label">連 續 打 卡</div>
@@ -360,12 +362,14 @@
       ${comebackBannerHtml(streak)}
 
       <div class="kid-card growth-card">
+        ${JDesign.companion(s,'growth')}
         <div class="xp-head">
           <div class="xp-level">Lv.${lv.level} <span>${lv.title}</span></div>
           <div class="xp-total">${xp.toLocaleString()} XP</div>
         </div>
         <div class="xp-track"><div class="xp-fill" style="width:${lv.pct}%"></div></div>
         <div class="xp-hint">${lv.next === null ? "已達最高等級 🎉" : `⚡ 還差 <b>${lv.toNext.toLocaleString()}</b> XP 就升到 Lv.${lv.level + 1}！`}</div>
+      </div>
       </div>
 
       ${latest ? `

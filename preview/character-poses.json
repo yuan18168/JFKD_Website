@@ -1,0 +1,632 @@
+[
+  {
+    "id": "babymonster",
+    "character": "Asa",
+    "slot": "task",
+    "file": "babymonster-task.webp",
+    "bytes": 39348
+  },
+  {
+    "id": "ruka",
+    "character": "Ruka",
+    "slot": "task",
+    "file": "ruka-task.webp",
+    "bytes": 40336
+  },
+  {
+    "id": "ahyeon",
+    "character": "Ahyeon",
+    "slot": "task",
+    "file": "ahyeon-task.webp",
+    "bytes": 35972
+  },
+  {
+    "id": "rami",
+    "character": "Rami",
+    "slot": "task",
+    "file": "rami-task.webp",
+    "bytes": 37468
+  },
+  {
+    "id": "rora",
+    "character": "Rora",
+    "slot": "task",
+    "file": "rora-task.webp",
+    "bytes": 33134
+  },
+  {
+    "id": "babymonster",
+    "character": "Asa",
+    "slot": "streak",
+    "file": "babymonster-streak.webp",
+    "bytes": 43356
+  },
+  {
+    "id": "ruka",
+    "character": "Ruka",
+    "slot": "streak",
+    "file": "ruka-streak.webp",
+    "bytes": 41576
+  },
+  {
+    "id": "ahyeon",
+    "character": "Ahyeon",
+    "slot": "streak",
+    "file": "ahyeon-streak.webp",
+    "bytes": 36276
+  },
+  {
+    "id": "rami",
+    "character": "Rami",
+    "slot": "streak",
+    "file": "rami-streak.webp",
+    "bytes": 40312
+  },
+  {
+    "id": "rora",
+    "character": "Rora",
+    "slot": "streak",
+    "file": "rora-streak.webp",
+    "bytes": 35674
+  },
+  {
+    "id": "babymonster",
+    "character": "Asa",
+    "slot": "growth",
+    "file": "babymonster-growth.webp",
+    "bytes": 43306
+  },
+  {
+    "id": "ruka",
+    "character": "Ruka",
+    "slot": "growth",
+    "file": "ruka-growth.webp",
+    "bytes": 45374
+  },
+  {
+    "id": "ahyeon",
+    "character": "Ahyeon",
+    "slot": "growth",
+    "file": "ahyeon-growth.webp",
+    "bytes": 41046
+  },
+  {
+    "id": "rami",
+    "character": "Rami",
+    "slot": "growth",
+    "file": "rami-growth.webp",
+    "bytes": 46342
+  },
+  {
+    "id": "rora",
+    "character": "Rora",
+    "slot": "growth",
+    "file": "rora-growth.webp",
+    "bytes": 35306
+  },
+  {
+    "id": "chiquita",
+    "character": "Chiquita",
+    "slot": "task",
+    "file": "chiquita-task.webp",
+    "bytes": 42016
+  },
+  {
+    "id": "pharita",
+    "character": "Pharita",
+    "slot": "task",
+    "file": "pharita-task.webp",
+    "bytes": 31186
+  },
+  {
+    "id": "asa-silver",
+    "character": "Asa",
+    "slot": "task",
+    "file": "asa-silver-task.webp",
+    "bytes": 30436
+  },
+  {
+    "id": "ruka-graffiti",
+    "character": "Ruka",
+    "slot": "task",
+    "file": "ruka-graffiti-task.webp",
+    "bytes": 37554
+  },
+  {
+    "id": "chiquita-sunset",
+    "character": "Chiquita",
+    "slot": "task",
+    "file": "chiquita-sunset-task.webp",
+    "bytes": 48752
+  },
+  {
+    "id": "chiquita",
+    "character": "Chiquita",
+    "slot": "streak",
+    "file": "chiquita-streak.webp",
+    "bytes": 45728
+  },
+  {
+    "id": "pharita",
+    "character": "Pharita",
+    "slot": "streak",
+    "file": "pharita-streak.webp",
+    "bytes": 39332
+  },
+  {
+    "id": "asa-silver",
+    "character": "Asa",
+    "slot": "streak",
+    "file": "asa-silver-streak.webp",
+    "bytes": 32432
+  },
+  {
+    "id": "ruka-graffiti",
+    "character": "Ruka",
+    "slot": "streak",
+    "file": "ruka-graffiti-streak.webp",
+    "bytes": 40886
+  },
+  {
+    "id": "chiquita-sunset",
+    "character": "Chiquita",
+    "slot": "streak",
+    "file": "chiquita-sunset-streak.webp",
+    "bytes": 45102
+  },
+  {
+    "id": "chiquita",
+    "character": "Chiquita",
+    "slot": "growth",
+    "file": "chiquita-growth.webp",
+    "bytes": 47882
+  },
+  {
+    "id": "pharita",
+    "character": "Pharita",
+    "slot": "growth",
+    "file": "pharita-growth.webp",
+    "bytes": 43204
+  },
+  {
+    "id": "asa-silver",
+    "character": "Asa",
+    "slot": "growth",
+    "file": "asa-silver-growth.webp",
+    "bytes": 34542
+  },
+  {
+    "id": "ruka-graffiti",
+    "character": "Ruka",
+    "slot": "growth",
+    "file": "ruka-graffiti-growth.webp",
+    "bytes": 43092
+  },
+  {
+    "id": "chiquita-sunset",
+    "character": "Chiquita",
+    "slot": "growth",
+    "file": "chiquita-sunset-growth.webp",
+    "bytes": 49254
+  },
+  {
+    "id": "zoro",
+    "character": "索隆",
+    "slot": "task",
+    "file": "zoro-task.webp",
+    "bytes": 37520
+  },
+  {
+    "id": "luffy",
+    "character": "魯夫",
+    "slot": "task",
+    "file": "luffy-task.webp",
+    "bytes": 35766
+  },
+  {
+    "id": "nami",
+    "character": "娜美",
+    "slot": "task",
+    "file": "nami-task.webp",
+    "bytes": 30282
+  },
+  {
+    "id": "usopp",
+    "character": "騙人布",
+    "slot": "task",
+    "file": "usopp-task.webp",
+    "bytes": 35488
+  },
+  {
+    "id": "sanji",
+    "character": "香吉士",
+    "slot": "task",
+    "file": "sanji-task.webp",
+    "bytes": 27208
+  },
+  {
+    "id": "zoro",
+    "character": "索隆",
+    "slot": "streak",
+    "file": "zoro-streak.webp",
+    "bytes": 51306
+  },
+  {
+    "id": "luffy",
+    "character": "魯夫",
+    "slot": "streak",
+    "file": "luffy-streak.webp",
+    "bytes": 38322
+  },
+  {
+    "id": "nami",
+    "character": "娜美",
+    "slot": "streak",
+    "file": "nami-streak.webp",
+    "bytes": 34298
+  },
+  {
+    "id": "usopp",
+    "character": "騙人布",
+    "slot": "streak",
+    "file": "usopp-streak.webp",
+    "bytes": 41680
+  },
+  {
+    "id": "sanji",
+    "character": "香吉士",
+    "slot": "streak",
+    "file": "sanji-streak.webp",
+    "bytes": 28346
+  },
+  {
+    "id": "zoro",
+    "character": "索隆",
+    "slot": "growth",
+    "file": "zoro-growth.webp",
+    "bytes": 41034
+  },
+  {
+    "id": "luffy",
+    "character": "魯夫",
+    "slot": "growth",
+    "file": "luffy-growth.webp",
+    "bytes": 39138
+  },
+  {
+    "id": "nami",
+    "character": "娜美",
+    "slot": "growth",
+    "file": "nami-growth.webp",
+    "bytes": 37934
+  },
+  {
+    "id": "usopp",
+    "character": "騙人布",
+    "slot": "growth",
+    "file": "usopp-growth.webp",
+    "bytes": 48820
+  },
+  {
+    "id": "sanji",
+    "character": "香吉士",
+    "slot": "growth",
+    "file": "sanji-growth.webp",
+    "bytes": 30706
+  },
+  {
+    "id": "chopper",
+    "character": "喬巴",
+    "slot": "task",
+    "file": "chopper-task.webp",
+    "bytes": 39694
+  },
+  {
+    "id": "robin",
+    "character": "羅賓",
+    "slot": "task",
+    "file": "robin-task.webp",
+    "bytes": 29836
+  },
+  {
+    "id": "franky",
+    "character": "佛朗基",
+    "slot": "task",
+    "file": "franky-task.webp",
+    "bytes": 43918
+  },
+  {
+    "id": "shanks",
+    "character": "布魯克",
+    "slot": "task",
+    "file": "shanks-task.webp",
+    "bytes": 29730
+  },
+  {
+    "id": "jinbe",
+    "character": "吉貝爾",
+    "slot": "task",
+    "file": "jinbe-task.webp",
+    "bytes": 40128
+  },
+  {
+    "id": "chopper",
+    "character": "喬巴",
+    "slot": "streak",
+    "file": "chopper-streak.webp",
+    "bytes": 43276
+  },
+  {
+    "id": "robin",
+    "character": "羅賓",
+    "slot": "streak",
+    "file": "robin-streak.webp",
+    "bytes": 30486
+  },
+  {
+    "id": "franky",
+    "character": "佛朗基",
+    "slot": "streak",
+    "file": "franky-streak.webp",
+    "bytes": 43372
+  },
+  {
+    "id": "shanks",
+    "character": "布魯克",
+    "slot": "streak",
+    "file": "shanks-streak.webp",
+    "bytes": 34652
+  },
+  {
+    "id": "jinbe",
+    "character": "吉貝爾",
+    "slot": "streak",
+    "file": "jinbe-streak.webp",
+    "bytes": 40536
+  },
+  {
+    "id": "chopper",
+    "character": "喬巴",
+    "slot": "growth",
+    "file": "chopper-growth.webp",
+    "bytes": 42110
+  },
+  {
+    "id": "robin",
+    "character": "羅賓",
+    "slot": "growth",
+    "file": "robin-growth.webp",
+    "bytes": 31142
+  },
+  {
+    "id": "franky",
+    "character": "佛朗基",
+    "slot": "growth",
+    "file": "franky-growth.webp",
+    "bytes": 44164
+  },
+  {
+    "id": "shanks",
+    "character": "布魯克",
+    "slot": "growth",
+    "file": "shanks-growth.webp",
+    "bytes": 41250
+  },
+  {
+    "id": "jinbe",
+    "character": "吉貝爾",
+    "slot": "growth",
+    "file": "jinbe-growth.webp",
+    "bytes": 40068
+  },
+  {
+    "id": "gold",
+    "character": "皮卡丘",
+    "slot": "task",
+    "file": "gold-task.webp",
+    "bytes": 36602
+  },
+  {
+    "id": "aurora",
+    "character": "伊布",
+    "slot": "task",
+    "file": "aurora-task.webp",
+    "bytes": 34930
+  },
+  {
+    "id": "bulbasaur",
+    "character": "妙蛙花",
+    "slot": "task",
+    "file": "bulbasaur-task.webp",
+    "bytes": 34694
+  },
+  {
+    "id": "squirtle",
+    "character": "水箭龜",
+    "slot": "task",
+    "file": "squirtle-task.webp",
+    "bytes": 39424
+  },
+  {
+    "id": "dragonite",
+    "character": "快龍",
+    "slot": "task",
+    "file": "dragonite-task.webp",
+    "bytes": 37418
+  },
+  {
+    "id": "gold",
+    "character": "皮卡丘",
+    "slot": "streak",
+    "file": "gold-streak.webp",
+    "bytes": 32252
+  },
+  {
+    "id": "aurora",
+    "character": "伊布",
+    "slot": "streak",
+    "file": "aurora-streak.webp",
+    "bytes": 31638
+  },
+  {
+    "id": "bulbasaur",
+    "character": "妙蛙花",
+    "slot": "streak",
+    "file": "bulbasaur-streak.webp",
+    "bytes": 36102
+  },
+  {
+    "id": "squirtle",
+    "character": "水箭龜",
+    "slot": "streak",
+    "file": "squirtle-streak.webp",
+    "bytes": 36178
+  },
+  {
+    "id": "dragonite",
+    "character": "快龍",
+    "slot": "streak",
+    "file": "dragonite-streak.webp",
+    "bytes": 39548
+  },
+  {
+    "id": "gold",
+    "character": "皮卡丘",
+    "slot": "growth",
+    "file": "gold-growth.webp",
+    "bytes": 38320
+  },
+  {
+    "id": "aurora",
+    "character": "伊布",
+    "slot": "growth",
+    "file": "aurora-growth.webp",
+    "bytes": 33428
+  },
+  {
+    "id": "bulbasaur",
+    "character": "妙蛙花",
+    "slot": "growth",
+    "file": "bulbasaur-growth.webp",
+    "bytes": 35588
+  },
+  {
+    "id": "squirtle",
+    "character": "水箭龜",
+    "slot": "growth",
+    "file": "squirtle-growth.webp",
+    "bytes": 39314
+  },
+  {
+    "id": "dragonite",
+    "character": "快龍",
+    "slot": "growth",
+    "file": "dragonite-growth.webp",
+    "bytes": 38270
+  },
+  {
+    "id": "gengar",
+    "character": "耿鬼",
+    "slot": "task",
+    "file": "gengar-task.webp",
+    "bytes": 28644
+  },
+  {
+    "id": "lucario",
+    "character": "路卡利歐",
+    "slot": "task",
+    "file": "lucario-task.webp",
+    "bytes": 31986
+  },
+  {
+    "id": "jigglypuff",
+    "character": "甲賀忍蛙 ex",
+    "slot": "task",
+    "file": "jigglypuff-task.webp",
+    "bytes": 40326
+  },
+  {
+    "id": "galaxy",
+    "character": "超夢 ex",
+    "slot": "task",
+    "file": "galaxy-task.webp",
+    "bytes": 35444
+  },
+  {
+    "id": "lava",
+    "character": "噴火龍 ex",
+    "slot": "task",
+    "file": "lava-task.webp",
+    "bytes": 44854
+  },
+  {
+    "id": "gengar",
+    "character": "耿鬼",
+    "slot": "streak",
+    "file": "gengar-streak.webp",
+    "bytes": 29358
+  },
+  {
+    "id": "lucario",
+    "character": "路卡利歐",
+    "slot": "streak",
+    "file": "lucario-streak.webp",
+    "bytes": 40076
+  },
+  {
+    "id": "jigglypuff",
+    "character": "甲賀忍蛙 ex",
+    "slot": "streak",
+    "file": "jigglypuff-streak.webp",
+    "bytes": 55372
+  },
+  {
+    "id": "galaxy",
+    "character": "超夢 ex",
+    "slot": "streak",
+    "file": "galaxy-streak.webp",
+    "bytes": 51944
+  },
+  {
+    "id": "lava",
+    "character": "噴火龍 ex",
+    "slot": "streak",
+    "file": "lava-streak.webp",
+    "bytes": 43850
+  },
+  {
+    "id": "gengar",
+    "character": "耿鬼",
+    "slot": "growth",
+    "file": "gengar-growth.webp",
+    "bytes": 46326
+  },
+  {
+    "id": "lucario",
+    "character": "路卡利歐",
+    "slot": "growth",
+    "file": "lucario-growth.webp",
+    "bytes": 43688
+  },
+  {
+    "id": "jigglypuff",
+    "character": "甲賀忍蛙 ex",
+    "slot": "growth",
+    "file": "jigglypuff-growth.webp",
+    "bytes": 57056
+  },
+  {
+    "id": "galaxy",
+    "character": "超夢 ex",
+    "slot": "growth",
+    "file": "galaxy-growth.webp",
+    "bytes": 62136
+  },
+  {
+    "id": "lava",
+    "character": "噴火龍 ex",
+    "slot": "growth",
+    "file": "lava-growth.webp",
+    "bytes": 65826
+  }
+]

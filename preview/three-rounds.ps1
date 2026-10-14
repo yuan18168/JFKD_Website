@@ -3,7 +3,7 @@ $env:PLAYWRIGHT_BROWSERS_PATH=(Resolve-Path '../.tools/playwright-browsers').Pat
 for ($round=$(if ($env:QA_START) {[int]$env:QA_START} else {1}); $round -le 3; $round++) {
  $env:QA_ROUND=[string]$round
  New-Item -ItemType Directory -Force "_qa/live-round-$round" | Out-Null
- foreach ($test in @('verify','interactions','theme-copy','readability','check-theme-apply-all','palettes')) {
+ foreach ($test in @('verify','interactions','theme-copy','readability','check-theme-apply-all','palettes','character-poses')) {
   $output = & node -r ./preview/live-test-hook.cjs "preview/$test.cjs" 2>&1
   $exit=$LASTEXITCODE
   $output | Set-Content -Encoding utf8 "_qa/live-round-$round/$test.log"

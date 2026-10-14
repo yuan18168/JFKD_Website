@@ -1,0 +1,24 @@
+/* Three independent, transparent character poses. Presentation only. */
+.home-layout{align-items:start}
+.home-layout .today-card{grid-row:auto}
+.home-side{display:grid;gap:18px;min-width:0;align-content:start}
+.character-stage{position:relative;display:grid;place-items:center;isolation:isolate;min-width:0}
+.character-stage:before{content:'';position:absolute;z-index:-1;inset:14% 0 0;border-radius:50%;background:radial-gradient(ellipse at 50% 65%,var(--k-soft-bg2),transparent 68%);opacity:.8}
+.character-stage:after{content:'';position:absolute;z-index:-1;bottom:2%;width:68%;height:9%;border-radius:50%;background:var(--k-accent);opacity:.12;filter:blur(5px)}
+.character-pose{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 5px #18213518)}
+.task-world .world-companion{width:130px;height:148px;filter:none}
+.task-world .character-stage{width:100%;height:100%}
+.task-world .world-companion .character-pose{width:100%;height:100%}
+.home-side .streak-hero{grid-template-columns:40px minmax(0,1fr) minmax(100px,40%);gap:8px 10px;align-items:center;padding:24px;min-height:0}
+.home-side .streak-flame{grid-column:1;grid-row:1/3;font-size:34px}
+.home-side .streak-num{grid-column:2;grid-row:1;align-self:end;font-size:calc(40px * var(--font-scale,1));line-height:1.15}
+.home-side .streak-label{grid-column:2;grid-row:2;align-self:start;letter-spacing:1px;white-space:normal}
+.home-side .character-stage-streak{grid-column:3;grid-row:1/3;height:170px}
+.home-side .streak-chips,.home-side .streak-goal{grid-column:1/-1;margin-top:8px}
+.home-side .growth-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,40%);gap:16px 12px;align-items:center;min-height:0}
+.growth-card .character-stage-growth{grid-column:2;grid-row:1;height:170px}
+.growth-card .xp-head{grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin:0}
+.growth-card .xp-level{white-space:normal}
+.growth-card .xp-track,.growth-card .xp-hint{grid-column:1/-1;margin:0}
+@media(max-width:600px){.task-world .world-companion{width:105px;height:125px}.home-side .streak-hero{padding:20px;grid-template-columns:30px minmax(0,1fr) minmax(90px,38%);gap:6px}.home-side .streak-flame{font-size:28px}.home-side .character-stage-streak,.growth-card .character-stage-growth{height:145px}.home-side .streak-num{font-size:calc(34px * var(--font-scale,1))}}
+@media(prefers-reduced-motion:no-preference){.character-pose{animation:pose-arrive .45s ease-out both}@keyframes pose-arrive{from{opacity:0;transform:translateY(7px) scale(.96)}to{opacity:1;transform:none}}}
