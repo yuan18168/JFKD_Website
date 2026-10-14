@@ -97,20 +97,9 @@
           </div>
         </div>
 
-        <div style="margin-bottom:10px;">
-          <label>大標題${hasTheme ? "" : '　<span class="text-faint" style="font-weight:400;">（套用主題後才能編輯）</span>'}</label>
-          <input type="text" id="bannerTitleInput" placeholder="${escapeHtml(defaultTitle || "請先套用主題")}" value="${escapeHtml(student.bannerTitle || "")}" ${hasTheme ? "" : "disabled"} />
+        <div class="text-faint" style="margin-top:14px;line-height:1.8;">
+          首頁標題與場景介紹會跟隨目前主題自動切換。每款主題另有 6 句專屬鼓勵語，重新整理或切換主題時會換一句；打卡時保持不變。
         </div>
-        <div style="margin-bottom:14px;">
-          <label>小標題</label>
-          <input type="text" id="bannerTaglineInput" placeholder="${escapeHtml(defaultTagline || "請先套用主題")}" value="${escapeHtml(student.bannerTagline || "")}" ${hasTheme ? "" : "disabled"} />
-        </div>
-        <button class="btn btn-primary btn-sm" id="saveBannerBtn" ${hasTheme ? "" : "disabled"}>儲存標題設定</button>
-        ${
-          hasTheme
-            ? `<div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1)); margin-top:8px;">留白代表使用預設文字：「${escapeHtml(defaultTitle)}」／「${escapeHtml(defaultTagline)}」</div>`
-            : ""
-        }
       </div>`;
 
     document.getElementById("themeSelect").addEventListener("change", async (e) => {
@@ -134,26 +123,7 @@
       }
     });
 
-    if (hasTheme) {
-      document.getElementById("saveBannerBtn").addEventListener("click", async () => {
-        const btn = document.getElementById("saveBannerBtn");
-        const title = document.getElementById("bannerTitleInput").value.trim();
-        const tagline = document.getElementById("bannerTaglineInput").value.trim();
-        btn.disabled = true;
-        try {
-          await updateStudent(student.id, {
-            bannerTitle: title ? title : firebase.firestore.FieldValue.delete(),
-            bannerTagline: tagline ? tagline : firebase.firestore.FieldValue.delete(),
-          });
-          students = await listStudents();
-          flashButtonSuccess(btn, "已儲存 ✓");
-        } catch (err) {
-          alert("儲存失敗：" + err.message);
-        } finally {
-          btn.disabled = false;
-        }
-      });
-    }
+
   }
 
   // 【2026-07-31 修正】renderGallery/renderTabs/renderEditor 都要等 THEME_PREVIEW_STYLE

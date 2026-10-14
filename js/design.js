@@ -71,9 +71,29 @@ const JDesign = (() => {
     return '<div class="task-world task-world-'+id+(complete?' is-complete':'')+'"><div class="task-world-copy"><span class="task-world-label">'+worldMark(id)+w.label+'</span><p>'+ (complete?w.finish:w.start)+'</p><span class="world-energy" aria-hidden="true">'+[0,1,2,3,4].map(i=>'<i class="'+(total&&done/total*5>i?'lit':'')+'"></i>').join('')+'</span></div><div class="world-companion">'+character+'</div></div>';
   }
 
+  // Keep the quote stable during task rerenders; remember only its index locally.
+  const quoteVisits = new Map();
+  const quoteHistory = new Map();
+  function encouragement(student, id, lines) {
+    const who=String(student.id||student.name||'guest');
+    const active=quoteVisits.get(who);
+    if(active?.id===id) return active.text;
+    const key='jfkd-encouragement-v1:'+who+':'+id;
+    let previous=quoteHistory.get(key);
+    try { const stored=localStorage.getItem(key); if(stored!==null) previous=Number(stored); } catch (_) {}
+    const choices=lines.map((_,i)=>i).filter(i=>i!==previous);
+    const index=choices[Math.floor(Math.random()*choices.length)]??0;
+    const text=lines[index];
+    quoteHistory.set(key,index);
+    try { localStorage.setItem(key,String(index)); } catch (_) {}
+    quoteVisits.set(who,{id,text});
+    return text;
+  }
   function hero(student){
     const id=student.themeId||'',w=worlds[id]||worlds[''],d=dateStyle();
-    const title=student.bannerTitle||w.label;
+    const title=w.label;
+    const copy=typeof THEME_COPY!=='undefined'?THEME_COPY[id]:null;
+    const quote=copy?encouragement(student,id,copy.quotes):w.description;
     const headTop=heroHeadTop[w.image];
     const framed=headTop!==undefined;
     // Crop only ~0.6% of source height beyond the hairline; keep the feet.
@@ -82,7 +102,7 @@ const JDesign = (() => {
     const pose=w.series==='stage'?'<span class="mv-date-portrait" aria-hidden="true" style="background-image:url(images/redesign/'+w.image+')"></span>':['zoro'].includes(id)?`<span class="weekly-pose" aria-hidden="true" style="background-position:${d.week%3*50}% ${id==='zoro'?0:100}%"></span>`:'';
     return `<section class="world-hero ${framed?'world-framed ':''}world-${esc(id||'default')} world-series-${esc(w.series||'default')} season-${d.season} variation-${d.week%3}"${framing} aria-label="專屬主題">
       ${artworkHtml(w,true)}${signatureWorlds[id]?'<span class="hero-signature" aria-hidden="true">'+worldMark(id)+'</span>':''}
-      <div class="world-copy"><div class="eyebrow">${w.en}</div><h2>${esc(title)}</h2><p>${esc(student.bannerTagline||w.description)}</p><span class="world-date">${pose||icon('spark')}${d.day}</span></div>
+      <div class="world-copy"><div class="eyebrow">${w.en}</div><h2>${esc(title)}</h2><p class="world-intro">${esc(copy?.intro||w.description)}</p>${copy?`<div class="world-encouragement"><span class="world-encouragement-label">給今天的你</span><p>${esc(quote)}</p></div>`:''}<span class="world-date">${pose||icon('spark')}${d.day}</span></div>
     </section>`;
   }
   function themeArt(id){const w=worlds[id]||worlds[''];return `<div class="theme-art world-${id||'default'}">${artworkHtml(w)}<span class="theme-edition">${w.en}</span></div>`;}

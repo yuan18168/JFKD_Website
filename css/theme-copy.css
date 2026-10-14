@@ -1,0 +1,7 @@
+.world-copy .world-intro{margin-bottom:12px}
+.world-encouragement{padding:12px 14px;border-left:3px solid var(--k-accent);border-radius:4px 12px 12px 4px;background:var(--kid-card);color:var(--kid-text);margin:0 0 16px;max-width:100%;box-sizing:border-box}
+.world-encouragement-label{display:block;font-size:calc(10px * var(--font-scale,1));font-weight:700;color:var(--k-accent);letter-spacing:1px}
+.world-copy .world-encouragement p{margin:5px 0 0;color:var(--kid-text);font-size:calc(13px * var(--font-scale,1));line-height:1.7;max-width:none}
+@media(max-width:600px){.world-encouragement{padding:10px 12px}.world-copy .world-encouragement p{font-size:calc(12px * var(--font-scale,1))}}
+
+.world-copy .world-intro,.world-copy .world-encouragement p{opacity:1}
