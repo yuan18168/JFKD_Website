@@ -1,0 +1,6 @@
+# Keep local preview fixtures and internal handoff out of GitHub Pages.
+exclude:
+  - preview
+  - handoff.md
+  - README.md
+  - firestore.rules

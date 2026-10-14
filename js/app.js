@@ -111,19 +111,7 @@
   }
 
   /** 主題橫幅：顯示大標題／小標題（可在家長端「主題造型」頁個別覆寫） */
-  function themeBannerBlock(student) {
-    const theme = getStudentTheme(student.themeId);
-    if (!theme) return "";
-    const title = student.bannerTitle || `${student.name} · ${theme.name}`;
-    const tagline = student.bannerTagline || theme.tagline || "";
-    return `<div class="kid-banner">
-      <div class="kid-banner-icon">${themeIconSvg(theme.id)}</div>
-      <div class="kid-banner-text">
-        <div class="kid-banner-title">${escapeHtml(title)}</div>
-        <div class="kid-banner-tagline">${escapeHtml(tagline)}</div>
-      </div>
-    </div>`;
-  }
+  function themeBannerBlock(student) { return JDesign.hero(student); }
 
   function floatXp(x, y, text, color) {
     const el = document.createElement("div");
@@ -143,7 +131,7 @@
   function badgeToast(badge) {
     const el = document.createElement("div");
     el.className = "badge-unlock-toast";
-    el.innerHTML = `<span style="font-size:1.5em">${badge.i || badge.icon}</span>
+    el.innerHTML = `<span style="font-size:1.5em">${badge.id ? JDesign.badge(badge.id) : (badge.i || badge.icon || "✨")}</span>
       <span>解鎖新徽章：${escapeHtml(badge.n || badge.name)}</span>`;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 3500);
@@ -189,7 +177,7 @@
     overlay.innerHTML = `
       <div class="badge-celebrate-card">
         <div class="badge-celebrate-label">🎉 解鎖新成就！</div>
-        <div class="badge-celebrate-icon">${badge.i || badge.icon}</div>
+        <div class="badge-celebrate-icon">${JDesign.badge(badge.id)}</div>
         <div class="badge-celebrate-name">${escapeHtml(badge.n || badge.name)}</div>
         ${badge.rarityName ? `<div class="badge-celebrate-rarity">${escapeHtml(badge.rarityName)}</div>` : ""}
         <div class="badge-celebrate-hint">點一下繼續</div>
@@ -217,9 +205,10 @@
   // （靠 hasMoodToday(ctx.student) 判斷是否已經問過/填過）。----
   function moodGateHtml() {
     return `<div class="mood-gate" id="moodGate">
-      <div class="mood-gate-card">
-        <div class="mood-gate-title">哈囉！今天過得如何呀？</div>
-        <div class="mood-gate-sub">選一個代表今天心情的表情吧</div>
+      <div class="mood-gate-card" role="dialog" aria-modal="true" aria-labelledby="moodGateTitle">
+        <button class="mood-close" type="button" aria-label="關閉心情選擇">×</button>
+        <div class="mood-gate-title" id="moodGateTitle">今天的你，心情是什麼顏色？</div>
+        <div class="mood-gate-sub">每一種心情都值得被記住，選最像現在的自己。</div>
         <div class="mood-gate-options">
           ${MOOD_OPTIONS.map((m) => `<button class="mood-opt" data-mood="${m.id}">
             <span class="mood-emoji">${m.emoji}</span><span class="mood-label">${escapeHtml(m.label)}</span>
@@ -228,10 +217,22 @@
       </div>
     </div>`;
   }
-  function maybeShowMoodGate(ctx) {
-    if (hasMoodToday(ctx.student) || document.getElementById("moodGate")) return;
+  function maybeShowMoodGate(ctx, edit = false) {
+    if ((!edit && hasMoodToday(ctx.student)) || document.getElementById("moodGate")) return;
+    const previousFocus = document.activeElement;
     document.body.insertAdjacentHTML("beforeend", moodGateHtml());
     const gate = document.getElementById("moodGate");
+    const close = () => { if (gate.dataset.busy) return; gate.remove(); if (previousFocus?.isConnected) previousFocus.focus(); };
+    gate.querySelector('.mood-close').onclick = close;
+    gate.addEventListener('keydown', e => {
+      if (e.key === 'Escape') close();
+      if (e.key === 'Tab') {
+        const controls = [...gate.querySelectorAll('button')], first = controls[0], last = controls.at(-1);
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+    gate.querySelector('[data-mood]').focus();
     gate.querySelectorAll("[data-mood]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         if (gate.dataset.busy) return;
@@ -244,7 +245,12 @@
           ctx.student.moodLog = r.moodLog;
           ctx.student.moodStreak = { best: r.moodStreakBest };
           saved = true;
-        } catch (e) { /* 離線時先不擋，明天再問一次即可 */ }
+        } catch (e) {
+          delete gate.dataset.busy;
+          gate.querySelector('.mood-gate-sub').textContent = '這次沒有儲存成功，請再試一次。你的心情還沒有被記錄。';
+          gate.querySelector('.mood-gate-sub').setAttribute('role','alert');
+          return;
+        }
         gate.classList.add("fading-out");
         setTimeout(async () => {
           gate.remove();
@@ -252,6 +258,7 @@
             // 選完心情後：①判定並可能解鎖「心情系列」徽章 ②重畫首頁讓月曆立刻顯示今天的表情
             await refreshBadges(ctx, { celebrate: true });
             renderHome(ctx);
+            document.querySelector("[data-mood-open]")?.focus();
           }
         }, 260);
       });
@@ -320,6 +327,18 @@
 
     document.getElementById("homeBody").innerHTML = `
       ${themeBannerBlock(s)}
+      <div class="home-layout">
+      <div class="kid-card today-card">
+        ${JDesign.taskWorld(s,done.size,tasks.length)}
+        <div class="kid-card-title">今日任務 <small>${done.size} / ${tasks.length} 完成</small></div>
+        <div id="taskList">${
+          tasks.length
+            ? tasks.map((t) => taskHtml(t, done.has(t.id))).join("")
+            : '<div class="kid-empty">還沒有設定每日任務<br>請家長到「家長模式 → 每日任務設定」新增</div>'
+        }</div>
+        ${tasks.length && done.size === tasks.length ? `<div class="kid-perfect">🎉 完美一天！額外 +${PERFECT_DAY_XP} XP</div>` : ""}
+      </div>
+
       <div class="streak-hero">
         <div class="streak-flame">🔥</div>
         <div class="streak-num">${streak.count}</div>
@@ -340,7 +359,7 @@
 
       ${comebackBannerHtml(streak)}
 
-      <div class="kid-card" style="margin-top:13px">
+      <div class="kid-card growth-card">
         <div class="xp-head">
           <div class="xp-level">Lv.${lv.level} <span>${lv.title}</span></div>
           <div class="xp-total">${xp.toLocaleString()} XP</div>
@@ -349,18 +368,8 @@
         <div class="xp-hint">${lv.next === null ? "已達最高等級 🎉" : `⚡ 還差 <b>${lv.toNext.toLocaleString()}</b> XP 就升到 Lv.${lv.level + 1}！`}</div>
       </div>
 
-      <div class="kid-card">
-        <div class="kid-card-title">今日任務 <small>${done.size} / ${tasks.length} 完成</small></div>
-        <div id="taskList">${
-          tasks.length
-            ? tasks.map((t) => taskHtml(t, done.has(t.id))).join("")
-            : '<div class="kid-empty">還沒有設定每日任務<br>請家長到「家長模式 → 每日任務設定」新增</div>'
-        }</div>
-        ${tasks.length && done.size === tasks.length ? `<div class="kid-perfect">🎉 完美一天！額外 +${PERFECT_DAY_XP} XP</div>` : ""}
-      </div>
-
       ${latest ? `
-      <div class="kid-card">
+      <div class="kid-card latest-card">
         <div class="kid-card-title">最新成績 <small>${escapeHtml(latest.semester || "")} ${escapeHtml(latest.examType || "")}</small></div>
         <div style="display:flex;align-items:center;gap:12px">
           <div style="font-size:calc(30px * var(--font-scale,1));font-weight:900;color:var(--k-accent)">${latest.result.avgScore}</div>
@@ -375,17 +384,20 @@
       </div>` : `
       <div class="kid-card"><div class="kid-empty">還沒有考試紀錄<br>請家長到「家長模式」新增第一筆</div></div>`}
 
-      <div class="kid-card">
-        <div class="kid-card-title">最近 28 天打卡</div>
+      <div class="kid-card calendar-card">
+        <div class="kid-card-title">我的心情日記 <small>最近 28 天</small></div>
+        ${moodJournalHtml(ctx)}
         <div class="kid-cal">${calendarHtml(ctx)}</div>
         <div class="kid-cal-legend">
           <span><i class="kid-dot" style="background:var(--k-warm-grad)"></i>有打卡</span>
           <span><i class="kid-dot" style="background:var(--k-soft-bg2)"></i>沒打卡</span>
-          <span>😊 當天心情</span>
+          <span>😊 真實心情</span>
         </div>
+      </div>
       </div>
     `;
 
+    document.querySelector("[data-mood-open]")?.addEventListener("click", () => maybeShowMoodGate(ctx, true));
     bindTasks(ctx);
     document.querySelectorAll("[data-goto]").forEach((b) =>
       b.addEventListener("click", () => switchTab(b.dataset.goto)));
@@ -422,21 +434,18 @@
     return r.bonusStatus === "done" ? "已發放" : "尚未發放";
   }
 
+  function moodJournalHtml(ctx) {
+    const log=ctx.student.moodLog||{},mood=MOOD_OPTIONS.find(m=>m.id===log[todayStr()]);
+    const messages={great:'把今天的笑容收藏起來，明天也來看看自己！',good:'平凡的小快樂，也值得好好收藏。',okay:'平平淡淡也很好，謝謝你來看看今天的自己。',bad:'今天辛苦了。先休息一下，也可以找信任的人聊聊。',sad:'難過也沒關係，你值得被陪伴。想說的話，可以慢慢說。'};
+    let recorded=0;for(let i=0;i<28;i++){const d=new Date();d.setDate(d.getDate()-i);if(MOOD_OPTIONS.some(m=>m.id===log[localDateStr(d)]))recorded++;}
+    return `<div class="mood-today ${mood?'is-recorded':''}"><div class="mood-self" aria-hidden="true">${mood?mood.emoji:'🌤️'}</div><div class="mood-today-copy"><span class="mood-kicker">今天的我 · ${new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric'})}</span><h3>${mood?escapeHtml(mood.label):'留一個表情，送給今天的自己'}</h3><p>${mood?messages[mood.id]:'開心、普通或有點累，都可以在這裡安心留下。'}</p><button class="kid-pill accent" type="button" data-mood-open>${mood?'更新今天心情':'記錄今天心情'} ${JDesign.icon('arrow')}</button></div></div><div class="mood-collection-note">已收藏 <b>${recorded}</b> 天心情 <span>每一次回來，都是照顧自己的一小步。</span></div>`;
+  }
   function calendarHtml(ctx) {
-    const comp = ctx.student.dailyTaskCompletions || {};
-    const moodLog = ctx.student.moodLog || {};
-    const today = todayStr();
-    let html = "";
-    for (let i = 27; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 86400000);
-      const key = localDateStr(d);
-      const hit = (comp[key] || []).length > 0;
-      const mood = MOOD_OPTIONS.find((m) => m.id === moodLog[key]);
-      html += `<div class="kid-cal-day ${hit ? "hit" : ""} ${key === today ? "today" : ""}">
-        ${d.getDate()}${mood ? `<span class="kid-cal-mood" title="${escapeHtml(mood.label)}">${mood.emoji}</span>` : ""}
-      </div>`;
-    }
-    return html;
+    const comp=ctx.student.dailyTaskCompletions||{},log=ctx.student.moodLog||{},today=todayStr();let html='';
+    for(let i=27;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const key=localDateStr(d),hit=(comp[key]||[]).length>0,mood=MOOD_OPTIONS.find(m=>m.id===log[key]);
+      const label=`${d.getMonth()+1}月${d.getDate()}日，${mood?mood.label:'未記錄心情'}，${hit?'有完成任務':'尚無任務打卡'}`;
+      html+=`<div class="kid-cal-day ${hit?'hit':''} ${key===today?'today':''} ${mood?'has-mood':''}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}"><span class="mood-day-number">${d.getDate()===1||i===27?d.getMonth()+1+'/':''}${d.getDate()}</span><span class="kid-cal-mood" aria-hidden="true">${mood?mood.emoji:'·'}</span><span class="mood-task-dot" aria-hidden="true">${hit?'✓':''}</span></div>`;
+    }return html;
   }
 
   function taskHtml(t, done) {
@@ -1005,7 +1014,7 @@
       <div class="kid-card-title">🎯 即將解鎖</div>
       ${list.map(({ b, have, need, pct }) => `
         <div class="near-unlock-row">
-          <div class="near-unlock-icon">${b.i}</div>
+          <div class="near-unlock-icon">${JDesign.badge(b.id)}</div>
           <div class="near-unlock-info">
             <div class="near-unlock-name">${escapeHtml(b.n)}</div>
             <div class="near-unlock-track"><div style="width:${pct}%"></div></div>
@@ -1034,8 +1043,8 @@
       const cells = L.map((b) => {
         const secret = b.hidden && !b.unlocked;
         return `<div class="dex-badge ${b.unlocked ? "r" + b.rarity : "locked"}" data-badge="${b.id}">
-          <div class="dex-badge-icon">${secret ? "❓" : b.icon}</div>
-          <div class="dex-badge-name">${secret ? "???" : escapeHtml(b.name)}</div>
+          <div class="dex-badge-icon">${JDesign.badge(b.id, secret)}</div>
+          <div class="dex-badge-name">${secret ? "???" : escapeHtml(b.name)}</div><div class="badge-card-number">${secret ? "SECRET" : "NO. " + String(BADGES.findIndex(x=>x.id===b.id)+1).padStart(3,"0")}</div>
         </div>`;
       }).join("");
       return `<div class="dex-rarity-head" style="color:${RARITY_COLOR[r]}">
@@ -1045,6 +1054,7 @@
     }).join("");
 
     document.getElementById("dexBody").innerHTML = `
+      <div class="collection-intro"><div><div class="eyebrow">YOUR LITTLE TREASURES</div><h2>努力，值得被珍藏。</h2><p>每一枚收藏，都記得你認真過的日子。</p></div><div class="collection-mark">${JDesign.badge("s_365")}</div></div>
       <div class="dex-hero">
         <div class="dex-hero-num">${res.stats.unlocked}<small> / ${res.stats.total}</small></div>
         <div class="dex-hero-label">已收集徽章</div>
@@ -1066,7 +1076,7 @@
     if (!b) return;
     const secret = b.hidden && !b.unlocked;
     document.getElementById("dexModalCard").innerHTML = `
-      <div class="dex-modal-icon" style="${b.unlocked ? "" : "filter:grayscale(1) brightness(1.5);opacity:.45"}">${secret ? "❓" : b.icon}</div>
+      <div class="dex-modal-icon" style="${b.unlocked ? "" : "filter:grayscale(1) brightness(1.5);opacity:.45"}">${JDesign.badge(b.id, secret)}</div>
       <div class="dex-modal-no">No. ${String(idx + 1).padStart(3, "0")}</div>
       <div class="dex-modal-name">${secret ? "神秘徽章" : escapeHtml(b.name)}</div>
       <div class="dex-modal-rarity" style="background:${RARITY_COLOR[b.rarity]}">${b.rarityName}</div>
@@ -1124,7 +1134,8 @@
   }
 
   // ================================================================ 造型
-  const THEME_ORDER = ["", "zoro", "babymonster", "galaxy", "lava", "aurora", "gold"];
+  const THEME_ORDER = ["", ...Object.keys(STUDENT_THEMES)];
+  let selectedThemeSeries = 'all';
   const THEME_SWATCH = {
     "": "theme-swatch-default", zoro: "theme-swatch-zoro", babymonster: "theme-swatch-babymonster",
     galaxy: "theme-swatch-galaxy", lava: "theme-swatch-lava", aurora: "theme-swatch-aurora", gold: "theme-swatch-gold",
@@ -1144,10 +1155,11 @@
       // 正在使用中的主題一律視為已解鎖（家長可在管理頁直接指定，指定後就不該再被 XP 門檻擋住）
       const unlocked = isCur || themeUnlocked(id, xp);
       const pct = need > 0 ? Math.min(100, Math.round((xp / need) * 100)) : 100;
-      return `<div class="theme-card ${THEME_SWATCH[id]} ${unlocked ? "" : "locked"} ${isCur ? "current" : ""}"
+      return `<div class="theme-card ${THEME_SWATCH[id] || ""} ${unlocked ? "" : "locked"} ${isCur ? "current" : ""}" data-series="${theme.series || 'default'}"
                    ${unlocked ? `data-theme="${id}"` : ""}>
-        <div class="theme-card-name">${THEME_ICON[id]} ${escapeHtml(theme.name)}${unlocked ? "" : " 🔒"}</div>
-        <div class="theme-card-desc">${escapeHtml(theme.tagline || "")}</div>
+        ${JDesign.themeArt(id)}
+        <div class="theme-card-name">${THEME_ICON[id] || "✦"} ${escapeHtml(JDesign.worlds[id]?.label || theme.name)}${unlocked ? "" : " 🔒"}</div>
+        <div class="theme-card-desc">${escapeHtml(JDesign.worlds[id]?.description || theme.tagline || "")}</div>
         ${unlocked
           ? `<div class="theme-card-state">${isCur
               ? (themeUnlocked(id, xp) ? "✅ 使用中" : "✅ 使用中（家長指定）")
@@ -1173,13 +1185,20 @@
     }).join("");
 
     document.getElementById("themeBody").innerHTML = `
-      <div class="kid-note">累積 XP 解鎖新造型，套用後整個成績頁的配色都會跟著變 ✨</div>
-      ${cards}
+      <div class="kid-note">每累積 <b>1,000 XP</b>，就開啟下一位角色的世界。30 款角色造型，陪你一起成長。</div>
+      <div class="theme-series-tabs" aria-label="依系列篩選">${[['all','全部 31'],['onepiece','海賊王 10'],['stage','BABYMONSTER 10'],['pokemon','寶可夢 10']].map(([id,label])=>`<button type="button" data-series-filter="${id}" aria-pressed="${selectedThemeSeries===id}">${label}</button>`).join('')}</div>
+      <div class="theme-grid">${cards}</div>
       <div class="kid-card" style="margin-top:16px">
         <div class="kid-card-title">✨ 我的特效收藏 <small>成績達標時自動播放</small></div>
         <div class="fx-collection">${fxItems}</div>
       </div>`;
 
+    const filterThemes = () => {
+      document.querySelectorAll('.theme-card[data-series]').forEach(el=>{el.hidden=selectedThemeSeries!=='all' && el.dataset.series!==selectedThemeSeries;});
+      document.querySelectorAll('[data-series-filter]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.seriesFilter===selectedThemeSeries)));
+    };
+    filterThemes();
+    document.querySelectorAll('[data-series-filter]').forEach(el=>el.addEventListener('click',()=>{selectedThemeSeries=el.dataset.seriesFilter;filterThemes();}));
     document.querySelectorAll("[data-theme]").forEach((el) =>
       el.addEventListener("click", async () => {
         const id = el.dataset.theme;

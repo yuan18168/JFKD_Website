@@ -10,71 +10,24 @@
 
   let activeId = students[0] && students[0].id;
 
-  // ---- 主題庫預覽（跟每位學生的設定無關，純展示所有可選主題）----
-  // 【2026-07-31 修正】原本只用 zoro / 其他 二選一決定配色，galaxy/lava/aurora/gold 這 4 個
-  // 後來新增的 XP 解鎖主題都會誤用「其他」分支（babymonster 的紅色系），改成完整的每主題配色表。
-  const THEME_PREVIEW_STYLE = {
-    zoro: {
-      swatches: ["#04160d", "#0d3b24", "#00e676", "#ffd200", "#eafff2"],
-      bannerBg: "linear-gradient(120deg,#04160d,#0d3b24 38%,#145c38 68%,#1f7a4d)",
-      bannerBorder: "2px solid #00e676",
-      taglineColor: "#7dffb8",
-    },
-    babymonster: {
-      swatches: ["#0c0c0e", "#3a0a10", "#ff1744", "#d8dbe2", "#ffffff"],
-      bannerBg: "linear-gradient(120deg,#0c0c0e,#3a0a10 38%,#6e131f 68%,#8f1826)",
-      bannerBorder: "2px solid #ff1744",
-      taglineColor: "#ff8fa3",
-    },
-    galaxy: {
-      swatches: ["#0E0A2E", "#3B1F7A", "#A855F7", "#E4D9FF", "#FFE9A8"],
-      bannerBg: "linear-gradient(120deg,#0E0A2E,#3B1F7A 45%,#7B2FA8 75%,#A855F7)",
-      bannerBorder: "2px solid #A855F7",
-      taglineColor: "#E4D9FF",
-    },
-    lava: {
-      swatches: ["#2B0A00", "#8A2200", "#FF6B00", "#FFC93C", "#FFE2CC"],
-      bannerBg: "linear-gradient(120deg,#2B0A00,#8A2200 45%,#FF6B00 75%,#FFC93C)",
-      bannerBorder: "2px solid #FF8A3D",
-      taglineColor: "#FFE2CC",
-    },
-    aurora: {
-      swatches: ["#031B18", "#0B5C4A", "#19C79A", "#7DF9D6", "#D6FFF4"],
-      bannerBg: "linear-gradient(120deg,#031B18,#0B5C4A 45%,#19C79A 75%,#7DF9D6)",
-      bannerBorder: "2px solid #19C79A",
-      taglineColor: "#D6FFF4",
-    },
-    gold: {
-      swatches: ["#2B1F00", "#8A6A00", "#FFC93C", "#FFE9A8", "#FFF6D6"],
-      bannerBg: "linear-gradient(120deg,#2B1F00,#8A6A00 45%,#FFC93C 75%,#FFE9A8)",
-      bannerBorder: "2px solid #FFC93C",
-      taglineColor: "#FFF6D6",
-    },
-  };
+  // Character catalog is shared with the child interface.
   function renderGallery() {
     const gallery = document.getElementById("themeGallery");
     gallery.innerHTML = Object.values(STUDENT_THEMES)
       .map((theme) => {
         const bannerClass = theme.bodyClass;
-        const style = THEME_PREVIEW_STYLE[theme.id] || THEME_PREVIEW_STYLE.babymonster;
+        const style = {swatches:[theme.color,theme.bg,"#fff"]};
         const { swatches, bannerBg, bannerBorder, taglineColor } = style;
         const nameColor = "#ffffff";
         return `
         <div class="card theme-gallery-card">
-          <div class="theme-preview-banner ${bannerClass}" style="background:${bannerBg}; border:${bannerBorder};">
-            <div style="display:flex; align-items:center; gap:14px;">
-              <div>${themeIconSvg(theme.id)}</div>
-              <div>
-                <div style="font-weight:800; font-size:calc(16px * var(--font-scale, 1)); color:${nameColor};">${escapeHtml(theme.name)}</div>
-                <div style="font-size:calc(12px * var(--font-scale, 1)); color:${taglineColor};">${escapeHtml(theme.tagline)}</div>
-              </div>
-            </div>
-          </div>
+          ${JDesign.themeArt(theme.id)}
+          <div class="theme-preview-info"><h3>${escapeHtml(JDesign.worlds[theme.id]?.label || theme.name)}</h3><p>${escapeHtml(JDesign.worlds[theme.id].description)}</p></div>
           <div class="theme-swatches">
             ${swatches.map((c) => `<span class="theme-swatch" style="background:${c};"></span>`).join("")}
           </div>
           <div class="text-faint" style="font-size:calc(12px * var(--font-scale, 1));">
-            套用後會出現在該學生的學生紀錄頁最上方（橫幅＋配色＋圖標），僅此一頁換裝，不影響其他人。
+            ${theme.character} · ${theme.xp.toLocaleString()} XP
           </div>
         </div>`;
       })
@@ -121,8 +74,8 @@
     activeId = student.id;
     const theme = getStudentTheme(student.themeId);
     const hasTheme = !!theme;
-    const defaultTitle = hasTheme ? `${student.name} · ${theme.name}` : "";
-    const defaultTagline = hasTheme ? theme.tagline : "";
+    const defaultTitle = hasTheme ? JDesign.worlds[theme.id].label : "";
+    const defaultTagline = hasTheme ? JDesign.worlds[theme.id].description : "";
 
     el.innerHTML = `
       <div class="card" style="max-width:560px;">

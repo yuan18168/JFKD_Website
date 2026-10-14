@@ -1,0 +1,19 @@
+/* Mood is the calendar's main content; task completion is a separate small tick. */
+.mood-today{display:flex;align-items:center;gap:22px;padding:22px;border:1px solid var(--kid-border);border-radius:22px;background:radial-gradient(circle at 0 0,var(--theme-glow-a,#eee4fa),transparent 60%),var(--kid-card);margin-bottom:15px}
+.mood-self{display:grid;place-items:center;flex:none;width:100px;height:100px;font-size:64px;border-radius:50%;background:#fff5ce;box-shadow:0 7px 0 #b08d2920,inset 0 0 0 5px #ffffff88;line-height:1}
+.mood-today-copy{min-width:0}.mood-kicker{font-size:calc(11px * var(--font-scale,1));color:var(--kid-dim)}.mood-today h3{font-size:calc(19px * var(--font-scale,1));margin:4px 0 7px;color:var(--kid-text)}.mood-today p{font-size:calc(12px * var(--font-scale,1));line-height:1.8;margin:0 0 12px;color:var(--kid-dim)}
+.mood-today button{padding:8px 14px;display:inline-flex;align-items:center;gap:8px}.mood-today button .ui-icon{width:16px;height:16px}
+.mood-collection-note{font-size:calc(12px * var(--font-scale,1));color:var(--kid-text);margin:15px 0}.mood-collection-note span{margin-left:12px;color:var(--kid-dim);font-size:calc(11px * var(--font-scale,1))}
+body.kid-app .calendar-card .kid-cal{gap:9px}
+body.kid-app .calendar-card .kid-cal-day{aspect-ratio:auto;min-height:90px;display:flex;flex-direction:column;justify-content:center;gap:7px;background:var(--k-soft-bg);color:var(--kid-dim);border:1px solid var(--kid-border);border-radius:16px;padding:8px 3px}
+body.kid-app .calendar-card .kid-cal-day.hit{background:var(--k-soft-bg);color:var(--kid-text)}
+body.kid-app .calendar-card .kid-cal-day.has-mood{background:var(--kid-card)}
+body.kid-app .calendar-card .kid-cal-day.today{outline:2px solid var(--k-accent);outline-offset:2px;box-shadow:0 3px 12px var(--theme-shadow)}
+body.kid-app .calendar-card .kid-cal-mood{position:static;font-size:32px;line-height:1.15;filter:none;color:var(--kid-dim)}
+.mood-day-number{font-size:calc(11px * var(--font-scale,1));line-height:1.2}.mood-task-dot{position:absolute;bottom:5px;right:5px;width:13px;height:13px;border-radius:50%;font-size:9px;line-height:13px;text-align:center}
+.hit .mood-task-dot{background:var(--k-accent);color:#fff}
+.mood-gate-card{position:relative}.mood-close{position:absolute;right:9px;top:8px;width:40px;height:40px;background:transparent;border:0;color:var(--kid-dim);font-size:26px;border-radius:50%}
+.mood-gate-title{padding:0 24px}.mood-gate-sub{line-height:1.7}.mood-opt:focus-visible{outline:3px solid var(--k-accent);outline-offset:3px}
+@media(max-width:640px){.mood-today{gap:13px;padding:16px;align-items:flex-start}.mood-self{width:62px;height:62px;font-size:40px}.mood-today h3{font-size:calc(16px * var(--font-scale,1))}.mood-today p{font-size:calc(11px * var(--font-scale,1))}.mood-collection-note span{display:block;margin:4px 0 0}body.kid-app .calendar-card .kid-cal{gap:6px}body.kid-app .calendar-card .kid-cal-day{min-height:67px;border-radius:9px;gap:5px;padding:7px 0 13px}body.kid-app .calendar-card .kid-cal-mood{font-size:25px}.mood-day-number{font-size:calc(9px * var(--font-scale,1))}.mood-task-dot{bottom:3px;right:3px;width:10px;height:10px;line-height:10px;font-size:7px}}
+@media(max-width:360px){body.kid-app .calendar-card{padding:16px}body.kid-app .calendar-card .kid-cal{gap:4px}body.kid-app .calendar-card .kid-cal-mood{font-size:22px}.mood-today{padding:12px;gap:10px}.mood-self{width:48px;height:48px;font-size:32px}}
+@media(prefers-reduced-motion:no-preference){.mood-today.is-recorded .mood-self{animation:mood-bloom .4s ease-out}@keyframes mood-bloom{from{transform:scale(.88)}to{transform:scale(1)}}}

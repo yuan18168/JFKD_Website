@@ -1,0 +1,68 @@
+/* Three approved prototype worlds. Keep layout and gameplay shared. */
+.signature-mark{width:24px;height:24px;flex:none;vertical-align:middle}
+.hero-signature{position:absolute;right:18px;bottom:14px;color:var(--k-accent);background:var(--kid-card);border:1px solid var(--kid-border);width:40px;height:40px;display:grid;place-items:center;border-radius:50%;opacity:.9}
+.task-world{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:112px;margin:-3px 0 20px;padding:0 0 15px;border-bottom:1px solid var(--kid-border)}
+.task-world-copy{min-width:0;flex:1}.task-world-label{display:flex;align-items:center;gap:8px;font-size:calc(12px * var(--font-scale,1));font-weight:800;color:var(--k-accent)}
+.task-world p{font-size:calc(11px * var(--font-scale,1));line-height:1.8;margin:7px 0 10px;color:var(--kid-dim);max-width:250px}
+.world-companion{width:94px;height:100px;flex:none;display:grid;place-items:center;filter:drop-shadow(0 5px 3px #18213515)}
+.companion-pose{display:block;width:100px;height:100px;background-image:url('../images/redesign/role-poses.webp');background-size:300% 200%;background-repeat:no-repeat}
+.world-companion img{width:94px;height:94px;object-fit:contain}
+.world-energy{display:flex;gap:4px;width:92px;height:7px}.world-energy i{flex:1;background:var(--k-soft-bg2);border:1px solid var(--kid-border)}.world-energy i.lit{background:var(--k-accent);border-color:var(--k-accent)}
+body.kid-app:is(.theme-zoro,.theme-babymonster,.theme-gold) .kid-task{transition:background .2s,box-shadow .2s}
+body.kid-app:is(.theme-zoro,.theme-babymonster,.theme-gold) .kid-task:focus-visible{outline:3px solid var(--k-accent);outline-offset:3px}
+/* Zoro: ivory training scrolls, forest lacquer, brass sword guards. */
+body.kid-app.theme-zoro{background-image:radial-gradient(ellipse at 100% 0,#b5ce9d80,transparent 60%),repeating-linear-gradient(90deg,transparent 0 78px,#38513809 79px 80px),repeating-linear-gradient(2deg,#eef0df50 0 2px,transparent 3px 12px)!important;background-size:100% 850px,auto,auto}
+body.kid-app.theme-zoro .kid-card{border-radius:7px 23px 7px 23px;background:linear-gradient(110deg,#fffdf4,var(--kid-card))!important;border-color:#bdc6a6!important;box-shadow:3px 4px 0 #264c2510}
+body.kid-app.theme-zoro .today-card{border-top:5px double #8f773d!important}
+body.kid-app.theme-zoro .world-hero{border-radius:8px 30px 8px 30px;border:1px solid #a4b38c;border-bottom:5px solid #516f3c}
+body.kid-app.theme-zoro .kid-task{border-radius:5px 14px 5px 14px;border-left:3px solid #8b7843;background:linear-gradient(100deg,#eeefdf,#f8faef)}
+body.kid-app.theme-zoro .kid-task.done{border-left-color:#226640;box-shadow:inset 3px 0 #226640}
+body.kid-app.theme-zoro .kid-task-box{border-radius:50%;border:2px double #80703e;box-shadow:0 0 0 3px #80703e16}
+body.kid-app.theme-zoro .kid-task-xp{border-radius:4px;background:#e8e7d1;color:#4a5428}
+body.kid-app.theme-zoro .kid-pill,body.kid-app.theme-zoro .kid-pill.ghost{border-radius:5px 12px 5px 12px;border-bottom:3px solid #8b7843}
+body.kid-app.theme-zoro .xp-track,body.kid-app.theme-zoro .streak-goal-track{height:10px;border-radius:2px;background:#d2d7bd;border:1px solid #a4af86}
+body.kid-app.theme-zoro .xp-fill,body.kid-app.theme-zoro .streak-goal-fill{border-radius:0;background:repeating-linear-gradient(130deg,#2c6542 0 9px,#96aa6b 10px 14px,#2c6542 15px 24px)}
+body.kid-app.theme-zoro .kid-tabbar{border-top:3px double #b49b60;background:linear-gradient(90deg,#183d2c,#2c4830);border-radius:10px}
+body.kid-app.theme-zoro .kid-tab.active{border-radius:5px 12px 5px 12px;box-shadow:inset 0 -3px #9d8648}
+body.kid-app.theme-zoro .streak-hero{border-radius:7px 23px 7px 23px;border-left:4px solid #7a8051!important}
+/* Asa: concert ticket stock, chrome edges, equalizer strips, violet spotlights. */
+body.kid-app.theme-babymonster{background-image:linear-gradient(116deg,transparent 15%,#c8a2e533 15.2%,transparent 36%),linear-gradient(65deg,transparent 50%,#eab4dc40 50.2%,transparent 75%),radial-gradient(#74379813 1px,transparent 1px)!important;background-size:100% 1100px,100% 1100px,14px 14px}
+body.kid-app.theme-babymonster .kid-card{border-radius:18px 5px 18px 5px;background:linear-gradient(135deg,#fffcff,#f2e9fa)!important;border-color:#cbb8dc!important;box-shadow:4px 5px 0 #63447712}
+body.kid-app.theme-babymonster .today-card{border-top:5px solid #86609f!important}
+body.kid-app.theme-babymonster .task-world{border-bottom:2px dashed #b9a4c9}
+body.kid-app.theme-babymonster .task-world-label{letter-spacing:.7px}
+body.kid-app.theme-babymonster .world-hero{border:2px solid #baa5cc;border-radius:18px 5px 18px 5px;box-shadow:4px 5px 0 #5c347825}
+body.kid-app.theme-babymonster .kid-task{border-radius:9px 3px 9px 3px;background:linear-gradient(100deg,#f5edf9,#fffaff);border-left:3px solid #9364ad}
+body.kid-app.theme-babymonster .kid-task-xp{border-radius:3px;border-left:1px dashed #9762a9;background:#ece0f3}
+body.kid-app.theme-babymonster .kid-task-box{border-radius:4px;box-shadow:2px 2px 0 #a187b533}
+body.kid-app.theme-babymonster .kid-task.done{box-shadow:inset 3px 0 #8d519e}
+body.kid-app.theme-babymonster .kid-pill,body.kid-app.theme-babymonster .kid-pill.ghost{border-radius:7px;border:1px solid #b29ac4;box-shadow:2px 2px 0 #86649b25}
+body.kid-app.theme-babymonster .xp-track,body.kid-app.theme-babymonster .streak-goal-track{height:11px;border-radius:2px;background:#dfd0e9}
+body.kid-app.theme-babymonster .xp-fill,body.kid-app.theme-babymonster .streak-goal-fill{border-radius:2px;background:repeating-linear-gradient(90deg,transparent 0 7px,#f4e9ff 7px 10px),linear-gradient(90deg,#684095,#ae4f92)}
+body.kid-app.theme-babymonster .kid-tabbar{background:linear-gradient(100deg,#291738,#3e2851);border-top:2px solid #c3a6dc;border-radius:16px 5px 16px 5px}
+body.kid-app.theme-babymonster .kid-tab.active{border-radius:9px 3px 9px 3px;box-shadow:inset 0 -3px #a46bbf}
+body.kid-app.theme-babymonster .streak-hero{border-radius:18px 5px 18px 5px;border-top:2px dashed #b9a4c9!important}
+body.kid-app.theme-babymonster .world-energy{align-items:end;height:13px}.theme-babymonster .world-energy i:nth-child(2n){height:70%}.theme-babymonster .world-energy i{height:100%}
+/* Pikachu: cheerful charging devices, amber rims and electric segmentation. */
+body.kid-app.theme-gold{background-image:radial-gradient(circle at 12% 12%,#ffdf5b55 0 85px,transparent 87px),radial-gradient(circle at 94% 35%,#e4ad3d22 0 130px,transparent 132px),radial-gradient(#96731b15 2px,transparent 2.5px)!important;background-size:100% 1000px,100% 1200px,32px 32px}
+body.kid-app.theme-gold .kid-card{border-radius:28px;background:linear-gradient(145deg,#fffef4,#fff7d8)!important;border:2px solid #dfc66c!important;box-shadow:0 5px 0 #bfa34f20}
+body.kid-app.theme-gold .today-card{border-top:5px solid #dfb839!important}
+body.kid-app.theme-gold .world-hero{border:2px solid #d8bd59;border-radius:30px;box-shadow:0 5px 0 #aa8d3820}
+body.kid-app.theme-gold .kid-task{border-radius:20px;background:#fffdf0;border:1px solid #dbc773;box-shadow:0 2px 0 #a8892820}
+body.kid-app.theme-gold .kid-task-box{border-radius:50%;border:2px solid #98731c;background:#fff6cc}
+body.kid-app.theme-gold .kid-task.done{background:#f7edb5;box-shadow:inset 0 0 0 1px #c0a23c}
+body.kid-app.theme-gold .kid-task-xp{border-radius:20px;background:#f6e59a;color:#705108;border:1px solid #dfc45d}
+body.kid-app.theme-gold .kid-pill,body.kid-app.theme-gold .kid-pill.ghost{border-radius:22px;border:2px solid #d4b956;box-shadow:0 3px 0 #aa892320}
+body.kid-app.theme-gold .xp-track,body.kid-app.theme-gold .streak-goal-track{height:13px;border-radius:12px;border:2px solid #bfa147;background:#f7e8ab;padding:1px}
+body.kid-app.theme-gold .xp-fill,body.kid-app.theme-gold .streak-goal-fill{border-radius:10px;background:repeating-linear-gradient(90deg,#9b751b 0 15px,#f4cf44 16px 19px)}
+body.kid-app.theme-gold .kid-tabbar{background:#463611;border-top:4px solid #d5b63b;border-radius:25px}
+body.kid-app.theme-gold .kid-tab.active{border-radius:20px;background:#fff5c7;box-shadow:inset 0 -3px #d1ac32}
+body.kid-app.theme-gold .streak-hero{border:2px solid #dfc66c!important;border-radius:28px;background:radial-gradient(circle at 95% 5%,#f4d75644,transparent 55%),#fffbed!important}
+body.kid-app.theme-gold .world-energy{height:10px}.theme-gold .world-energy i{border-radius:2px}
+@media(max-width:360px){.world-companion{width:74px;height:84px}.companion-pose{width:82px;height:82px}.world-companion img{width:78px;height:78px}.task-world-label{font-size:calc(11px * var(--font-scale,1))}}
+@media(prefers-reduced-motion:no-preference){.task-world.is-complete .world-companion{animation:companion-cheer .6s ease-out both}@keyframes companion-cheer{0%{transform:translateY(6px) scale(.94)}50%{transform:translateY(-5px) scale(1.04)}100%{transform:none}}body.kid-app.theme-gold .world-hero .pokemon-character{animation:cover-arrive .8s ease-out both}}
+/* Opaque bases keep readable fallback surfaces under decorative gradients. */
+body.kid-app.theme-zoro .kid-task{background-color:#f8faef}
+body.kid-app.theme-babymonster .kid-task{background-color:#fffaff}
+body.kid-app.theme-zoro .kid-tabbar{background-color:#183d2c}
+body.kid-app.theme-babymonster .kid-tabbar{background-color:#291738}

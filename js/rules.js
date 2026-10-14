@@ -61,7 +61,7 @@
     const rows = list
       .map(
         (b) => `<tr>
-          <td style="width:44px; font-size:calc(20px * var(--font-scale,1));">${b.hidden ? "❓" : b.i}</td>
+          <td style="width:44px; font-size:calc(20px * var(--font-scale,1));"><span style="display:block;width:44px;height:44px">${JDesign.badge(b.id,b.hidden)}</span></td>
           <td><b>${b.hidden ? "（隱藏）" + escapeHtml(b.n) : escapeHtml(b.n)}</b></td>
           <td><span style="color:${RC[b.r]}; font-weight:700; white-space:nowrap;">${"★".repeat(b.r)} ${RARITY_NAME[b.r]}</span></td>
           <td>${escapeHtml(b.d)}</td>
@@ -80,7 +80,7 @@
   document.getElementById("badgeList").innerHTML = groupHtml;
 
   // ---- 主題解鎖門檻 ----
-  const themeRows = ["", "zoro", "babymonster", "galaxy", "lava", "aurora", "gold"]
+  const themeRows = ["", ...Object.keys(STUDENT_THEMES)]
     .map((id) => {
       const t = id ? getStudentTheme(id) : { name: "預設主題", tagline: "乾淨清爽的預設配色" };
       if (!t) return "";

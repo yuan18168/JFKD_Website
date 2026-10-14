@@ -1,0 +1,72 @@
+[
+  {
+    "id": "babymonster",
+    "name": "Asa",
+    "scene": "SHEESH 星鍊階梯",
+    "file": "asa-sheesh-v1",
+    "head": 0.018
+  },
+  {
+    "id": "ruka",
+    "name": "Ruka",
+    "scene": "DRIP 街舞音箱",
+    "file": "ruka-drip-v1",
+    "head": 0.016
+  },
+  {
+    "id": "ahyeon",
+    "name": "Ahyeon",
+    "scene": "DRIP 晴光唱片街",
+    "file": "ahyeon-mv-v1",
+    "head": 0.015
+  },
+  {
+    "id": "rami",
+    "name": "Rami",
+    "scene": "SHEESH 銀鏡高音舞台",
+    "file": "rami-mv-v1",
+    "head": 0.025
+  },
+  {
+    "id": "rora",
+    "name": "Rora",
+    "scene": "SHEESH 薔薇秘境",
+    "file": "rora-mv-v1",
+    "head": 0.038
+  },
+  {
+    "id": "chiquita",
+    "name": "Chiquita",
+    "scene": "SHEESH 金翼迴廊",
+    "file": "chiquita-mv-v1",
+    "head": 0.028
+  },
+  {
+    "id": "pharita",
+    "name": "Pharita",
+    "scene": "SHEESH 珠光月之殿",
+    "file": "pharita-mv-v1",
+    "head": 0.025
+  },
+  {
+    "id": "asa-silver",
+    "name": "Asa",
+    "scene": "FOREVER 冰藍時裝秀",
+    "file": "asa-silver-mv-v1",
+    "head": 0.035
+  },
+  {
+    "id": "ruka-graffiti",
+    "name": "Ruka",
+    "scene": "BATTER UP 緋紅節拍",
+    "file": "ruka-graffiti-mv-v1",
+    "head": 0.03
+  },
+  {
+    "id": "chiquita-sunset",
+    "name": "Chiquita",
+    "scene": "DRIP 糖果黑膠屋",
+    "file": "chiquita-sunset-mv-v1",
+    "head": 0.02
+  }
+]
