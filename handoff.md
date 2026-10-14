@@ -1,3 +1,12 @@
+# 2026-10-15 發布阻擋與三輪驗證接續（最高優先）
+
+- 使用者已授權直接上線、遇到 Bug 自行修正、最後對實際上線版本完整測試 3 輪；中途若修改產品程式需重新起算。
+- 本機與 GitHub main 最新 699d9e85aff8edc361a64961dea32d3a93ed26c1，包含對比修正 3a4a22c、文案與 180 句鼓勵語 000680f、測試工具 699d9e8。本機測試通過，但截至本節紀錄 CDN 仍是 883a1f3，對比修正與鼓勵語尚未正式生效。不要聲稱已上線或三輪已完成。
+- GitHub Pages build 步驟成功，deploy 失敗：`Deployment request failed ... due to in progress deployment. Please cancel 3a4a22cfa94307dadd8efb6c8d22dba3e08e33a3 first or wait for it to complete.` 舊發布已逾時且 cancel API 顯示 deployment_cancelled，仍殘留服務端鎖。已重試失敗步驟、Pages 完整建置及新提交，仍同錯誤。最新失敗 run 38599253242；先前重試 38597587802 仍 queued。勿刪除 Pages 網站或 force push。
+- 正式 GitHub Pages 網址 https://yuan18168.github.io/JFKD_Website/；必要時先 GET 舊 deployment 狀態，再 POST pages/builds 重試一次，避免堆積工作。登入已由 GCM 保存，不輸出憑證。
+- 部署成功且 app.html 確認含 theme-copy.js 與 readability.css 後執行 preview/three-rounds.ps1，三輪每輪含 16 頁載入、主要互動、180 文案／120 大字布局、31 配色規矩文字對比、30 主題實際套用與 150 導覽切換、配色、正式登入頁桌面／手機與效能紀錄。工具使用正式 CDN 產品資源，但在測試瀏覽器隔離替換資料；不得改正式家庭資料。原生 Safari／實體手機未測，不可宣稱全裝置零 Bug。
+- 測試結果保存 _qa/live-round-1..3。若測試工具本身有問題可修正工具；產品 bug 修正上線後清楚建立新的三輪紀錄。完成後回填實際成功部署 SHA、測試結果與效能數據，再回報使用者。
+
 ## 2026-10-15 主題圖文與每日鼓勵
 
 - 使用者已確認 30 款圖文自動對應、每款 6 句原創角色特色鼓勵語（共 180 句），並授權直接發布與完成後三輪功能／UI／效能測試。
