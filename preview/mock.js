@@ -8,7 +8,7 @@ function seedDemo() {
   const students = {};
   for (const [index, id, name, theme, grade] of [[0,'demo-k','ㄎㄎ','babymonster','五'],[1,'demo-h','哈哈','zoro','二']]) {
     const completions = {}, moodLog = {};
-    for(let n=1;n<24;n++){ completions[demoDate(-n)]=['read','bag','move'];moodLog[demoDate(-n)]='happy'; }
+    for(let n=1;n<24;n++){ completions[demoDate(-n)]=['read','bag','move'];moodLog[demoDate(-n)]=['great','good','great','okay','great','good','sad'][n%7]; }
     students[id] = {name,order:index,grade,schoolName:'示範國小',className:index?'201':'501',seatNumber:'',color:index?'#13856d':'#855dd6',themeId:theme,
       xpFromTasks: index?1450:2700,ruleBonusTotal:120,
       streak:{count:index?12:23,best:index?16:23,totalDays:index?35:68,lastCheckInDate:demoDate(-1),shields:1},
@@ -22,7 +22,7 @@ function seedDemo() {
   for(const id of Object.keys(students)) for(let i=0;i<4;i++) examRecords[`${id}-${i}`]={studentId:id,date:demoDate(-7-i*20),semester:`${students[id].grade}上`,examType:i?'小考':'期中',ruleProfileId:'demo-default',subjects:['國語','數學','英文'].map((name,j)=>({name,score:Math.min(100,94-i*2+j),prevScore:89-i+j})),bonusStatus:i?'done':'pending',punishmentStatus:'done',note:'示範資料',createdAt:Date.now()};
   return {students,examRecords,ruleProfiles:{'demo-default':{...defaultRules(),name:'家庭預設',createdAt:1}},config:{settings:{defaultProfileId:'demo-default',dashboardTitle:'我們家的成長日記',fontScale:'md',parentPin:'1234'},chartSettings:{yMin:60,yMax:100,xCount:5,showPointLabels:true},subjectPresets:{二:['國語','數學','英文'],五:['國語','數學','英文','自然','社會']}}};
 }
-function storeDemo(){if(!demoStore){try {demoStore=JSON.parse(localStorage.getItem(DEMO_KEY));}catch{} if(!demoStore)demoStore=seedDemo();}return demoStore;}
+function storeDemo(){if(!demoStore){try {demoStore=JSON.parse(localStorage.getItem(DEMO_KEY));}catch{} if(!demoStore)demoStore=seedDemo();}for(const student of Object.values(demoStore.students||{})){for(const [day,mood] of Object.entries(student.moodLog||{})){if(mood==='happy')student.moodLog[day]='great';}}return demoStore;}
 function persistDemo(){localStorage.setItem(DEMO_KEY,JSON.stringify(demoStore));}
 function snap(id,data){return {id,exists:!!data,data:()=>clone(data)};}
 function assignDemo(target,fields){for(const [path,value] of Object.entries(fields)){const parts=path.split('.');let at=target;for(const p of parts.slice(0,-1))at=at[p]??={};const key=parts.at(-1);if(value?.__op==='delete')delete at[key];else if(value?.__op==='arrayUnion')at[key]=[...(at[key]||[]),...value.values];else at[key]=clone(value);}}

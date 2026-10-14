@@ -49,3 +49,44 @@ body.kid-app[class] .kid-cal-day.hit{background:var(--k-accent-grad);color:#fff}
 /* Official character art with independent AI scenery; neither image is repainted. */
 .pokemon-stage{position:absolute;inset:0;overflow:hidden;isolation:isolate;z-index:-2}.theme-art>.pokemon-stage{z-index:0}.pokemon-backdrop{position:absolute;inset:0;background-repeat:no-repeat}.pokemon-stage>.world-art.pokemon-character{inset:auto 2% 3% auto;width:43%;height:91%;object-fit:contain;object-position:center bottom;z-index:1;filter:drop-shadow(0 12px 8px #1c23483d);transform:none;animation:none}.pokemon-aura{position:absolute;right:7%;bottom:6%;width:34%;height:14%;border-radius:50%;background:#fff5d982;box-shadow:0 0 30px 12px #fff4b033;transform:rotate(-6deg)}.pokemon-glint{position:absolute;inset:0;background:linear-gradient(118deg,transparent 55%,#ffffff26 58%,transparent 61%);pointer-events:none;z-index:2}.theme-art .pokemon-stage>.pokemon-character{right:6%;width:60%;height:92%;bottom:4%}.theme-art .theme-edition{z-index:3}.theme-art>.world-art{z-index:0}.theme-art{isolation:isolate}.world-hero:has(.pokemon-stage):after{background:linear-gradient(90deg,#fffaf5f0 0%,#fffaf5d9 32%,#fffaf570 52%,transparent 67%)}
 @media(max-width:640px){.pokemon-stage>.world-art.pokemon-character{right:-2%;width:49%;height:86%;bottom:6%}.theme-art .pokemon-stage>.pokemon-character{right:1%;width:70%;height:90%}}
+/* Frame the whole pose by its hairline, independently of the banner width. */
+.world-hero.world-framed{min-height:320px;background:#fffaf5}
+.world-framed:before{content:'';position:absolute;inset:0;z-index:-3;background-image:var(--hero-scene);background-size:cover;background-position:center;opacity:.22;filter:blur(3px)}
+.world-hero.world-framed>.world-art{inset:auto 0 auto auto;top:var(--hero-art-top);width:auto;max-width:none;height:var(--hero-art-height);object-fit:contain;object-position:right top;transform-origin:80% 8%}
+.world-hero.world-framed:after{background:linear-gradient(90deg,#fffaf5 0%,#fffaf5 42%,#fffaf5d9 52%,#fffaf500 72%)}
+@media(max-width:640px){.world-hero.world-framed{min-height:260px}.world-hero.world-framed>.world-art{right:-12%}.world-hero.world-framed:after{background:linear-gradient(90deg,#fffaf5e8 0%,#fffaf5a6 30%,#fffaf500 66%)}}
+@media(prefers-reduced-motion:no-preference){.world-hero.world-framed>.world-art{animation:cover-arrive .8s ease-out both}}
+/* Task-specific atlas: one explicit, unique cell per achievement. */
+.collectible:not(.mystery){background-image:url('../images/redesign/achievement-tasks-v2.webp')}
+.collectible:not(.mystery){border-radius:18%;mix-blend-mode:multiply}
+/* Character palettes extend across the entire child experience. */
+body.kid-app[class*="theme-"]{background-color:var(--kid-bg)!important;background-image:radial-gradient(ellipse at 4% 0%,var(--theme-glow-a),transparent 58%),radial-gradient(ellipse at 100% 24%,var(--theme-glow-b),transparent 58%),var(--theme-pattern)!important;background-size:100% 900px,100% 1100px,var(--theme-pattern-size);background-repeat:no-repeat,no-repeat,repeat}
+body.kid-app[class*="theme-"] .kid-card,body.kid-app[class*="theme-"] .world-hero{box-shadow:0 12px 32px var(--theme-shadow)}
+body.kid-app[class*="theme-"] .today-card{border-top:4px solid var(--k-accent)!important}
+body.kid-app[class*="theme-"] .streak-hero{background:linear-gradient(130deg,var(--kid-card),var(--k-soft-bg))!important}
+body.kid-app[class*="theme-"] .kid-avatar{background:var(--k-accent-grad)!important;color:#fff!important}
+body.kid-app[class*="theme-"] .kid-switcher button.active{background:var(--theme-nav);color:var(--theme-nav-text);border-color:var(--theme-nav)}
+body.kid-app[class*="theme-"] .kid-tabbar{background:var(--theme-nav);border-color:var(--theme-nav);box-shadow:0 10px 30px var(--theme-shadow)}
+body.kid-app[class*="theme-"] .kid-tab{color:var(--theme-nav-muted)}
+body.kid-app[class*="theme-"] .kid-tab.active{background:var(--kid-card);color:var(--k-accent)}
+body.kid-app[class*="theme-"] .kid-tab:focus-visible{outline-color:var(--kid-card)}
+body.kid-app[class*="theme-"] .kid-task.done{background:var(--k-soft-bg)}
+body.kid-app[class*="theme-"] .kid-card-title,body.kid-app[class*="theme-"] .dex-badge-name{color:var(--kid-text)}
+body.kid-app[class*="theme-"] .badge-card-number{color:var(--kid-dim)}
+body.kid-app[class*="theme-"] .world-hero{background-color:var(--theme-hero);color:var(--kid-text)}
+body.kid-app[class*="theme-"] .world-hero:after{background:linear-gradient(90deg,var(--theme-hero) 0%,var(--theme-hero) 42%,var(--theme-hero-veil) 52%,transparent 72%)}
+body.kid-app[class*="theme-"] .world-date{background:var(--theme-hero-veil);border-color:var(--kid-border)}
+@media(max-width:640px){body.kid-app[class*="theme-"] .world-hero:after{background:linear-gradient(90deg,var(--theme-hero-mobile) 0%,var(--theme-hero-mobile-veil) 30%,transparent 66%)}}
+/* Official Brook render, displayed intact against an independent music stage. */
+.world-hero:has(>.crew-stage){min-height:320px}
+.world-hero .crew-stage>.world-art{height:99%;bottom:0;right:4%;width:39%}
+.theme-art .crew-stage>.world-art{height:97%;width:59%;right:4%;bottom:1%}
+.crew-stage .pokemon-aura{background:#dec28b66}
+/* ex is a website collection style; no printed-card rarity or game stats are implied. */
+.ex-emblem{position:absolute;top:12px;right:12px;z-index:4;padding:2px 12px 4px;border-radius:8px;background:linear-gradient(115deg,#fff2a9,#bcedfa 45%,#eec8ff 75%,#f8db7e);border:1px solid #fff5cf;color:#342951;font:bold italic 22px/1.2 Georgia,serif;box-shadow:0 2px 12px #1c24443d}
+.ex-foil-edge{position:absolute;inset:4px;z-index:3;pointer-events:none;border-radius:inherit;border:2px solid #e7d1a8;box-shadow:inset 0 0 14px #c2eeff66,0 0 10px #efd08855}
+.edition-ex{border-radius:inherit}
+.edition-ex .pokemon-glint{background:linear-gradient(120deg,transparent 28%,#b9ffff30 43%,#f4bdff35 57%,transparent 72%);mix-blend-mode:screen}
+.edition-ex .pokemon-aura{background:#b8d8ff80;box-shadow:0 0 32px 12px #d7b8ff55}
+@media(max-width:640px){.world-hero:has(>.crew-stage){min-height:260px}.world-hero .crew-stage>.world-art{right:0;width:48%;height:98%}.theme-art .ex-emblem{top:7px;right:7px;font-size:17px;padding:2px 9px}}
+@media(prefers-reduced-motion:no-preference){.world-hero .crew-stage>.world-art{animation:cover-arrive .8s ease-out both;transform-origin:center top}}

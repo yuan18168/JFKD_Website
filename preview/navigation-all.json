@@ -1,0 +1,74 @@
+[
+  {
+    "batch": 0,
+    "ids": [
+      "zoro",
+      "luffy",
+      "nami",
+      "usopp",
+      "sanji"
+    ],
+    "prompt": "Generate a premium 3D game UI prop sprite atlas, exactly FIVE columns by FIVE rows =25 separate objects, square canvas. Genuine transparent background. Equal uniform square cells, object centered in each cell with 15% clear empty margin on ALL sides. No objects crossing cells. No shadows outside cells, no ground plane, no gridlines, no labels, no text, no people. Reference image is quality/material inspiration only; do NOT copy its 3-row layout. All 25 icons unique shapes and ornament, polished tactile collectible quality, bold silhouettes readable at48px. Columns are home emblem, CHECKLIST with clear checkmark, achievement TROPHY on a pedestal, wish GIFT/CHEST, collection BOOK/ALBUM. Use described character colors/materials in EACH of five objects in row, not color-only clones. Exactly five rows top to bottom:\nROW 1: Zoro emerald green leather brass THREE sheathed swords; swords scroll checklist; crossed-sword trophy; dark green treasure chest; sword compass leather codex\nROW 2: Luffy red and straw gold woven STRAW HAT; rolled rope-bound checklist; strawhat crown trophy; red barrel treasure chest; red logbook with strawhat emblem\nROW 3: Nami orange teal gold ORANGE fruit and compass; orange-leaf nautical checklist; compass trophy; orange treasure chest; teal weather atlas with orange emblem\nROW 4: Usopp olive brown brass SLINGSHOT; wood carved checklist; target trophy; seed satchel gift chest; plant fieldguide with goggles emblem\nROW 5: Sanji navy gold fine porcelain CHEF CLOCHE; menu checklist scroll; golden fork trophy; navy ribbon gift hamper; navy recipe codex with fork emblem",
+    "source": "C:\\Users\\yuan1\\.codex\\generated_images\\01a13770-b0e1-7f30-8eb8-5a269693a133\\exec-dad79d5b-dcbf-4c2e-83f8-a816c24bced6.png"
+  },
+  {
+    "batch": 1,
+    "ids": [
+      "chopper",
+      "robin",
+      "franky",
+      "shanks",
+      "jinbe"
+    ],
+    "prompt": "Generate a premium 3D game UI prop sprite atlas, exactly FIVE columns by FIVE rows =25 separate objects, square canvas. Genuine transparent background. Equal uniform square cells, object centered in each cell with 15% clear empty margin on ALL sides. No objects crossing cells. No shadows outside cells, no ground plane, no gridlines, no labels, no text, no people. Reference image is quality/material inspiration only; do NOT copy its 3-row layout. All 25 icons unique shapes and ornament, polished tactile collectible quality, bold silhouettes readable at48px. Columns are home emblem, CHECKLIST with clear checkmark, achievement TROPHY on a pedestal, wish GIFT/CHEST, collection BOOK/ALBUM. Use described character colors/materials in EACH of five objects in row, not color-only clones. Exactly five rows top to bottom:\nROW 1: Chopper pink cyan cream MEDICAL HAT with antlers; medical checklist; pink antler trophy; blue doctor gift case; pink medical fieldguide\nROW 2: Robin plum lilac antique gold BLOOMING FLOWER; archaeological scroll checklist; flower relic trophy; carved purple relic chest; plum ancient codex with flower seal\nROW 3: Franky cyan red chrome MECHANICAL STAR; riveted metal checklist; gear star trophy; mechanical red treasure box; cyan blueprint codex\nROW 4: Brook black ivory violet VIOLIN; sheetmusic checklist; treble clef trophy; violet musicbox gift; black gold songbook\nROW 5: Jinbe ocean blue coral gold WAVE CREST; sea scroll checklist; wave trophy; coral carved treasure chest; ocean blue navigation codex",
+    "source": "C:\\Users\\yuan1\\.codex\\generated_images\\01a13770-b0e1-7f30-8eb8-5a269693a133\\exec-a97b2d03-1cb8-41d9-8b75-126286e67332.png"
+  },
+  {
+    "batch": 2,
+    "ids": [
+      "babymonster",
+      "ruka",
+      "ahyeon",
+      "rami",
+      "rora"
+    ],
+    "prompt": "Generate a premium 3D game UI prop sprite atlas, exactly FIVE columns by FIVE rows =25 separate objects, square canvas. Genuine transparent background. Equal uniform square cells, object centered in each cell with 15% clear empty margin on ALL sides. No objects crossing cells. No shadows outside cells, no ground plane, no gridlines, no labels, no text, no people. Reference image is quality/material inspiration only; do NOT copy its 3-row layout. All 25 icons unique shapes and ornament, polished tactile collectible quality, bold silhouettes readable at48px. Columns are home emblem, CHECKLIST with clear checkmark, achievement TROPHY on a pedestal, wish GIFT/CHEST, collection BOOK/ALBUM. Use described character colors/materials in EACH of five objects in row, not color-only clones. Exactly five rows top to bottom:\nROW 1: Asa SHEESH black rosepink silver MICROPHONE with star chains; blackpink checked setlist; angular pink crystal trophy; black feather trimmed pink giftbox; blackpink photocard album\nROW 2: Ruka DRIP olive yellow coral chrome MEGAPHONE; coral hoodie-textured checklist; yellow speaker trophy; olive cargo pocket giftcase; coral denim photocard binder\nROW 3: Ahyeon DRIP yellow denimblue chrome HEADPHONES; blue sporty checklist; yellow equalizer trophy; blue yellow music giftbox; denimblue record album\nROW 4: Rami SHEESH iceblue black red chrome STUDIO MICROPHONE; black laceup checklist; ice crystal vocal trophy; red laced black giftbox; ice silver music album\nROW 5: Rora SHEESH dustyrose black pearl BOW with turquoise jewel; lacecollar checklist; pearl bow trophy; black lace bow giftbox; rose thorn photocard codex\nKeep generous empty gutters between icons. Every item must fit fully inside its cell.",
+    "source": "C:\\Users\\yuan1\\.codex\\generated_images\\01a13770-b0e1-7f30-8eb8-5a269693a133\\exec-54510939-0a8d-4a43-b85d-8c77f106d8bd.png"
+  },
+  {
+    "batch": 3,
+    "ids": [
+      "chiquita",
+      "pharita",
+      "asa-silver",
+      "ruka-graffiti",
+      "chiquita-sunset"
+    ],
+    "prompt": "Generate a premium 3D game UI prop sprite atlas, exactly FIVE columns by FIVE rows =25 separate objects, square canvas. Genuine transparent background. Equal uniform square cells, object centered in each cell with 15% clear empty margin on ALL sides. No objects crossing cells. No shadows outside cells, no ground plane, no gridlines, no labels, no text, no people. Reference image is quality/material inspiration only; do NOT copy its 3-row layout. All 25 icons unique shapes and ornament, polished tactile collectible quality, bold silhouettes readable at48px. Columns are home emblem, CHECKLIST with clear checkmark, achievement TROPHY on a pedestal, wish GIFT/CHEST, collection BOOK/ALBUM. Use described character colors/materials in EACH of five objects in row, not color-only clones. Exactly five rows top to bottom:\nROW 1: Chiquita SHEESH champagne black silver WING charm; black white lace checklist; wing trophy; champagne ribbon black giftbox; black wing photocard binder\nROW 2: Pharita SHEESH pearlwhite silver paleviolet JEWELED CROWN; pearl white checklist; clear moon crystal trophy; white ruffled ribbon giftbox; pearl white jeweled photocard album\nROW 3: Asa FOREVER powderblue ivory silver BOW MICROPHONE; ivory lace checklist with blue belt; silver ribbon trophy; iceblue bow white giftbox; silver bow lace photocard album\nROW 4: Ruka BATTER UP winered navy chrome HEART SPEAKER; navy leather checklist pink clip; ruby heart trophy; winered leather giftcase; navy pink camo photocard binder\nROW 5: Chiquita DRIP denimblue candypink amber VINYL RECORD; denim checklist amber corners; pink vinyl trophy; pink crate giftbox; denim amber furtrim record binder\nKeep generous empty gutters between icons. Every item must fit fully inside its cell.",
+    "source": "C:\\Users\\yuan1\\.codex\\generated_images\\01a13770-b0e1-7f30-8eb8-5a269693a133\\exec-90b4591e-f1e8-421c-bdc9-83a701f6c49a.png"
+  },
+  {
+    "batch": 4,
+    "ids": [
+      "gold",
+      "aurora",
+      "bulbasaur",
+      "squirtle",
+      "dragonite"
+    ],
+    "prompt": "Generate a premium 3D game UI prop sprite atlas, exactly FIVE columns by FIVE rows =25 separate objects, square canvas. Genuine transparent background. Equal uniform square cells, object centered in each cell with 15% clear empty margin on ALL sides. No objects crossing cells. No shadows outside cells, no ground plane, no gridlines, no labels, no text, no people. Reference image is quality/material inspiration only; do NOT copy its 3-row layout. All 25 icons unique shapes and ornament, polished tactile collectible quality, bold silhouettes readable at48px. Columns are home emblem, CHECKLIST with clear checkmark, achievement TROPHY on a pedestal, wish GIFT/CHEST, collection BOOK/ALBUM. Use described character colors/materials in EACH of five objects in row, not color-only clones. Exactly five rows top to bottom:\nROW 1: Pikachu yellow brown red LIGHTNING BOLT; yellow checked notebook; lightning trophy; yellow red ribbon capsule gift; yellow lightning fieldguide\nROW 2: Eevee caramel cream leafgreen FLUFFY EARS; cream leaf checklist; leaf ears trophy; brown forest giftbox; caramel leaf fieldguide\nROW 3: Venusaur jungle green rosepink giant FLOWER; tropical leaf checklist; pink flower trophy; green vine flower giftbox; jungle botanical fieldguide\nROW 4: Blastoise ocean blue bronze WATER CANNON SHELL; blue shell checklist; splash trophy; bronze blue shell giftchest; ocean shell fieldguide\nROW 5: Dragonite apricot mint blue DRAGON WINGS; apricot wing checklist; dragonwing trophy; apricot mint giftbox; wing embossed blue fieldguide\nGenerous clear gutters, keep every prop smaller than cell, no touching boundaries.",
+    "source": "C:\\Users\\yuan1\\.codex\\generated_images\\01a13770-b0e1-7f30-8eb8-5a269693a133\\exec-43244313-a8ce-4320-841b-749e52b8ecd9.png"
+  },
+  {
+    "batch": 5,
+    "ids": [
+      "gengar",
+      "lucario",
+      "jigglypuff",
+      "galaxy",
+      "lava"
+    ],
+    "prompt": "Generate a premium 3D game UI prop sprite atlas, exactly FIVE columns by FIVE rows =25 separate objects, square canvas. Genuine transparent background. Equal uniform square cells, object centered in each cell with 15% clear empty margin on ALL sides. No objects crossing cells. No shadows outside cells, no ground plane, no gridlines, no labels, no text, no people. Reference image is quality/material inspiration only; do NOT copy its 3-row layout. All 25 icons unique shapes and ornament, polished tactile collectible quality, bold silhouettes readable at48px. Columns are home emblem, CHECKLIST with clear checkmark, achievement TROPHY on a pedestal, wish GIFT/CHEST, collection BOOK/ALBUM. Use described character colors/materials in EACH of five objects in row, not color-only clones. Exactly five rows top to bottom:\nROW 1: Gengar purple magenta black CRESCENT GHOST; purple spectral checklist; ghostmoon trophy; violet magic giftchest; purple moon fieldguide\nROW 2: Lucario cobalt black silver AURA CRYSTAL; cobalt steel checklist; aura diamond trophy; blue steel giftcase; cobalt aura fieldguide\nROW 3: Greninja ex indigo aqua ruby WATER SHURIKEN; indigo water checklist; aqua shuriken foil trophy; waterstar giftcase; indigo holographic fieldguide\nROW 4: Mewtwo ex lavender platinum violet PSYCHIC ORB; platinum violet checklist; orbit trophy; psychic orb giftcapsule; silver holographic psychic fieldguide\nROW 5: Charizard ex orange charcoal gold FLAMING WINGS; charcoal ember checklist; firewing trophy; orange gold volcanic giftchest; black holographic flame fieldguide\nGenerous clear gutters, keep every prop smaller than cell, no touching boundaries.",
+    "source": "C:\\Users\\yuan1\\.codex\\generated_images\\01a13770-b0e1-7f30-8eb8-5a269693a133\\exec-87b4dfee-2e5f-4e26-a7fe-b1a5febc823d.png"
+  }
+]

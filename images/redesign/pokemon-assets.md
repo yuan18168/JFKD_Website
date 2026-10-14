@@ -32,3 +32,7 @@ Prompt: Create a background sprite atlas for six collectible character website t
 Prompt: Premium 3D illustrated background sprite atlas, EXACT TWO COLUMNS x TWO ROWS, four equal 16:9 landscape cells, overall 16:9. Edge-to-edge no borders, gutters, text, characters, creatures or people. Empty display clearing on right half; left atmospheric with lower detail for website text. Top left turquoise seaside cove, transparent bubbles, shells and ivory shoreline. Top right emerald botanical greenhouse, giant leaves, dew and pale lime sunbeams. Bottom left playful violet night carnival, crescent moon, amethyst lanterns and tiny stars, cozy not frightening. Bottom right golden peach sunset above cotton cloud islands, distant floating towers and blue green accents. Refined tactile diorama, luminous distinct palettes, no animal-shaped architecture or character silhouettes. Exact 2x2 grid.
 
 JDesign.artworkHtml() 以 CSS sprite 背景配合官方角色 `<img>` 呈現，保留獨立圖層，沒有生成宣稱為官方的新圖。
+
+## 進化與 ex 更新
+
+新增官方圖鑑透明 PNG：妙蛙花 venusaur.png（003）、水箭龜 blastoise.png（009）、甲賀忍蛙 greninja.png（658），下載 URL 同上規則，均為 475×475，角色像素未重繪。舊胖丁、傑尼龜、妙蛙種子檔案保留但不再列於目前主題。ex 是網站的卡牌風格呈現，沒有使用官方卡牌掃描。新增月影背景與解鎖表詳見 unlock-order-20261014.md。

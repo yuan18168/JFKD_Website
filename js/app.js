@@ -205,9 +205,10 @@
   // （靠 hasMoodToday(ctx.student) 判斷是否已經問過/填過）。----
   function moodGateHtml() {
     return `<div class="mood-gate" id="moodGate">
-      <div class="mood-gate-card">
-        <div class="mood-gate-title">哈囉！今天過得如何呀？</div>
-        <div class="mood-gate-sub">選一個代表今天心情的表情吧</div>
+      <div class="mood-gate-card" role="dialog" aria-modal="true" aria-labelledby="moodGateTitle">
+        <button class="mood-close" type="button" aria-label="關閉心情選擇">×</button>
+        <div class="mood-gate-title" id="moodGateTitle">今天的你，心情是什麼顏色？</div>
+        <div class="mood-gate-sub">每一種心情都值得被記住，選最像現在的自己。</div>
         <div class="mood-gate-options">
           ${MOOD_OPTIONS.map((m) => `<button class="mood-opt" data-mood="${m.id}">
             <span class="mood-emoji">${m.emoji}</span><span class="mood-label">${escapeHtml(m.label)}</span>
@@ -216,10 +217,22 @@
       </div>
     </div>`;
   }
-  function maybeShowMoodGate(ctx) {
-    if (hasMoodToday(ctx.student) || document.getElementById("moodGate")) return;
+  function maybeShowMoodGate(ctx, edit = false) {
+    if ((!edit && hasMoodToday(ctx.student)) || document.getElementById("moodGate")) return;
+    const previousFocus = document.activeElement;
     document.body.insertAdjacentHTML("beforeend", moodGateHtml());
     const gate = document.getElementById("moodGate");
+    const close = () => { if (gate.dataset.busy) return; gate.remove(); if (previousFocus?.isConnected) previousFocus.focus(); };
+    gate.querySelector('.mood-close').onclick = close;
+    gate.addEventListener('keydown', e => {
+      if (e.key === 'Escape') close();
+      if (e.key === 'Tab') {
+        const controls = [...gate.querySelectorAll('button')], first = controls[0], last = controls.at(-1);
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+    gate.querySelector('[data-mood]').focus();
     gate.querySelectorAll("[data-mood]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         if (gate.dataset.busy) return;
@@ -232,7 +245,12 @@
           ctx.student.moodLog = r.moodLog;
           ctx.student.moodStreak = { best: r.moodStreakBest };
           saved = true;
-        } catch (e) { /* 離線時先不擋，明天再問一次即可 */ }
+        } catch (e) {
+          delete gate.dataset.busy;
+          gate.querySelector('.mood-gate-sub').textContent = '這次沒有儲存成功，請再試一次。你的心情還沒有被記錄。';
+          gate.querySelector('.mood-gate-sub').setAttribute('role','alert');
+          return;
+        }
         gate.classList.add("fading-out");
         setTimeout(async () => {
           gate.remove();
@@ -240,6 +258,7 @@
             // 選完心情後：①判定並可能解鎖「心情系列」徽章 ②重畫首頁讓月曆立刻顯示今天的表情
             await refreshBadges(ctx, { celebrate: true });
             renderHome(ctx);
+            document.querySelector("[data-mood-open]")?.focus();
           }
         }, 260);
       });
@@ -310,6 +329,7 @@
       ${themeBannerBlock(s)}
       <div class="home-layout">
       <div class="kid-card today-card">
+        ${JDesign.taskWorld(s,done.size,tasks.length)}
         <div class="kid-card-title">今日任務 <small>${done.size} / ${tasks.length} 完成</small></div>
         <div id="taskList">${
           tasks.length
@@ -365,17 +385,19 @@
       <div class="kid-card"><div class="kid-empty">還沒有考試紀錄<br>請家長到「家長模式」新增第一筆</div></div>`}
 
       <div class="kid-card calendar-card">
-        <div class="kid-card-title">最近 28 天打卡</div>
+        <div class="kid-card-title">我的心情日記 <small>最近 28 天</small></div>
+        ${moodJournalHtml(ctx)}
         <div class="kid-cal">${calendarHtml(ctx)}</div>
         <div class="kid-cal-legend">
           <span><i class="kid-dot" style="background:var(--k-warm-grad)"></i>有打卡</span>
           <span><i class="kid-dot" style="background:var(--k-soft-bg2)"></i>沒打卡</span>
-          <span>😊 當天心情</span>
+          <span>😊 真實心情</span>
         </div>
       </div>
       </div>
     `;
 
+    document.querySelector("[data-mood-open]")?.addEventListener("click", () => maybeShowMoodGate(ctx, true));
     bindTasks(ctx);
     document.querySelectorAll("[data-goto]").forEach((b) =>
       b.addEventListener("click", () => switchTab(b.dataset.goto)));
@@ -412,21 +434,18 @@
     return r.bonusStatus === "done" ? "已發放" : "尚未發放";
   }
 
+  function moodJournalHtml(ctx) {
+    const log=ctx.student.moodLog||{},mood=MOOD_OPTIONS.find(m=>m.id===log[todayStr()]);
+    const messages={great:'把今天的笑容收藏起來，明天也來看看自己！',good:'平凡的小快樂，也值得好好收藏。',okay:'平平淡淡也很好，謝謝你來看看今天的自己。',bad:'今天辛苦了。先休息一下，也可以找信任的人聊聊。',sad:'難過也沒關係，你值得被陪伴。想說的話，可以慢慢說。'};
+    let recorded=0;for(let i=0;i<28;i++){const d=new Date();d.setDate(d.getDate()-i);if(MOOD_OPTIONS.some(m=>m.id===log[localDateStr(d)]))recorded++;}
+    return `<div class="mood-today ${mood?'is-recorded':''}"><div class="mood-self" aria-hidden="true">${mood?mood.emoji:'🌤️'}</div><div class="mood-today-copy"><span class="mood-kicker">今天的我 · ${new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric'})}</span><h3>${mood?escapeHtml(mood.label):'留一個表情，送給今天的自己'}</h3><p>${mood?messages[mood.id]:'開心、普通或有點累，都可以在這裡安心留下。'}</p><button class="kid-pill accent" type="button" data-mood-open>${mood?'更新今天心情':'記錄今天心情'} ${JDesign.icon('arrow')}</button></div></div><div class="mood-collection-note">已收藏 <b>${recorded}</b> 天心情 <span>每一次回來，都是照顧自己的一小步。</span></div>`;
+  }
   function calendarHtml(ctx) {
-    const comp = ctx.student.dailyTaskCompletions || {};
-    const moodLog = ctx.student.moodLog || {};
-    const today = todayStr();
-    let html = "";
-    for (let i = 27; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 86400000);
-      const key = localDateStr(d);
-      const hit = (comp[key] || []).length > 0;
-      const mood = MOOD_OPTIONS.find((m) => m.id === moodLog[key]);
-      html += `<div class="kid-cal-day ${hit ? "hit" : ""} ${key === today ? "today" : ""}">
-        ${d.getDate()}${mood ? `<span class="kid-cal-mood" title="${escapeHtml(mood.label)}">${mood.emoji}</span>` : ""}
-      </div>`;
-    }
-    return html;
+    const comp=ctx.student.dailyTaskCompletions||{},log=ctx.student.moodLog||{},today=todayStr();let html='';
+    for(let i=27;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const key=localDateStr(d),hit=(comp[key]||[]).length>0,mood=MOOD_OPTIONS.find(m=>m.id===log[key]);
+      const label=`${d.getMonth()+1}月${d.getDate()}日，${mood?mood.label:'未記錄心情'}，${hit?'有完成任務':'尚無任務打卡'}`;
+      html+=`<div class="kid-cal-day ${hit?'hit':''} ${key===today?'today':''} ${mood?'has-mood':''}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}"><span class="mood-day-number">${d.getDate()===1||i===27?d.getMonth()+1+'/':''}${d.getDate()}</span><span class="kid-cal-mood" aria-hidden="true">${mood?mood.emoji:'·'}</span><span class="mood-task-dot" aria-hidden="true">${hit?'✓':''}</span></div>`;
+    }return html;
   }
 
   function taskHtml(t, done) {
