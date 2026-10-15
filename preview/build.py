@@ -37,6 +37,10 @@ for file in ROOT.glob('*.html'):
         raise RuntimeError('Live backend script leaked into preview')
     (OUT / file.name).write_text(html, encoding='utf-8')
 # Local-only character approval sheet; never a production application page.
+if (ROOT / 'preview/poses-gallery.html').exists():
+    shutil.copy2(ROOT / 'preview/poses-gallery.html', OUT / 'poses-gallery.html')
+if (ROOT / 'preview/realistic-gallery.html').exists():
+    shutil.copy2(ROOT / 'preview/realistic-gallery.html', OUT / 'realistic-gallery.html')
 if (ROOT / 'preview/mv-study.html').exists():
     shutil.copy2(ROOT / 'preview/mv-study.html', OUT / 'mv-study.html')
 if (ROOT / 'preview/completion-gallery.html').exists():

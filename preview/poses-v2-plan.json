@@ -1,0 +1,845 @@
+{
+  "status": "PARTIAL: 60 generated and locally integrated; Pokemon 30 blocked by image generation service; not published",
+  "tool": "built-in image_gen",
+  "rows": [
+    {
+      "id": "babymonster",
+      "character": "Asa",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Asa with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated on a simple stool, body 45 degrees left, looking down at an open book held with both hands, thoughtful soft smile. Costume: long black high twin ponytails, black faux feather trimmed pink skull graphic stage top, black shorts with silver star chains, fingerless black gloves, tall black platform boots with red buckle straps. Ignore any text on clothing in the reference; replace lettering with plain fabric.. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/babymonster-hero.webp",
+      "official": "_qa/realistic-references/asa-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "babymonster",
+      "character": "Asa",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Asa with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: taking a lively long step to the right, face turned 30 degrees back toward viewer, raised open hand waving, bright toothy smile. Costume: long black high twin ponytails, black faux feather trimmed pink skull graphic stage top, black shorts with silver star chains, fingerless black gloves, tall black platform boots with red buckle straps. Ignore any text on clothing in the reference; replace lettering with plain fabric.. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/babymonster-hero.webp",
+      "official": "_qa/realistic-references/asa-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "babymonster",
+      "character": "Asa",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Asa with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: small airborne celebratory jump with both knees bent and both arms lifted in a V, chin slightly raised, open joyful laugh. Costume: long black high twin ponytails, black faux feather trimmed pink skull graphic stage top, black shorts with silver star chains, fingerless black gloves, tall black platform boots with red buckle straps. Ignore any text on clothing in the reference; replace lettering with plain fabric.. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/babymonster-hero.webp",
+      "official": "_qa/realistic-references/asa-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ruka",
+      "character": "Ruka",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ruka with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: low crouch carefully placing a notebook into a backpack, face 45 degrees right and focused attentive expression. Costume: dark brown high ponytail, silver hair clips and large hoop earrings, coral pink cropped hoodie with ladder cut sleeves, yellow olive camouflage wide cargo pants, silver grommet belt and tan chunky sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ruka-hero.webp",
+      "official": "_qa/realistic-references/ruka-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ruka",
+      "character": "Ruka",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ruka with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: brisk walking toward left, one arm swinging and other giving a thumbs up, face 30 degrees left, playful grin. Costume: dark brown high ponytail, silver hair clips and large hoop earrings, coral pink cropped hoodie with ladder cut sleeves, yellow olive camouflage wide cargo pants, silver grommet belt and tan chunky sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ruka-hero.webp",
+      "official": "_qa/realistic-references/ruka-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ruka",
+      "character": "Ruka",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ruka with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated on a stool leaning slightly forward, face straight toward viewer, clapping hands at chest level, eyes smiling with delighted laughter. Costume: dark brown high ponytail, silver hair clips and large hoop earrings, coral pink cropped hoodie with ladder cut sleeves, yellow olive camouflage wide cargo pants, silver grommet belt and tan chunky sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ruka-hero.webp",
+      "official": "_qa/realistic-references/ruka-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ahyeon",
+      "character": "Ahyeon",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ahyeon with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sitting sideways on a stool, writing in a notebook on lap, face 40 degrees left and concentrated gaze downward. Costume: short dark brown bob with wispy bangs and silver headphones, yellow and royal blue sporty cropped tee, loose faded blue cargo jeans with silver belt, sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ahyeon-hero.webp",
+      "official": "_qa/realistic-references/ahyeon-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ahyeon",
+      "character": "Ahyeon",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ahyeon with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: light skipping step, one foot raised behind, open hand waving at shoulder, face 30 degrees right and cheerful smile. Costume: short dark brown bob with wispy bangs and silver headphones, yellow and royal blue sporty cropped tee, loose faded blue cargo jeans with silver belt, sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ahyeon-hero.webp",
+      "official": "_qa/realistic-references/ahyeon-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ahyeon",
+      "character": "Ahyeon",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ahyeon with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: wide stable stance leaning to left with one arm pointing upward, other on waist, face tilted upward 40 degrees left, confident proud grin. Costume: short dark brown bob with wispy bangs and silver headphones, yellow and royal blue sporty cropped tee, loose faded blue cargo jeans with silver belt, sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ahyeon-hero.webp",
+      "official": "_qa/realistic-references/ahyeon-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "rami",
+      "character": "Rami",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Rami with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing with feet staggered leaning forward to read an open book, face 45 degrees right looking down, calm focused smile. Costume: long blonde hair with bangs, black sleeveless stage top, black trousers with white criss-cross lacing along legs, red belt or sash, red high top sneakers; no readable lettering. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/rami-hero.webp",
+      "official": "_qa/realistic-references/rami-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "rami",
+      "character": "Rami",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Rami with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated upright on stool with feet planted, body 45 degrees left, one hand waving and other on knee, face toward viewer with welcoming smile. Costume: long blonde hair with bangs, black sleeveless stage top, black trousers with white criss-cross lacing along legs, red belt or sash, red high top sneakers; no readable lettering. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/rami-hero.webp",
+      "official": "_qa/realistic-references/rami-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "rami",
+      "character": "Rami",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Rami with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: small hop with arms spread diagonally and knees flexed, face 30 degrees right slightly up, joyful open smile. Costume: long blonde hair with bangs, black sleeveless stage top, black trousers with white criss-cross lacing along legs, red belt or sash, red high top sneakers; no readable lettering. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/rami-hero.webp",
+      "official": "_qa/realistic-references/rami-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "rora",
+      "character": "Rora",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Rora with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated neatly on stool with knees together, holding closed notebook at chest with both hands, face 45 degrees right, gentle thoughtful smile. Costume: dark hair in two small ribbon buns with face framing strands, black short sleeve stage dress with white lace Peter Pan collar, layered pearl necklace with blue jewel, short black gloves and black boots. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/rora-hero.webp",
+      "official": "_qa/realistic-references/rora-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "rora",
+      "character": "Rora",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Rora with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: forward stride body angled left, hand reaching toward viewer in friendly greeting, face 30 degrees left, bright smile. Costume: dark hair in two small ribbon buns with face framing strands, black short sleeve stage dress with white lace Peter Pan collar, layered pearl necklace with blue jewel, short black gloves and black boots. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/rora-hero.webp",
+      "official": "_qa/realistic-references/rora-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "rora",
+      "character": "Rora",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Rora with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: half turn with feet firmly grounded, both hands applauding near shoulder, face 45 degrees right, broad delighted smile. Costume: dark hair in two small ribbon buns with face framing strands, black short sleeve stage dress with white lace Peter Pan collar, layered pearl necklace with blue jewel, short black gloves and black boots. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/rora-hero.webp",
+      "official": "_qa/realistic-references/rora-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "chiquita",
+      "character": "Chiquita",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Chiquita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: kneeling on one knee to arrange books in a small backpack, modest posture with knees together, face 45 degrees left downward with focused smile. Costume: long blonde high twin ponytails, dark blue black wing motif stage top with white lace long sleeves, black stage skirt with silver chains over opaque black shorts, tall black boots and black choker. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/chiquita-hero.webp",
+      "official": "_qa/realistic-references/chiquita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "chiquita",
+      "character": "Chiquita",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Chiquita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: lively sideways step toward right, both arms opened in welcoming gesture, face turned 30 degrees left with toothy grin. Costume: long blonde high twin ponytails, dark blue black wing motif stage top with white lace long sleeves, black stage skirt with silver chains over opaque black shorts, tall black boots and black choker. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/chiquita-hero.webp",
+      "official": "_qa/realistic-references/chiquita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "chiquita",
+      "character": "Chiquita",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Chiquita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated on stool with upright torso, one fist raised in celebration, face 40 degrees right slightly up, joyful laughing expression. Costume: long blonde high twin ponytails, dark blue black wing motif stage top with white lace long sleeves, black stage skirt with silver chains over opaque black shorts, tall black boots and black choker. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/chiquita-hero.webp",
+      "official": "_qa/realistic-references/chiquita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "pharita",
+      "character": "Pharita",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Pharita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing leaning slightly over a notebook held in one hand, other writing with pencil, face 45 degrees left downward with quiet concentration. Costume: dark elegant updo with loose face framing strands, ivory peach satin ruffled short jacket and layered matching stage dress, pearl and gold necklace, white boots. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/pharita-hero.webp",
+      "official": "_qa/realistic-references/pharita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "pharita",
+      "character": "Pharita",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Pharita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: small skipping step toward left, open palm high waving, face 30 degrees right with bright friendly smile. Costume: dark elegant updo with loose face framing strands, ivory peach satin ruffled short jacket and layered matching stage dress, pearl and gold necklace, white boots. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/pharita-hero.webp",
+      "official": "_qa/realistic-references/pharita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "pharita",
+      "character": "Pharita",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Pharita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated sideways on stool, both hands clapping, face 45 degrees left lifted toward viewer, delighted open smile. Costume: dark elegant updo with loose face framing strands, ivory peach satin ruffled short jacket and layered matching stage dress, pearl and gold necklace, white boots. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/pharita-hero.webp",
+      "official": "_qa/realistic-references/pharita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "asa-silver",
+      "character": "Asa",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Asa with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sitting on stool, holding an open book on lap, face 45 degrees right downward with focused expression. Costume: long black hair gathered in a loose side braid or side ponytail, ivory off shoulder ruffled long sleeved short dress with pale blue broad belt, white tall boots, pearl necklace. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/asa-silver-hero.webp",
+      "official": "_qa/realistic-references/asa-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "asa-silver",
+      "character": "Asa",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Asa with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: long energetic stride toward right, arm swinging, face turned 30 degrees left with radiant toothy smile. Costume: long black hair gathered in a loose side braid or side ponytail, ivory off shoulder ruffled long sleeved short dress with pale blue broad belt, white tall boots, pearl necklace. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/asa-silver-hero.webp",
+      "official": "_qa/realistic-references/asa-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "asa-silver",
+      "character": "Asa",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Asa with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: firm wide stance with both arms reaching upward in V, face 35 degrees right slightly up, exuberant laughter. Costume: long black hair gathered in a loose side braid or side ponytail, ivory off shoulder ruffled long sleeved short dress with pale blue broad belt, white tall boots, pearl necklace. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/asa-silver-hero.webp",
+      "official": "_qa/realistic-references/asa-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ruka-graffiti",
+      "character": "Ruka",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ruka with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: crouching to zip a backpack, face 40 degrees right downward with concentrated expression. Costume: long black hair with burgundy red streaks, black leather bomber jacket over black red sporty stage top, black shorts, tall black buckle boots and silver heart pendant; sunglasses on head not covering eyes. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ruka-graffiti-hero.webp",
+      "official": "_qa/realistic-references/ruka-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ruka-graffiti",
+      "character": "Ruka",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ruka with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing in a side lunge with one open palm waving, face 30 degrees left with mischievous friendly grin. Costume: long black hair with burgundy red streaks, black leather bomber jacket over black red sporty stage top, black shorts, tall black buckle boots and silver heart pendant; sunglasses on head not covering eyes. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ruka-graffiti-hero.webp",
+      "official": "_qa/realistic-references/ruka-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "ruka-graffiti",
+      "character": "Ruka",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Ruka with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: jumping lightly with both fists raised beside shoulders, face 30 degrees right lifted, triumphant laughing smile. Costume: long black hair with burgundy red streaks, black leather bomber jacket over black red sporty stage top, black shorts, tall black buckle boots and silver heart pendant; sunglasses on head not covering eyes. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/ruka-graffiti-hero.webp",
+      "official": "_qa/realistic-references/ruka-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "chiquita-sunset",
+      "character": "Chiquita",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Chiquita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated on stool leaning forward to draw in notebook, face 45 degrees left downward, absorbed gentle smile. Costume: long black hair, orange furry animal ear hood, orange textured sleeveless top, red fingerless gloves, very loose blue jeans with dark belt, pink sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/chiquita-sunset-hero.webp",
+      "official": "_qa/realistic-references/chiquita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "chiquita-sunset",
+      "character": "Chiquita",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Chiquita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: skipping toward right with trailing foot lifted, open hand waving, face 30 degrees right smiling brightly. Costume: long black hair, orange furry animal ear hood, orange textured sleeveless top, red fingerless gloves, very loose blue jeans with dark belt, pink sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/chiquita-sunset-hero.webp",
+      "official": "_qa/realistic-references/chiquita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "chiquita-sunset",
+      "character": "Chiquita",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body photorealistic AI-redrawn BABYMONSTER Chiquita with normal human proportions, realistic skin and recognizable facial identity, never chibi or doll companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: grounded half-turn with arms wide overhead, face turned 45 degrees left, joyful open-mouth laugh. Costume: long black hair, orange furry animal ear hood, orange textured sleeveless top, red fingerless gloves, very loose blue jeans with dark belt, pink sneakers. Use fully opaque fabric and opaque tights under short stage bottoms, natural modest nonsexual posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/realistic-v1/chiquita-sunset-hero.webp",
+      "official": "_qa/realistic-references/chiquita-official.jpg",
+      "status": "generated"
+    },
+    {
+      "id": "zoro",
+      "character": "索隆",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 索隆 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: kneeling on one knee inspecting a sheathed sword, face 45 degrees left focused frown, THREE swords stay sheathed. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/zoro-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "zoro",
+      "character": "索隆",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 索隆 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: forward running stride right with one fist near chest, face 30 degrees right determined grin. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/zoro-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "zoro",
+      "character": "索隆",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 索隆 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated cross-legged with both fists raised, head 35 degrees left slightly up with broad proud smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/zoro-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "luffy",
+      "character": "魯夫",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 魯夫 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated cross-legged reading open book held with BOTH hands, face 45 degrees left down with curious focused expression; ONLY TWO ARMS no hand touching hat. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/luffy-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "luffy",
+      "character": "魯夫",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 魯夫 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: leaping forward with right knee raised and open hand waving, face 30 degrees right joyful grin; ONLY TWO ARMS. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/luffy-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "luffy",
+      "character": "魯夫",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 魯夫 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing in a wide leaning-back celebratory pose, two arms raised overhead, head 35 degrees left tilted up laughing heartily. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/luffy-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "nami",
+      "character": "娜美",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 娜美 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sitting on small crate studying a rolled-open navigation map, face 45 degrees right downward, intelligent concentrated expression. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/nami-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "nami",
+      "character": "娜美",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 娜美 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: stepping briskly left and waving open palm, face 30 degrees left with confident grin. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/nami-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "nami",
+      "character": "娜美",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 娜美 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: small joyful jump with both hands clasped at chest, face 40 degrees right upward, delighted laugh. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/nami-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "usopp",
+      "character": "騙人布",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 騙人布 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: crouching while writing checklist on small clipboard, face 45 degrees left down with focused squint. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/usopp-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "usopp",
+      "character": "騙人布",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 騙人布 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: running sideways right with one open hand beckoning, face 30 degrees right toothy grin. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/usopp-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "usopp",
+      "character": "騙人布",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 騙人布 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated on a crate throwing both arms up, face 35 degrees left raised with exuberant laughter. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/usopp-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "sanji",
+      "character": "香吉士",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 香吉士 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing leaning forward arranging a small plate on a low stool, face 45 degrees right focused calm smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/sanji-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "sanji",
+      "character": "香吉士",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 香吉士 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: long elegant stride left carrying a small closed notebook, face 30 degrees left and warm grin. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/sanji-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "sanji",
+      "character": "香吉士",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 香吉士 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: one knee bent with both arms open wide, face 45 degrees right tilted upward with delighted smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/sanji-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "chopper",
+      "character": "喬巴",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 喬巴 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sitting on haunches carefully studying an open medical book, face 40 degrees left downward curious smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/chopper-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "chopper",
+      "character": "喬巴",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 喬巴 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: bounding toward right with one hoof waving, face 30 degrees right excited smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/chopper-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "chopper",
+      "character": "喬巴",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 喬巴 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing on one hoof with other lifted and both forehooves high, face 40 degrees left lifted delighted laughing expression. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/chopper-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "robin",
+      "character": "羅賓",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 羅賓 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated sideways on a stone stool translating an open book, face 45 degrees right down, calm curious smile; exactly two arms. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/robin-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "robin",
+      "character": "羅賓",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 羅賓 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: walking forward left while gently waving, face 30 degrees left with warm smile; exactly two arms. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/robin-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "robin",
+      "character": "羅賓",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 羅賓 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing half-turned with both hands applauding, face 45 degrees right lifted with joyful soft laugh; exactly two arms no flower arms. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/robin-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "franky",
+      "character": "佛朗基",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 佛朗基 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: crouching examining a small mechanical component in his TWO large robot hands, face 40 degrees left down focused grin. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/franky-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "franky",
+      "character": "佛朗基",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 佛朗基 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: wide stepping lunge right one robot forearm raised in greeting, face 30 degrees right determined smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/franky-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "franky",
+      "character": "佛朗基",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 佛朗基 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: low wide stance with TWO robot forearms meeting above head in his iconic SUPER pose, head 35 degrees left high, exuberant grin. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/franky-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "shanks",
+      "character": "布魯克",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 布魯克 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated on a stool studying sheet music held in both skeletal hands, skull turned 45 degrees right downward thoughtful posture. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/shanks-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "shanks",
+      "character": "布魯克",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 布魯克 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: long dancing stride left with cane in one hand and other waving, skull turned 30 degrees left, jovial open jaw. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/shanks-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "shanks",
+      "character": "布魯克",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 布魯克 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: one knee high in a celebratory dance and both arms outstretched, skull 40 degrees right tilted upward laughing open jaw; skeleton anatomy remains correct. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/shanks-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "jinbe",
+      "character": "吉貝爾",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 吉貝爾 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated cross-legged reviewing an unrolled scroll, face 45 degrees left down with wise calm smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/jinbe-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "jinbe",
+      "character": "吉貝爾",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 吉貝爾 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: deep grounded karate side stance right with one open palm raised in friendly greeting, face 30 degrees right determined smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/jinbe-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "jinbe",
+      "character": "吉貝爾",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D chibi One Piece 吉貝爾 companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing tall with both hands clasped overhead in victory, face 40 degrees left slightly up with broad joyous laugh. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/jinbe-task.webp",
+      "official": null,
+      "status": "generated"
+    },
+    {
+      "id": "gold",
+      "character": "皮卡丘",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 皮卡丘 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sitting low with both forepaws resting on open book, face 45 degrees left downward curious focused eyes, ears angled forward. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/gold-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "gold",
+      "character": "皮卡丘",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 皮卡丘 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: bounding right with forepaws spread, face 30 degrees right and joyful open mouth, tail curved behind. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/gold-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "gold",
+      "character": "皮卡丘",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 皮卡丘 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: upright on hind feet with both forepaws raised, head 40 degrees left tilted up with delighted eyes and open smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/gold-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "aurora",
+      "character": "伊布",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 伊布 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: lying on belly with forepaws beside open book, head 45 degrees right tilted down curious attentive eyes, ears forward. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/aurora-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "aurora",
+      "character": "伊布",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 伊布 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: playful airborne bound left with four paws distinct, face 30 degrees left bright happy open mouth. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/aurora-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "aurora",
+      "character": "伊布",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 伊布 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sitting upright with one forepaw lifted and head 40 degrees right tilted up, eyes happily closed and open cheerful smile, tail curled around. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/aurora-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "bulbasaur",
+      "character": "妙蛙花",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 妙蛙花 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: resting low on all four legs with head lowered 40 degrees left toward a seedling, focused curious eyes; huge flower visible. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/bulbasaur-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "bulbasaur",
+      "character": "妙蛙花",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 妙蛙花 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: walking strongly right on four legs with one front foot lifted, head 30 degrees right cheerful open smile; flower and vines bounce. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/bulbasaur-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "bulbasaur",
+      "character": "妙蛙花",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 妙蛙花 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: proud crouched body rising with face 40 degrees left tilted up and delighted open mouth, two plant vines curling high, all four legs grounded. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/bulbasaur-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "squirtle",
+      "character": "水箭龜",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 水箭龜 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sitting on haunches examining open book with both forepaws, head 45 degrees right down concentrated gaze, cannons safely pointed back. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/squirtle-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "squirtle",
+      "character": "水箭龜",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 水箭龜 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: striding forward left one forepaw waving, head 30 degrees left with upbeat grin, shell and both cannons visible. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/squirtle-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "squirtle",
+      "character": "水箭龜",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 水箭龜 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: wide planted stance lifting both forepaws triumphantly, head 40 degrees right up, broad joyful open smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/squirtle-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "dragonite",
+      "character": "快龍",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 快龍 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated with tail wrapped alongside, holding a small book in both paws, head 40 degrees left down with gentle thoughtful smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/dragonite-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "dragonite",
+      "character": "快龍",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 快龍 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: hovering with small wings spread and feet trailing, one paw waving, face 30 degrees right cheerful smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/dragonite-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "dragonite",
+      "character": "快龍",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 快龍 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing on one foot in delighted celebratory hop, both paws lifted, head 40 degrees left upward laughing happily. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/dragonite-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "gengar",
+      "character": "耿鬼",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 耿鬼 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: crouched low with fingers resting beside an open book, face 45 degrees right tilted down with curious crooked grin. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/gengar-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "gengar",
+      "character": "耿鬼",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 耿鬼 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: floating diagonally left in a playful forward lean with one hand waving, face 30 degrees left cheeky broad grin. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/gengar-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "gengar",
+      "character": "耿鬼",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 耿鬼 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: airborne with both short feet tucked and arms stretched high, face 40 degrees right upward laughing with eyes squeezed joyfully. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/gengar-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "lucario",
+      "character": "路卡利歐",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 路卡利歐 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated cross-legged meditating with paws on knees, face 45 degrees left slightly down eyes calmly focused. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/lucario-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "lucario",
+      "character": "路卡利歐",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 路卡利歐 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: lunging forward right with one paw beckoning and other balanced behind, face 30 degrees right determined friendly smile. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/lucario-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "lucario",
+      "character": "路卡利歐",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 路卡利歐 retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: grounded broad stance with both paws raised holding a small blue aura orb overhead, face 40 degrees left up with proud pleased expression. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/lucario-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "jigglypuff",
+      "character": "甲賀忍蛙 ex",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 甲賀忍蛙 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: deep low ninja crouch studying a small scroll on ground, face 45 degrees right down focused eyes, four limbs clear and tongue scarf natural. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/jigglypuff-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "jigglypuff",
+      "character": "甲賀忍蛙 ex",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 甲賀忍蛙 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sideways acrobatic leap left with arms open and knees bent, face 30 degrees left lively alert eyes and subtle pleased mouth. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/jigglypuff-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "jigglypuff",
+      "character": "甲賀忍蛙 ex",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 甲賀忍蛙 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: upright perched on a small rock with one hand raised in victory, face 40 degrees right up proud confident eyes, tongue scarf curls behind. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/jigglypuff-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "galaxy",
+      "character": "超夢 ex",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 超夢 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: seated floating cross-legged with small closed book levitating in front, face 45 degrees left downward calm focused expression. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/galaxy-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "galaxy",
+      "character": "超夢 ex",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 超夢 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: floating diagonally right with one hand extended encouragingly, face 30 degrees right soft confident smile, tail curved away. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/galaxy-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "galaxy",
+      "character": "超夢 ex",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 超夢 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: upright hovering with both hands elevated beside shoulders and soft psychic glow, head 40 degrees left raised with proud gentle smile, long tail fully visible. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/galaxy-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "lava",
+      "character": "噴火龍 ex",
+      "slot": "task",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 噴火龍 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: sitting on haunches leaning toward a small open book, face 45 degrees right down with thoughtful friendly eyes, wings folded, tail flame safely away. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/lava-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "lava",
+      "character": "噴火龍 ex",
+      "slot": "streak",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 噴火龍 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: short low flight left with wings spread and legs trailing, face 30 degrees left cheerful open grin, tail flame visible. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/lava-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    },
+    {
+      "id": "lava",
+      "character": "噴火龍 ex",
+      "slot": "growth",
+      "prompt": "Create ONE premium full-body polished 3D Pokemon 噴火龍 ex retaining canonical creature anatomy and proportions companion cutout. Reference preserves identity, outfit, hairstyle, colors and rendering style ONLY, do NOT copy its pose. NEW POSE: standing tall on hind legs with wings fully open and both forepaws high, head 40 degrees right lifted in joyful roar, no fire breath. Face remains recognizable and clearly visible in three-quarter view; pose silhouette radically different from straight standing. Entire body, all fingers, limbs, ears, props, tails and wings inside image with generous transparent margins. Correct anatomy with only canonical limbs, no extra hands, arms or fingers. One character only, no duplicates, no text, no watermark, no scene, no ground plane. True transparent alpha background. Crisp detailed face, gentle studio lighting. Composition fitted comfortably to a portrait companion card.",
+      "reference": "images/redesign/poses-v1/lava-task.webp",
+      "official": null,
+      "status": "not generated; original retained"
+    }
+  ],
+  "pendingRepairs": [
+    "Mewtwo galaxy task: remove third hand; 2026-10-15 image_gen output blocked, request 4cd318c6-379a-4648-81c1-41183e87b331",
+    "Gengar task: remove extra rear arms; image_gen output blocked request 366c6434-ddd6-4397-960f-283719e30707"
+  ],
+  "blockedRequests": [
+    {
+      "id": "gold",
+      "slot": "task",
+      "attempts": 2
+    },
+    {
+      "id": "gold",
+      "slot": "streak"
+    },
+    {
+      "id": "gold",
+      "slot": "growth"
+    },
+    {
+      "id": "aurora",
+      "slot": "task"
+    },
+    {
+      "id": "usopp",
+      "slot": "streak",
+      "operation": "nose repair"
+    }
+  ],
+  "blockReason": "image_gen HTTP 400 moderation_blocked, output stage, category other; no further detail"
+}

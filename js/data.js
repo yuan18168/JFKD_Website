@@ -338,7 +338,7 @@ const STUDENT_THEMES ={
     "tagline": "每一次練習，都讓明天的你更閃耀。",
     "bodyClass": "theme-babymonster",
     "xp": 2000,
-    "image": "mv-study/asa-sheesh-v1.webp",
+    "image": "realistic-v1/babymonster-hero.webp",
     "artPending": false
   },
   "gold": {
@@ -388,7 +388,7 @@ const STUDENT_THEMES ={
     "tagline": "跟著自己的節奏，把練習變成自信。",
     "bodyClass": "theme-ruka",
     "xp": 5000,
-    "image": "mv-study/ruka-drip-v1.webp",
+    "image": "realistic-v1/ruka-hero.webp",
     "artPending": false
   },
   "aurora": {
@@ -438,7 +438,7 @@ const STUDENT_THEMES ={
     "tagline": "勇敢站上舞台，今天的你也值得掌聲。",
     "bodyClass": "theme-ahyeon",
     "xp": 8000,
-    "image": "mv-study/ahyeon-mv-v1.webp",
+    "image": "realistic-v1/ahyeon-hero.webp",
     "artPending": false
   },
   "bulbasaur": {
@@ -488,7 +488,7 @@ const STUDENT_THEMES ={
     "tagline": "把小小練習，唱成屬於自己的光。",
     "bodyClass": "theme-rami",
     "xp": 11000,
-    "image": "mv-study/rami-mv-v1.webp",
+    "image": "realistic-v1/rami-hero.webp",
     "artPending": false
   },
   "squirtle": {
@@ -538,7 +538,7 @@ const STUDENT_THEMES ={
     "tagline": "按照自己的步調，綻放獨一無二的光彩。",
     "bodyClass": "theme-rora",
     "xp": 14000,
-    "image": "mv-study/rora-mv-v1.webp",
+    "image": "realistic-v1/rora-hero.webp",
     "artPending": false
   },
   "dragonite": {
@@ -588,7 +588,7 @@ const STUDENT_THEMES ={
     "tagline": "帶著笑容與自信，讓今天充滿能量。",
     "bodyClass": "theme-chiquita",
     "xp": 17000,
-    "image": "mv-study/chiquita-mv-v1.webp",
+    "image": "realistic-v1/chiquita-hero.webp",
     "artPending": false
   },
   "gengar": {
@@ -638,7 +638,7 @@ const STUDENT_THEMES ={
     "tagline": "把每一步練習，化成優雅的光芒。",
     "bodyClass": "theme-pharita",
     "xp": 20000,
-    "image": "mv-study/pharita-mv-v1.webp",
+    "image": "realistic-v1/pharita-hero.webp",
     "artPending": false
   },
   "lucario": {
@@ -688,7 +688,7 @@ const STUDENT_THEMES ={
     "tagline": "讓想法跟上節拍，勇敢唱出你的聲音。",
     "bodyClass": "theme-asa-silver",
     "xp": 23000,
-    "image": "mv-study/asa-silver-mv-v1.webp",
+    "image": "realistic-v1/asa-silver-hero.webp",
     "artPending": false
   },
   "jigglypuff": {
@@ -743,7 +743,7 @@ const STUDENT_THEMES ={
     "tagline": "用自己的顏色，留下努力的記號。",
     "bodyClass": "theme-ruka-graffiti",
     "xp": 26000,
-    "image": "mv-study/ruka-graffiti-mv-v1.webp",
+    "image": "realistic-v1/ruka-graffiti-hero.webp",
     "artPending": false
   },
   "galaxy": {
@@ -794,7 +794,7 @@ const STUDENT_THEMES ={
     "tagline": "把今天的努力，變成最亮的笑容。",
     "bodyClass": "theme-chiquita-sunset",
     "xp": 29000,
-    "image": "mv-study/chiquita-sunset-mv-v1.webp",
+    "image": "realistic-v1/chiquita-sunset-hero.webp",
     "artPending": false
   },
   "lava": {

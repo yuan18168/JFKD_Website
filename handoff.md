@@ -1,3 +1,83 @@
+# 2026-10-15 60 張新姿勢發布（最新授權）
+
+使用者改為先發布已完成的 60 張，不再等待寶可夢 30 張。發布海賊王與 BABYMONSTER 三姿勢共 60 張，搭配已核准的 10 張 BABYMONSTER 寫實橫幅與手機版文字分區；寶可夢維持 poses-v1，超夢／耿鬼手臂問題仍待修。XP 計算、家庭資料、解鎖門檻不變。發布前 check-realistic、check-poses-v2、character-poses 通過（120 布局／90 圖解碼、20 寫實橫幅手機布局），已核對遠端 main=4bae76f，Pages main/root built。發布前後截圖與報告保存 _release/20261015-poses60；上線後依最新要求僅測一輪。
+
+---
+
+# 2026-10-15 正常重試仍受圖片服務阻擋
+
+超夢使用相同雙手修正提示正常重試一次，仍回 HTTP 400 moderation_blocked / output / other，request ID 5a148fbc-a6ef-4080-8f45-ddcf4afd8529。未取得圖片、未修改原素材、未發布。服務未提供具體觸發原因；不能聲稱是暫時故障或已修復。官方錯誤建議透過 help.openai.com 並提供 request ID 回報。完成所有重繪後直接發布的使用者授權仍有效，但圖片未完成，因此尚不滿足發布條件。
+
+---
+
+# 2026-10-15 最新發布授權
+
+使用者要求解決生成攔截、完成所有重繪後直接上線；此授權取代先前整批驗收後才發布的限制。全部圖片完成並驗證後可發布，上線後跑一輪測試。不可把未完成舊圖當作完成。圖片服務先前僅回 output moderation_blocked / other，原因未知；目前以相同超夢修正提示正常重試一次，未改用其他服務或規避攔截。XP 與真實家庭資料保持不變。
+
+---
+
+# 2026-10-15 集中驗收要求與剩餘補修
+
+使用者要求全部修完後一次檢核，不再逐張開頁或請驗收。已完成六張修正獲確認。喬巴 growth 已改閉眼開懷笑，來源 preview/chopper-expression-edit.json，備份 preview/chopper-growth-before-expression.png；Chiquita task 背包人工檢視完整，保留原圖。60 新素材合計 4,687,082 bytes。重新建置並執行 check-poses-v2。仍有超夢／耿鬼多餘手與寶可夢整批重繪被服務攔截，不能宣稱全部完成。未發布，未要求使用者檢核；待可完成剩餘項目才集中驗收。
+
+---
+
+# 2026-10-15 角色細節修正：六張完成，兩張生成受阻（本機未發布）
+
+- 已替換索隆三姿勢刀具，採和之國後和道一文字／三代鬼徹／閻魔白紅紫組合，參考 https://p-bandai.jp/contents/item-pickup-zoro-proplica/ 與 https://one-piece.com/anime/61598/index.html 。Q 版細節為重繪，非原作逐像素複製。
+- 騙人布 streak/growth 長鼻子已補修；香吉士 task 改白桌布、金邊與餐具的高級餐桌。六圖來源與提示詞 preview/crew-detail-edits.json；原檔備份 preview/poses-v2-before-crew-details/；同步 source 與 outputs 清單。
+- 超夢 galaxy-task 的第三隻手、耿鬼 gengar-task 的後方兩隻多餘手仍未修成：各一次 built-in image_gen 編輯回 HTTP 400 moderation_blocked，output 類別 other，沒有具體原因或輸出。request IDs 分別 4cd318c6-379a-4648-81c1-41183e87b331、366c6434-ddd6-4397-960f-283719e30707。原圖仍保留，不可宣稱已完成，沒有繞過攔截改用其他服務。
+- 重新建置預覽並通過 check-poses-v2、character-poses：60 新透明素材 4,701,888 bytes、90 圖解碼、4 種寬度、120 組七任務大字布局、篩選放大。無 JS 錯誤／正式資料請求；XP 與資料程式 hash 不變。僅 Chromium 模擬，未測實體手機。
+- 整批仍待驗收，未 commit/push/發布；寶可夢仍是 30 張舊圖。預覽 http://localhost:8765/poses-gallery.html?v=crew-details-4#zoro 。
+
+---
+
+# 2026-10-15 娜美頭髮重繪完成（本機，未發布）
+
+使用者要求髮型更自然，三姿勢皆已重繪：減少厚重規律捲髮，改為自然側分、細緻長髮與輕微彎曲，依坐姿／跨步／跳躍調整飄動。保留修長 Q 版、表情、服裝與姿勢。素材 images/redesign/poses-v2/nami-{task,streak,growth}.webp；built-in image_gen 提示詞與來源 preview/nami-hair-edits.json；修改前備份 preview/poses-v2-before-nami-hair/，成功清單同步更新。已重新打包建置預覽；check-poses-v2 驗證 60 新素材與 90 預覽圖、四尺寸、篩選／放大通過，無 JS 錯誤或正式資料請求，XP hash 不變。60 WebP 目前合計 4,723,544 bytes。其餘未完成事項沿用下方紀錄，未發布。
+
+---
+
+# 2026-10-15 娜美／布魯克局部修正完成（本機，未發布）
+
+使用者 grill-me 選 1 並 GO：娜美三姿勢改精緻修長 Q 版；布魯克慶祝改一手握杖、一手張開、保留抬腿舞步。四圖已生成、逐張視覺檢查並替換 images/redesign/poses-v2/{nami-task,nami-streak,nami-growth,shanks-growth}.webp（shanks 為歷史 ID，角色是布魯克）。
+
+- 本次工具 built-in image_gen。實際提示詞／輸出路徑 preview/nami-brook-edits.json；已同步 poses-v2-outputs.json 與 source；修改前來源備份 preview/poses-v2-before-nami-brook/。
+- 重新打包、建置 _preview，check-poses-v2 與 character-poses 通過：60 新圖透明／唯一，90 圖解碼、四尺寸驗收頁與篩選放大、120 組七任務大字布局；無 JS 錯誤／正式資料請求，XP 程式 hash 不變。目前 60 WebP 共 4,728,228 bytes，結果 _qa/poses-v2-check.json。
+- 預覽 http://localhost:8765/poses-gallery.html#nami 、#shanks。仍有前一輪寶可夢 30 圖未完成及其他既記錄待補修，本次成功不代表整批完成；尚未 commit/push/發布。測試為 Chromium 模擬，非實體手機。
+
+---
+
+# 2026-10-15 三系列姿勢重繪：60／90 張，本機預覽可看，尚未完成／發布
+
+使用者已確認 30 主題 × 三姿勢重繪；大橫幅保留，海賊王 Q 版、BABYMONSTER 寫實、寶可夢原比例。須整批驗收後才發布，本節優先於歷史自動發布指示。
+
+- 已生成並整合海賊王與 BABYMONSTER 共 60 張，images/redesign/poses-v2/。寶可夢 30 張未生成，暫留 poses-v1；驗收頁明確標示，不能稱 90 張完成。
+- 阻擋：image_gen 對皮卡丘閱讀（原版與簡化描述）、行動、慶祝及伊布閱讀皆回 HTTP 400 moderation_blocked，output 類別 other，無具體原因，已停止該系列重試。騙人布閱讀長鼻子補修成功，隨後行動圖補修也被攔截。沒有改用其他生成服務或 CLI。
+- 待補修：騙人布行動／慶祝長鼻子；喬巴慶祝表情與行動仍近似，可改閉眼笑；Chiquita 閱讀包包邊界待檢視。新圖尚非最終定稿。
+- 進度頁 http://localhost:8765/poses-gallery.html（60 新＋30 舊、有篩選／放大）；原 http://localhost:8765/realistic-gallery.html 的三姿勢也已指向新圖。網站 http://localhost:8765/app.html 用隔離示範資料。
+- 工具 built-in image_gen；計畫 preview/poses-v2-plan.json 已標各張狀態與阻擋；成功來源／實際提示詞 preview/poses-v2-outputs.json，原圖 preview/poses-v2-source/。騙人布閱讀修正版保留 previousPath 追溯。不要從頭重做，按 id＋slot 接續未完成部分。
+- WebP 60 張 600×720 真透明、唯一，總計 4,737,032 bytes。打包 preview/pack-poses-v2.cjs；驗收頁生成 preview/build-poses-gallery.cjs；preview/build.py 已加入複製。JDesign.companion 目前海賊王／女團載 poses-v2、寶可夢載 poses-v1；app.html 資源版號 20261015poses2。
+- 本機驗證：60 素材、90 預覽圖、四寬度篩選／放大／Esc；120 組七任務大字布局；打卡完成／取消、心情、主題套用、成就、五尺寸互動通過，無 JS 錯誤與正式資料請求。js/data.js、app.js、calc.js、gamify.js hash 與本輪前一致；XP、家庭資料未修改。結果 _qa/poses-v2-check.json、poses-v2-summary.json；桌機／手機截图 _qa/poses-{babymonster,zoro,gold}-{390,1440}.png。
+- 僅 Chromium 模擬，未測實體手機與 Safari。全部尚未 commit/push/部署；排程保持暫停。生成阻擋解除或使用者改定範圍後再完成整批，不能將此狀態當作已結案。
+
+---
+
+# 2026-10-15 寫實 BABYMONSTER 整批預覽（最新：已完成，待使用者與女兒驗收，尚未發布）
+
+本節優先於下方歷史發布指示。使用者透過 grill-me 選定 AI 寫實重繪、正常真人比例、保留十款 MV 服裝／場景／配色，姿勢自由；全十款一起完成後預覽驗收，已回覆 GO。此次尚未獲得成品驗收，不要直接推送或部署。通過驗收並上線後依最新要求跑一輪測試，不是三輪。
+
+- 完成十張橫幅與三十張獨立陪伴姿勢（今日任務／連續打卡／XP 等級），以及魯夫今日任務兩手持書修正版，共 41 張。BABYMONSTER 不再使用 Q 版比例；AI 重繪不是官方照片，也不能保證與本人完全一致，請讓使用者與女兒檢視相似度。
+- 保留原十款主題配置及另外二十款（僅魯夫指定圖片例外）。依 YG 官方個人照與既有 MV 服裝參考重繪，官方參考圖保留 _qa/realistic-references，未公開部署。Asa 連續打卡與 Chiquita 今日任務版本新增不透膚內搭／褲襪，已告知使用者，請一併驗收。
+- 本機驗收頁：http://localhost:8765/realistic-gallery.html ，包含十組新舊橫幅對照、每款三姿勢、魯夫修正，點圖放大、Esc 關閉。網站示範頁 http://localhost:8765/app.html 使用隔離示範資料。
+- 最終素材 images/redesign/realistic-v1/：41 張唯一 WebP，總計 3,614,310 bytes；三十張人物及魯夫為透明背景。來源備份 preview/realistic-source/。生成工具 built-in image_gen；完整提示詞與來源輸出對照 preview/realistic-outputs.json，規格及參考來源 preview/realistic-generation.json。preview 與 _qa 不公開部署。
+- 程式修改：data.js 十款圖片路徑；design.js 主角裁切定位與三處姿勢載入；character-poses.css 寫實人物比例與手機橫幅分區；app.html 資源版號。手機女團橫幅改上方人物、下方文案，避免互相遮擋。未修改 XP 計算、家庭資料、解鎖規則或認證。
+- 本機檢查通過：41 素材唯一性／解碼／透明背景；驗收頁 51 圖、320／390／768／1440 四尺寸無橫向溢出與放大操作；十款 × 兩手機尺寸共 20 組大字圖文不重疊。結果 _qa/realistic-check.json、realistic-home-desktop.png、realistic-home-mobile.png。
+- 既有回歸通過：120 組七任務大字布局與 90 姿勢解碼、180 鼓勵語與 120 組大字布局、主要示範互動與五尺寸、30 主題套用與 150 次導覽及刷新保存。最後手機 CSS 調整後已重跑素材／驗收頁／20 手機布局及 120 文案布局。無 JS 例外或正式資料請求。測試為本機 Chromium 模擬，未測實體手機與 Safari；尚未進行這批的正式上線測試。
+- 目前變更保留在工作目錄，未 commit／push。正式站仍是先前三處 Q 版姿勢版本；排程保持暫停。XP 歷史對帳限制仍如下一節，不能把示範 4,310 XP 當作正式餘額。
+
+---
+
 # 2026-10-15 三處角色姿勢（最新：已上線，一輪完整測試通過）
 
 - 使用者要求今日任務、連續打卡、XP 等級三處都有不同於橫幅的姿勢。30 主題各 3 張，共 90 張透明 WebP 已完成；維持既有角色、服裝與主題配色。新版右側卡片獨立排列，避免被七項任務撐高。

@@ -20,5 +20,18 @@
 .growth-card .xp-head{grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin:0}
 .growth-card .xp-level{white-space:normal}
 .growth-card .xp-track,.growth-card .xp-hint{grid-column:1/-1;margin:0}
+.task-world .world-companion:has(.is-realistic){width:120px;height:180px}
+.home-side .character-stage.is-realistic{height:210px}
+@media(max-width:600px){.task-world .world-companion:has(.is-realistic){width:104px;height:164px}.home-side .character-stage.is-realistic{height:180px}}
 @media(max-width:600px){.task-world .world-companion{width:105px;height:125px}.home-side .streak-hero{padding:20px;grid-template-columns:30px minmax(0,1fr) minmax(90px,38%);gap:6px}.home-side .streak-flame{font-size:28px}.home-side .character-stage-streak,.growth-card .character-stage-growth{height:145px}.home-side .streak-num{font-size:calc(34px * var(--font-scale,1))}}
 @media(prefers-reduced-motion:no-preference){.character-pose{animation:pose-arrive .45s ease-out both}@keyframes pose-arrive{from{opacity:0;transform:translateY(7px) scale(.96)}to{opacity:1;transform:none}}}
+/* Realistic full-height figures need a separate text panel on narrow screens. */
+@media(max-width:640px){
+ body.kid-app .world-hero.world-series-stage.world-framed{display:block;padding-top:300px;min-height:0}
+ body.kid-app .world-hero.world-series-stage.world-framed>.world-art{height:300px;top:0;right:-8%;width:auto}
+ body.kid-app[class*="theme-"] .world-hero.world-series-stage:after{height:300px;bottom:auto;background:none}
+ body.kid-app .world-hero.world-series-stage:before{height:300px;bottom:auto}
+ .world-series-stage .world-copy{position:relative;width:100%;padding:22px;background:var(--theme-hero,var(--kid-card))}
+ .world-series-stage .world-copy h2,.world-series-stage .world-copy p{max-width:none}
+ .world-series-stage .hero-signature{top:250px;bottom:auto}
+}

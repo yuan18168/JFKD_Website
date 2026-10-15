@@ -29,6 +29,16 @@ const JDesign = (() => {
   // Source-image head/hat positions, as fractions of image height. Keep the
   // character's full pose; do not enlarge a wide scene to fill a shallow banner.
   const heroHeadTop = Object.freeze({
+    'realistic-v1/babymonster-hero.webp':0.015,
+    'realistic-v1/ruka-hero.webp':0.012,
+    'realistic-v1/ahyeon-hero.webp':0.025,
+    'realistic-v1/rami-hero.webp':0.03,
+    'realistic-v1/rora-hero.webp':0.028,
+    'realistic-v1/chiquita-hero.webp':0,
+    'realistic-v1/pharita-hero.webp':0,
+    'realistic-v1/asa-silver-hero.webp':0.035,
+    'realistic-v1/ruka-graffiti-hero.webp':0.015,
+    'realistic-v1/chiquita-sunset-hero.webp':0,
     'mv-study/chiquita-sunset-mv-v1.webp':0.02,
     'mv-study/ruka-graffiti-mv-v1.webp':0.03,
     'mv-study/asa-silver-mv-v1.webp':0.035,
@@ -74,7 +84,8 @@ const JDesign = (() => {
   function companion(student,slot){
     const id=student.themeId;
     if(!worlds[id]?.character||!['task','streak','growth'].includes(slot))return '';
-    return `<span class="character-stage character-stage-${slot}" aria-hidden="true"><img class="character-pose" src="images/redesign/poses-v1/${esc(id)}-${slot}.webp" width="320" height="360" alt="" loading="lazy" decoding="async"></span>`;
+    const realistic=worlds[id].series==='stage',folder=worlds[id].series==='pokemon'?'poses-v1':'poses-v2';
+    return `<span class="character-stage character-stage-${slot}${realistic?' is-realistic':''}" aria-hidden="true"><img class="character-pose" src="images/redesign/${folder}/${esc(id)}-${slot}.webp" width="${folder==='poses-v2'?600:320}" height="${folder==='poses-v2'?720:360}" alt="" loading="lazy" decoding="async"></span>`;
   }
 
   // Keep the quote stable during task rerenders; remember only its index locally.
