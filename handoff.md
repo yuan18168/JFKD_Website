@@ -1,3 +1,15 @@
+# 2026-10-15 60 張新姿勢正式上線，單輪驗證通過
+
+- 最新授權：先發布已完成 60 張，寶可夢保留既有 30 張。產品提交 4330d48，Pages 發布 c4bbe6c182f50ff83c86394c9b697ea23bc6d778，狀態 built。正式網址 https://yuan18168.github.io/JFKD_Website/ 。
+- 60 張海賊王／BABYMONSTER 三姿勢與 10 張已核准寫實橫幅已發布。74 個正式資源與 Git 提交 SHA256 完全一致，證據 _qa/poses60-release/cdn.json。60 姿勢共 4,687,082 bytes。XP 公式、真實家庭資料及門檻未修改，data.js 僅改十個圖片路徑。
+- 一輪上線後測試完成（資料夾編號 60 只是本次識別，並非 60 輪）：verify、interactions、theme-copy、readability、check-theme-apply-all、palettes、character-poses、live-smoke 全通過；16 頁、30 主題／150 導覽、180 鼓勵語、120 七任務大字布局、90 姿勢解碼。無 JS 錯誤、溢出、失敗正式資源或真實後端請求。_qa/live-round-60/ 保存結果。
+- 正式登入頁載入：390px 約 1.13 秒，1440px 約 0.61 秒（本次環境單次測量，非速度保證）；每次傳輸約 278 KB。測試為 Chromium 桌面／手機尺寸模擬，未測實體手機與 Safari。
+- 前後各 44 張正式資源／隔離示範資料截圖，共 88 張；報告 _release/20261015-poses60/index.html；分享包 _release/JFKD_60張角色改版前後報告.zip；發布前 Git bundle _release/20261015-poses60/pre-release.bundle。未公開真實家庭資料與測試夾。
+- 超夢／耿鬼多餘手及寶可夢整批重繪仍待修，不能稱 90 張全部完成。生成服務攔截詳見下方。自動接續目前 PAUSED。
+- 測試工具修正：live-test-hook 與 capture-poses60 使用 unrouteAll ignoreErrors 收尾，避免關閉時等待已無法完成的圖片請求；產品無需修改。回退產品可 git revert 4330d48 後正常 push，不 force push，不回寫家庭資料。
+
+---
+
 # 2026-10-15 60 張新姿勢發布（最新授權）
 
 使用者改為先發布已完成的 60 張，不再等待寶可夢 30 張。發布海賊王與 BABYMONSTER 三姿勢共 60 張，搭配已核准的 10 張 BABYMONSTER 寫實橫幅與手機版文字分區；寶可夢維持 poses-v1，超夢／耿鬼手臂問題仍待修。XP 計算、家庭資料、解鎖門檻不變。發布前 check-realistic、check-poses-v2、character-poses 通過（120 布局／90 圖解碼、20 寫實橫幅手機布局），已核對遠端 main=4bae76f，Pages main/root built。發布前後截圖與報告保存 _release/20261015-poses60；上線後依最新要求僅測一輪。
