@@ -14,13 +14,13 @@ const ThemeNavigation=(()=>{
  babymonster:['饒舌麥克風','M19 3c8 0 8 11 0 11s-8-11 0-11ZM16 13 4 27l3 3 14-16M14 5l9 6'],
  ruka:['街舞節拍','M3 24 11 4l4 13 8-13 6 20M5 28h22'],
  ahyeon:['搖滾火花','M17 2 4 18h10l-1 12L28 12H17zM3 4l3 3m21 19 3 3'],
- rami:['月光琴鍵','M3 10h26v19H3zM9 10v19m7-19v19m7-19v19M22 2c-7 1-7 7 0 7-3-3-3-4 0-7'],
+ rami:['花影舞台','M16 12C5-5 2 14 12 16-6 26 14 33 16 20c9 18 20-2 4-4 17-10-4-22-4-4Z'],
  rora:['玫瑰唱片','M16 3a13 13 0 1 0 0 26 13 13 0 1 0 0-26Zm0 7a6 6 0 1 0 0 12 6 6 0 1 0 0-12Zm-3 4 6 2-6 2z'],
  chiquita:['熱帶音浪','M16 28V10M16 13C-2 12 5 0 16 10c6-15 21-6 0 3M3 23l3-6 4 6m13 0 3-6 4 6'],
  pharita:['天鵝','M4 21c0 12 22 11 22 0-11 5-17-5-13-12 4-8 10-5 7-1l-5 3m-2 4c-6-4-10 0-9 6'],
- 'asa-silver':['銀翼','M16 28V12M16 18 2 4l3 13 11 7M16 18 30 4l-3 13-11 7'],
- 'ruka-graffiti':['塗鴉','M9 10h14v20H9zM12 10V5h8v5M16 5V2m7 4 7-2m-7 5h7M12 20l4-5 4 5-4 5z'],
- 'chiquita-sunset':['夕陽舞台','M3 20h26M7 20a9 9 0 0 1 18 0M3 25h26M16 2v5M4 8l4 4m20-4-4 4'],
+ 'asa-silver':['琥珀寶石','M4 10 10 3h12l6 7-12 19zM4 10h24M10 3l6 26 6-26'],
+ 'ruka-graffiti':['月光唱片','M16 3a13 13 0 1 0 0 26 13 13 0 1 0 0-26Zm0 9a4 4 0 1 0 0 8 4 4 0 1 0 0-8M6 16a10 10 0 0 1 10-10'],
+ 'chiquita-sunset':['星冠','M4 10l6 5 6-11 6 11 6-5-3 17H7zM8 23h16'],
  gold:['閃電','M18 2 5 18h10l-1 12 13-18H17z'],
  aurora:['森林耳朵','M15 26C-2 23 2 5 3 3c9 4 12 13 12 23Zm2 0c17-3 13-21 12-23-9 4-12 13-12 23Z'],
  bulbasaur:['盛放花朵','M16 13C3-4 1 14 11 17c-14 5-1 18 5 5 6 13 19 0 5-5 10-3 8-21-5-4Zm-6 16h12M16 22v7'],
@@ -39,7 +39,7 @@ const ThemeNavigation=(()=>{
  };
  const svg=p=>'<svg class="ui-icon theme-nav-glyph" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+p+'"/></svg>';
  function refresh(){const nav=document.querySelector('.kid-tabbar');if(!nav)return;const id=Object.keys(marks).find(id=>document.body.classList.contains('theme-'+id)),w=id&&STUDENT_THEMES[id];nav.dataset.world=id||'';nav.dataset.series=w?.series||'';nav.dataset.props=Boolean(id&&w)?'true':'false';
- nav.querySelectorAll('.kid-tab').forEach(tab=>{const el=tab.querySelector('.kid-tab-icon'),key=id||'default';if(el.dataset.navTheme===key)return;const dot=el.querySelector('.kid-tab-dot');el.innerHTML=nav.dataset.props==='true'?'<img class="nav-prop" src="images/redesign/navigation-v2/'+id+'-'+tab.dataset.tab+'.webp" alt="" aria-hidden="true" width="48" height="48">':w?svg(tab.dataset.tab==='home'?marks[id][1]:sets[w.series][tab.dataset.tab]):JDesign.icon(tab.dataset.tab);if(dot)el.append(dot);el.dataset.navTheme=key;el.dataset.drawn='1';});
+ nav.querySelectorAll('.kid-tab').forEach(tab=>{const el=tab.querySelector('.kid-tab-icon'),key=id||'default';if(el.dataset.navTheme===key)return;const dot=el.querySelector('.kid-tab-dot');el.innerHTML=w?.series==='stage'?'<span class="kpop-nav-icon" aria-hidden="true">'+svg(tab.dataset.tab==='home'?marks[id][1]:sets.stage[tab.dataset.tab])+'</span>':nav.dataset.props==='true'?'<img class="nav-prop" src="images/redesign/navigation-v2/'+id+'-'+tab.dataset.tab+'.webp" alt="" aria-hidden="true" width="48" height="48">':w?svg(tab.dataset.tab==='home'?marks[id][1]:sets[w.series][tab.dataset.tab]):JDesign.icon(tab.dataset.tab);if(dot)el.append(dot);el.dataset.navTheme=key;el.dataset.drawn='1';});
  }
  document.addEventListener('DOMContentLoaded',()=>{refresh();new MutationObserver(refresh).observe(document.body,{attributes:true,attributeFilter:['class']});});
  return {marks,refresh};

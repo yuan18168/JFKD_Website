@@ -1138,7 +1138,7 @@
   }
 
   // ================================================================ 造型
-  const THEME_ORDER = ["", ...Object.keys(STUDENT_THEMES)];
+  const THEME_ORDER = ["", ...JDesign.themeList().map(t=>t.id)];
   let selectedThemeSeries = 'all';
   const THEME_SWATCH = {
     "": "theme-swatch-default", zoro: "theme-swatch-zoro", babymonster: "theme-swatch-babymonster",
@@ -1190,7 +1190,7 @@
 
     document.getElementById("themeBody").innerHTML = `
       <div class="kid-note">每累積 <b>1,000 XP</b>，就開啟下一位角色的世界。30 款角色造型，陪你一起成長。</div>
-      <div class="theme-series-tabs" aria-label="依系列篩選">${[['all','全部 31'],['onepiece','海賊王 10'],['stage','BABYMONSTER 10'],['pokemon','寶可夢 10']].map(([id,label])=>`<button type="button" data-series-filter="${id}" aria-pressed="${selectedThemeSeries===id}">${label}</button>`).join('')}</div>
+      <div class="theme-series-tabs" aria-label="依系列篩選">${[['all','全部 31'],['onepiece','海賊王 10'],['stage','K-POP 女團 10'],['pokemon','寶可夢 10']].map(([id,label])=>`<button type="button" data-series-filter="${id}" aria-pressed="${selectedThemeSeries===id}">${label}</button>`).join('')}</div>
       <div class="theme-grid">${cards}</div>
       <div class="kid-card" style="margin-top:16px">
         <div class="kid-card-title">✨ 我的特效收藏 <small>成績達標時自動播放</small></div>

@@ -13,7 +13,7 @@
   // Character catalog is shared with the child interface.
   function renderGallery() {
     const gallery = document.getElementById("themeGallery");
-    gallery.innerHTML = Object.values(STUDENT_THEMES)
+    gallery.innerHTML = JDesign.themeList()
       .map((theme) => {
         const bannerClass = theme.bodyClass;
         const style = {swatches:[theme.color,theme.bg,"#fff"]};
@@ -83,7 +83,7 @@
           <label>專屬主題造型</label>
           <select id="themeSelect">
             <option value="">無主題（標準樣式）</option>
-            ${Object.values(STUDENT_THEMES)
+            ${JDesign.themeList()
               .map((t) => {
                 const need = THEME_XP[t.id] || 0;
                 const tag = need > 0 ? `（需 ${need.toLocaleString()} XP）` : "";

@@ -1,0 +1,83 @@
+/* Approved photo-reference fashion designs. */
+.kpop-hero{--stage-accent:#8a315d;--stage-light:#edb9ce;position:relative;isolation:isolate;display:grid;grid-template-columns:1.05fr 1fr;min-height:390px;overflow:hidden;border:1px solid var(--stage-light);border-radius:24px;background:#fcf9fc;box-shadow:0 14px 38px #281b3010;margin-bottom:24px}
+.kpop-hero-copy{position:relative;z-index:2;padding:34px 28px 34px 36px;color:#292131;min-width:0}
+.kpop-eyebrow{font-size:11px;font-weight:800;letter-spacing:1.4px;display:block;color:var(--stage-accent)}
+.kpop-eyebrow b{padding:0 7px;opacity:.45}
+.kpop-hero h2{font-family:Inter,'Noto Sans TC',sans-serif;font-size:clamp(42px,5vw,66px);line-height:1.08;letter-spacing:-2px;margin:20px 0 8px;color:#292131}
+.kpop-scene{margin:0 0 14px;font-size:18px;font-weight:800;color:var(--stage-accent)}
+.kpop-intro{font-size:14px;line-height:1.8;color:#625968;max-width:32em;margin:0}
+.kpop-encouragement{border-top:1px solid var(--stage-light);padding-top:16px;margin-top:20px}
+.kpop-encouragement>span{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--stage-accent)}
+.kpop-encouragement p{font-size:calc(16px * var(--font-scale,1));line-height:1.7;margin:5px 0 0;font-weight:600}
+.kpop-date{display:flex;align-items:center;gap:7px;font-size:12px;color:#625968;margin-top:18px}
+.kpop-date .ui-icon{width:16px;height:16px}
+.kpop-hero-ticket{position:absolute;z-index:3;bottom:12px;right:18px;font-size:8px;letter-spacing:2px;color:#fff;opacity:.75}
+.kpop-stage{position:relative;overflow:hidden;isolation:isolate;height:100%;min-height:0;background:radial-gradient(ellipse at 55% 25%,var(--stage-light),transparent 62%),linear-gradient(145deg,#302638,var(--stage-accent) 120%)}
+.kpop-stage:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(112deg,transparent 0 72px,#fff1 73px 74px,transparent 75px 120px);pointer-events:none}
+.kpop-stage:after{content:'';position:absolute;inset:auto 0 0;height:28%;background:linear-gradient(transparent,#211928c9);pointer-events:none}
+.kpop-orbit{position:absolute;left:8%;top:9%;width:85%;aspect-ratio:1;border:1px solid #ffffff65;border-radius:50%;box-shadow:0 0 0 18px #ffffff08,0 0 0 19px #ffffff18;transform:rotate(-20deg)}
+.kpop-stage-word{position:absolute;left:8%;top:5%;font:900 clamp(30px,4vw,65px)/1 Inter,sans-serif;letter-spacing:-2px;color:#ffffff38;white-space:nowrap}
+.kpop-portrait{position:absolute;inset:0;overflow:hidden}
+.kpop-photo{display:block!important;position:absolute!important;top:0;left:0;width:100%!important;height:auto!important;max-width:none;object-fit:fill!important;mask-size:100% 100%;mask-repeat:no-repeat;-webkit-mask-size:100% 100%;-webkit-mask-repeat:no-repeat;filter:none!important;transform:none!important;animation:none!important}
+.kpop-hero .kpop-photo{top:0;width:100%!important;max-width:420px;left:50%;translate:-50% 0}
+.kpop-stage-caption{position:absolute;z-index:2;left:16px;right:16px;bottom:26px;display:flex;justify-content:space-between;gap:5px;align-items:center;color:#fff;font:700 9px/1.5 Inter,sans-serif;letter-spacing:1.4px}
+.kpop-stage-caption i{font-style:normal;color:var(--stage-light)}
+.theme-art.kpop-theme-art{height:250px!important;background:#2c2532!important;overflow:hidden;border-radius:14px 14px 0 0}
+.kpop-theme-art .kpop-stage{width:100%;height:100%}
+.kpop-theme-art .kpop-photo{width:90%!important;left:5%;top:-2%}
+.kpop-theme-art .kpop-stage-word{font-size:44px;top:5%;left:5%}
+.kpop-theme-art .kpop-stage-caption{bottom:14px;font-size:8px;letter-spacing:1px}
+.theme-card:has(.kpop-theme-art){border-radius:18px;overflow:hidden;border-color:#d9cdda;background:#fffafc}
+.theme-card:has(.kpop-theme-art) .theme-card-name{font-size:15px;line-height:1.5}
+.theme-card:has(.kpop-theme-art).locked .kpop-stage{filter:none}
+.theme-gallery-card .kpop-theme-art{height:310px!important}
+.character-stage.kpop-companion{position:relative;display:block;overflow:hidden;border-radius:18px;isolation:isolate;background:linear-gradient(150deg,var(--stage-light),#f9f4f9);height:170px;min-width:95px}
+.kpop-companion:before,.kpop-companion:after{display:none}
+.kpop-companion-ring{position:absolute;width:85%;aspect-ratio:1;top:12%;left:7%;border:1px solid #ffffffce;border-radius:50%;box-shadow:0 0 0 7px #ffffff30}
+.kpop-companion .kpop-photo{width:115%!important;left:-7.5%;top:3%}
+.kpop-companion-label{position:absolute;bottom:7px;left:5px;right:5px;text-align:center;color:var(--stage-accent);font-size:10px;font-weight:800;background:#ffffffdf;border-radius:7px;padding:5px 2px;line-height:1.2}
+.kpop-companion.character-stage-streak{background:radial-gradient(circle at 90% 10%,#fff 0 2%,transparent 3%),linear-gradient(30deg,#f9f4f9,var(--stage-light))}
+.kpop-companion.character-stage-growth .kpop-companion-ring{border-style:dashed;transform:rotate(25deg);border-radius:30%}
+.task-world:has(.kpop-companion){border-radius:16px;background:linear-gradient(105deg,#fff9fc,var(--k-soft-bg2));border:1px solid var(--kid-border)}
+.task-world:has(.kpop-companion).is-complete{background:linear-gradient(115deg,#fff9fc,var(--k-soft-bg2));border:2px solid var(--k-accent)}
+.task-world .world-companion:has(.kpop-companion){width:118px;height:150px;flex-shrink:0;filter:none}
+.task-world .kpop-companion{height:100%;width:100%}
+.kid-tabbar[data-series="stage"] .kpop-nav-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#ffffff15;border:1px solid #ffffff40;color:#f9e4f0;box-shadow:inset 0 1px #ffffff30}
+.kid-tabbar[data-series="stage"]{--nav-trim:var(--kpop-light);--nav-radius:20px;--nav-tab-radius:12px;--nav-icon-radius:12px;--nav-texture:linear-gradient(115deg,#ffffff0a,transparent);--nav-texture-size:auto}
+.kid-tabbar[data-series="stage"] .kpop-nav-icon svg{width:27px;height:27px;filter:none}
+.kid-tabbar[data-series="stage"] .active .kpop-nav-icon{background:var(--kpop-light);color:#291e30;box-shadow:0 3px 12px #0003}
+@media(min-width:1000px){.kpop-hero .kpop-stage{border-left:1px solid var(--stage-light)}}
+@media(max-width:640px){
+ .kpop-hero{display:flex;flex-direction:column;min-height:0;border-radius:20px}
+ .kpop-hero>.kpop-stage{order:0;height:300px;flex:none}
+ .kpop-hero-copy{order:1;padding:24px}
+ .kpop-hero .kpop-photo{width:86%!important;left:50%;top:0}
+ .kpop-hero h2{font-size:44px;margin-top:14px}
+ .kpop-hero .kpop-stage-word{font-size:58px;left:5%}
+ .kpop-hero-ticket{display:none}
+ .kpop-hero .kpop-stage-caption{bottom:15px}
+ .kpop-hero .kpop-orbit{width:68%;left:16%}
+ .theme-art.kpop-theme-art{height:220px!important}
+ .kpop-theme-art .kpop-photo{width:115%!important;left:-7.5%;top:0}
+ .kpop-theme-art .kpop-stage-word{font-size:32px}
+ .kpop-theme-art .kpop-stage-caption{font-size:7px;letter-spacing:.2px;left:8px;right:8px}
+ .task-world .world-companion:has(.kpop-companion){width:94px;height:132px}
+ .kpop-encouragement p{font-size:calc(15px * var(--font-scale,1))}
+}
+@media(prefers-reduced-motion:no-preference){.kpop-hero{animation:kpop-enter .4s ease-out}@keyframes kpop-enter{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:none}}}
+/* Full approved compositions: no masks, face crops, or artificial background layers. */
+.kpop-hero{display:block;min-height:0;background:#faf8f4}
+.kpop-hero>.kpop-stage{position:absolute;inset:0;height:100%;border:0}
+.kpop-hero-copy{width:49%;min-height:420px;background:linear-gradient(90deg,#fffdf7e8,#fffdf7a8 75%,transparent);padding:28px}
+.kpop-stage{background:#f4eee7}
+.kpop-stage:before,.kpop-stage:after,.kpop-hero-ticket{display:none}
+.kpop-stage .kpop-photo,.kpop-hero .kpop-stage .kpop-photo{position:static!important;width:100%!important;height:100%!important;max-width:none;object-fit:contain!important;translate:none;mask:none;-webkit-mask:none}
+.kpop-hero>.kpop-stage .kpop-photo{object-fit:cover!important;object-position:right center}
+.theme-art.kpop-theme-art,.theme-gallery-card .kpop-theme-art{height:auto!important;aspect-ratio:1672/941;background:#f4eee7!important}
+.character-stage.kpop-companion{background:none;border-radius:12px;height:170px}
+.kpop-action{position:static!important;display:block;width:100%!important;height:100%!important;object-fit:contain!important;transform:none!important;filter:none!important;border-radius:12px}
+@media(max-width:900px){.kpop-hero{display:flex;flex-direction:column}.kpop-hero>.kpop-stage{position:relative;order:0;width:100%;height:auto;aspect-ratio:1672/941;flex:none}.kpop-hero-copy{order:1;width:100%;min-height:0;padding:24px;background:#fffdf8}.kpop-hero>.kpop-stage .kpop-photo{object-fit:contain!important}.kpop-hero h2{font-size:44px}.kpop-hero .kpop-photo{left:auto;top:auto}}
+.kpop-hero{aspect-ratio:1672/941}
+.kpop-hero>.kpop-stage .kpop-photo{object-fit:contain!important}
+.kid-tabbar[data-series="stage"]{background:var(--theme-nav)!important}
+@media(max-width:900px){.kpop-hero{aspect-ratio:auto}}

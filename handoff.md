@@ -1,3 +1,23 @@
+# 2026-10-17 K-POP 女團四十張正式整合
+
+使用者已確認全員並授權上線。40 張來源 preview/kpop-complete；正式素材 images/redesign/kpop-complete，內建 image_gen 參考本人不同照片設計。BABYMONSTER：Ruka、Pharita、Asa、Ahyeon、Rora、Chiquita；BLACKPINK：Jisoo、Jennie、Rosé、Lisa。JDesign.themeList 僅調整顯示順序，歷史 themeId 與各項 XP 門檻保持。首頁、主題卡、任務／打卡／成長三動作同步更新。原照遮罩版本已被此次使用者核准稿取代。
+
+本機 check-kpop-release 通過四十圖、十人排序、四十版面、五十導覽、家長主題庫與資料函式不變檢查。桌面修復橫幅裁頭。發布前基線與前後對照在 _release/20261017-kpop40；Chromium 模擬，未測實機 Safari。正式部署狀態另見同資料夾 deployment.json。
+
+---
+
+# 2026-10-16 K-POP 女團真人照片重設計（本機完成，未發布）
+
+- 使用者經 grill-me 確認：改名「K-POP 女團」，BABYMONSTER 六位（不含 Rami）＋ BLACKPINK 四位，共十位；原照去背、經典造型、首頁／主題卡／任務／打卡／成長完成／導覽整套更新。
+- 照片選用 YG 官方 WE GO UP 六張與 BORN PINK 四張個人概念照。原 JPEG 不改寫，使用獨立 SVG 輪廓與柔邊遮罩顯示；沒有生成或重繪臉部。20 張官方肖像／概念照與兩支官方 MV 的主視覺縮圖用於參考，未聲稱逐段觀看完整 MV。來源、原照 SHA256：images/redesign/kpop-v1/sources.json。
+- 為保留已存的 themeId 與 XP，沿用十個歷史 ID：babymonster=Asa、ruka=Ruka、ahyeon=Ahyeon、rami=Jisoo、rora=Rora、chiquita=Chiquita、pharita=Pharita、asa-silver=Jennie、ruka-graffiti=Rosé、chiquita-sunset=Lisa。Rami 不在顯示名單中，無資料庫遷移或家庭資料回寫。
+- 新的照片元件在 js/design.js；各人配色 css/kpop-palettes.css；共用舞台、輪廓圖、三種每日陪伴版型、導航 css/kpop.css；導航用原生 SVG。三個陪伴版型使用同一張真實人像，沒有生成不存在的動作。其他二十款主題資料與所有解鎖門檻保持原樣。
+- 預覽：_preview/kpop-gallery.html（十人選擇／分團篩選／原照比較），_preview/app.html 為隔離示範資料。啟動本機預覽曾使用 127.0.0.1:8876。preview/build.py 已包含新預覽頁。
+- 驗證通過 preview/check-kpop.cjs：十人、分團篩選、50 次導覽切換、四尺寸共 40 組版面、照片解碼、重載保持、無 JS 錯誤／正式後端請求。preview/check-kpop-invariants.cjs：30 個 ID／門檻保持、其他20主題不變、data.js 資料存取函式不變、任務完成與取消、家長主題庫、海賊王／寶可夢 smoke、大字320px。證據 _qa/kpop-v1/。
+- 僅測 Chromium 模擬尺寸，未測實體手機／Safari。未 commit、push 或發布正式網站；原有未追蹤的其他重繪資產保持原狀。
+
+---
+
 # 2026-10-15 60 張新姿勢正式上線，單輪驗證通過
 
 - 最新授權：先發布已完成 60 張，寶可夢保留既有 30 張。產品提交 4330d48，Pages 發布 c4bbe6c182f50ff83c86394c9b697ea23bc6d778，狀態 built。正式網址 https://yuan18168.github.io/JFKD_Website/ 。

@@ -58,7 +58,17 @@ const JDesign = (() => {
     'theme-sanji.webp':.102,'theme-shanks.webp':.071,'theme-usopp.webp':.058,
     'theme-zoro.webp':.108
   });
+  function photoStage(w,hero=false){
+    return `<div class="kpop-stage"><img class="kpop-photo" src="images/redesign/${esc(w.image)}" alt="${esc(w.character)} 柔光時尚造型" width="1672" height="941" ${hero?'fetchpriority="high"':'loading="lazy"'} decoding="async"></div>`;
+  }
+  // Display order only: preserve saved theme IDs and XP unlock thresholds.
+  function themeList(){
+    const list=Object.values(STUDENT_THEMES),order=["ruka","pharita","asa","ahyeon","rora","chiquita","jisoo","jennie","rose","lisa"];
+    const stage=list.filter(t=>t.series==='stage').sort((a,b)=>order.indexOf(a.memberId)-order.indexOf(b.memberId));let i=0;
+    return list.map(t=>t.series==='stage'?stage[i++]:t);
+  }
   function artworkHtml(w,hero=false){
+    if(w.imageMode==='photo')return photoStage(w,hero);
     if(w.imageMode==='character'){
       const x=w.sceneColumns>1?w.sceneIndex%w.sceneColumns/(w.sceneColumns-1)*100:0,y=w.sceneRows>1?Math.floor(w.sceneIndex/w.sceneColumns)/(w.sceneRows-1)*100:0;
       const scene=w.sceneImage?`background-image:url('images/redesign/${w.sceneImage}');background-size:cover;background-position:center`:`background-image:url('images/redesign/${w.sceneAtlas}');background-size:${w.sceneColumns*100}% ${w.sceneRows*100}%;background-position:${x}% ${y}%`;
@@ -84,6 +94,10 @@ const JDesign = (() => {
   function companion(student,slot){
     const id=student.themeId;
     if(!worlds[id]?.character||!['task','streak','growth'].includes(slot))return '';
+    if(worlds[id].imageMode==='photo'){
+      const w=worlds[id],labels={task:'練習時間',streak:'每天一點進步',growth:'為自己喝采'};
+      return `<span class="character-stage character-stage-${slot} kpop-companion" style="--stage-accent:${w.color};--stage-light:${w.light}"><img class="kpop-action" src="images/redesign/kpop-complete/${esc(w.memberId)}-${{task:"read",streak:"wave",growth:"celebrate"}[slot]}.webp" alt="${esc(w.character)} ${labels[slot]}" width="800" height="1200" loading="lazy" decoding="async"></span>`;
+    }
     const realistic=worlds[id].series==='stage',folder=worlds[id].series==='pokemon'?'poses-v1':'poses-v2';
     return `<span class="character-stage character-stage-${slot}${realistic?' is-realistic':''}" aria-hidden="true"><img class="character-pose" src="images/redesign/${folder}/${esc(id)}-${slot}.webp" width="${folder==='poses-v2'?600:320}" height="${folder==='poses-v2'?720:360}" alt="" loading="lazy" decoding="async"></span>`;
   }
@@ -111,6 +125,8 @@ const JDesign = (() => {
     const title=w.label;
     const copy=typeof THEME_COPY!=='undefined'?THEME_COPY[id]:null;
     const quote=copy?encouragement(student,id,copy.quotes):w.description;
+    if(w.imageMode==='photo')return `<section class="kpop-hero" style="--stage-accent:${w.color};--stage-light:${w.light}" aria-label="${esc(w.character)} 專屬主題">
+      <div class="kpop-hero-copy"><span class="kpop-eyebrow">K-POP 女團 <b>／</b> ${esc(w.group)}</span><h2>${esc(w.character)}</h2><p class="kpop-scene">${esc(w.scene)}</p><p class="kpop-intro">${esc(copy?.intro||w.description)}</p><div class="kpop-encouragement"><span>給今天的你</span><p>${esc(quote)}</p></div><span class="kpop-date">${icon('spark')}${d.day}</span></div>${photoStage(w,true)}<span class="kpop-hero-ticket" aria-hidden="true">DAILY ENCORE / YOUR OWN STAGE</span></section>`;
     const headTop=heroHeadTop[w.image];
     const framed=headTop!==undefined;
     // Crop only ~0.6% of source height beyond the hairline; keep the feet.
@@ -122,7 +138,7 @@ const JDesign = (() => {
       <div class="world-copy"><div class="eyebrow">${w.en}</div><h2>${esc(title)}</h2><p class="world-intro">${esc(copy?.intro||w.description)}</p>${copy?`<div class="world-encouragement"><span class="world-encouragement-label">給今天的你</span><p>${esc(quote)}</p></div>`:''}<span class="world-date">${pose||icon('spark')}${d.day}</span></div>
     </section>`;
   }
-  function themeArt(id){const w=worlds[id]||worlds[''];return `<div class="theme-art world-${id||'default'}">${artworkHtml(w)}<span class="theme-edition">${w.en}</span></div>`;}
+  function themeArt(id){const w=worlds[id]||worlds[''];return `<div class="theme-art world-${id||'default'}${w.imageMode==='photo'?' kpop-theme-art':''}">${artworkHtml(w)}${w.imageMode==='photo'?'':`<span class="theme-edition">${w.en}</span>`}</div>`;}
   function polish(){
     document.querySelectorAll('.kid-tab').forEach(el=>{const i=el.querySelector('.kid-tab-icon');if(i&&!i.dataset.drawn){const dot=i.querySelector('.kid-tab-dot');i.innerHTML=icon(el.dataset.tab);if(dot)i.append(dot);i.dataset.drawn='1';}el.setAttribute('aria-current',el.classList.contains('active')?'page':'false');});
     [['kidThemeEntryBtn','theme','主題造型'],['parentLink','parent','家長模式'],['kidLogoutBtn','logout','登出']].forEach(([id,type,label])=>{const el=document.getElementById(id);if(el&&!el.dataset.drawn){el.innerHTML=icon(type);el.setAttribute('aria-label',label);el.dataset.drawn='1';}});
@@ -132,5 +148,5 @@ const JDesign = (() => {
     document.querySelectorAll('button[title]:not([aria-label])').forEach(b=>b.setAttribute('aria-label',b.title));
   }
   document.addEventListener('DOMContentLoaded',()=>{polish();let scheduled=false;new MutationObserver(()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;polish();});}).observe(document.body,{childList:true,subtree:true});});
-  return {worlds,icon,badge,hero,themeArt,taskWorld,companion};
+  return {worlds,themeList,icon,badge,hero,themeArt,taskWorld,companion};
 })();
