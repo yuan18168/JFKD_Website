@@ -61,11 +61,9 @@ const JDesign = (() => {
   function photoStage(w,hero=false){
     return `<div class="kpop-stage"><img class="kpop-photo" src="images/redesign/${esc(w.image)}" alt="${esc(w.character)} 柔光時尚造型" width="1672" height="941" ${hero?'fetchpriority="high"':'loading="lazy"'} decoding="async"></div>`;
   }
-  // Display order only: preserve saved theme IDs and XP unlock thresholds.
+  // One source of truth: display order follows the actual unlock thresholds.
   function themeList(){
-    const list=Object.values(STUDENT_THEMES),order=["ruka","pharita","asa","ahyeon","rora","chiquita","jisoo","jennie","rose","lisa"];
-    const stage=list.filter(t=>t.series==='stage').sort((a,b)=>order.indexOf(a.memberId)-order.indexOf(b.memberId));let i=0;
-    return list.map(t=>t.series==='stage'?stage[i++]:t);
+    return Object.values(STUDENT_THEMES).sort((a,b)=>a.xp-b.xp);
   }
   function artworkHtml(w,hero=false){
     if(w.imageMode==='photo')return photoStage(w,hero);

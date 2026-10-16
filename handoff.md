@@ -1,3 +1,15 @@
+# 2026-10-17 K-POP 專屬導覽與 XP 修正
+
+使用者經 grill-me 確認並以 go 授權執行及發布。每 1,000 XP 解鎖一款，海賊王 → K-POP 女團 → 寶可夢輪流；Pharita 修正為 5,000 XP。K-POP 次序 Ruka、Pharita、Asa、Ahyeon、Rora、Chiquita、Jisoo、Jennie、Rosé、Lisa，門檻 2,000 起每次加 3,000。themeList 與規矩頁統一依 XP 排列。歷史 ID、40 張已核准人像、其他 20 個主題及資料讀寫函式不變。
+
+50 個內建 image_gen 獨立生成的透明立體道具置於 images/redesign/kpop-navigation。每人五個不同造型，配合各自金屬／水晶／花園／時裝／弦樂等設計語彙，非僅換色，亦非官方個人標誌。K-POP 導覽底座為 rgba(29,25,36,.80)、16px 模糊；圖示與文字不透明。提供不支援模糊及降低透明度設定的實色備援。
+
+本機通過 30 個循環門檻／90 個邊界值、Pharita 4,999／5,000／6,122 XP 實際頁面、50 圖載入、40 組大字版面、50 次導覽、保存重載、其他系列 smoke。圖片透明度及唯一性已核對。Chromium 模擬，未測實體 Safari；測試隔離示範資料，未操作真實家庭資料。
+
+提示詞與來源：preview/kpop-navigation/plan.json、references.md、results/；本機前後報告與部署／上線驗證：_release/20261017-kpop-nav50/index.html、deployment.json、live-smoke.json。發布前基線 3cc6aabe070a3d62fbd234af17f2aeea52582cd7，before-source.zip 已保存。正式 HTML 快取版本 20261017nav50。
+
+---
+
 # 2026-10-17 K-POP 女團四十張正式整合
 
 使用者已確認全員並授權上線。40 張來源 preview/kpop-complete；正式素材 images/redesign/kpop-complete，內建 image_gen 參考本人不同照片設計。BABYMONSTER：Ruka、Pharita、Asa、Ahyeon、Rora、Chiquita；BLACKPINK：Jisoo、Jennie、Rosé、Lisa。JDesign.themeList 僅調整顯示順序，歷史 themeId 與各項 XP 門檻保持。首頁、主題卡、任務／打卡／成長三動作同步更新。原照遮罩版本已被此次使用者核准稿取代。

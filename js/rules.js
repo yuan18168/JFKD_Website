@@ -80,7 +80,7 @@
   document.getElementById("badgeList").innerHTML = groupHtml;
 
   // ---- 主題解鎖門檻 ----
-  const themeRows = ["", ...Object.keys(STUDENT_THEMES)]
+  const themeRows = ["", ...JDesign.themeList().map(t=>t.id)]
     .map((id) => {
       const t = id ? getStudentTheme(id) : { name: "預設主題", tagline: "乾淨清爽的預設配色" };
       if (!t) return "";

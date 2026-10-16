@@ -81,3 +81,18 @@
 .kpop-hero>.kpop-stage .kpop-photo{object-fit:contain!important}
 .kid-tabbar[data-series="stage"]{background:var(--theme-nav)!important}
 @media(max-width:900px){.kpop-hero{aspect-ratio:auto}}
+/* K-POP collectible props on a translucent dark glass shelf. */
+body.kid-app .kid-tabbar[data-series="stage"][data-props="true"]{
+ --prop-rim:var(--kpop-light);--prop-highlight:#ffffff55;--prop-glow:var(--kpop-light);--prop-label:#fff;
+ background:rgba(29,25,36,.80)!important;
+ backdrop-filter:blur(16px) saturate(125%);-webkit-backdrop-filter:blur(16px) saturate(125%);
+ border:1px solid color-mix(in srgb,var(--kpop-light) 55%,transparent);border-top-color:#ffffff60;
+ box-shadow:inset 0 1px 0 #ffffff18,0 8px 28px #18122135;border-radius:24px;
+}
+body.kid-app .kid-tabbar[data-series="stage"]:before,body.kid-app .kid-tabbar[data-series="stage"]:after{display:none}
+body.kid-app .kid-tabbar[data-series="stage"] .kid-tab{color:#fff;opacity:1}
+body.kid-app .kid-tabbar[data-series="stage"] .kid-tab .kid-tab-icon{background:transparent;border:0;box-shadow:none}
+body.kid-app .kid-tabbar[data-series="stage"] .kid-tab.active{background:color-mix(in srgb,var(--kpop-light) 16%,transparent);border-radius:14px}
+body.kid-app .kid-tabbar[data-series="stage"] .kid-tab.active .nav-prop{filter:drop-shadow(0 3px 2px #0006) drop-shadow(0 0 5px var(--kpop-light))}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){body.kid-app .kid-tabbar[data-series="stage"][data-props="true"]{background:#211c29!important}}
+@media(prefers-reduced-transparency:reduce){body.kid-app .kid-tabbar[data-series="stage"][data-props="true"]{background:#211c29!important;backdrop-filter:none;-webkit-backdrop-filter:none}}
