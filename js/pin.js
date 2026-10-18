@@ -62,6 +62,7 @@ async function requireParentPin() {
           setTimeout(() => {
             if (buf === String(pin)) {
               sessionStorage.setItem(PARENT_SESSION_KEY, "1");
+              document.removeEventListener("keydown", onKey);
               gate.remove();
               resolve(true);
             } else {

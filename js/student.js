@@ -71,14 +71,7 @@
   document.getElementById("studentName").textContent = student.name;
   document.getElementById("studentMeta").textContent = `${records.length} 筆歷史紀錄`;
 
-  // 套用學生主題造型（原創致敬風格，只影響這一頁）
-  const studentTheme = getStudentTheme(student.themeId);
-  if (studentTheme) {
-    document.body.classList.add(studentTheme.bodyClass);
-    const bannerSlot = document.getElementById("themeBannerSlot");
-    if (bannerSlot) bannerSlot.innerHTML = themeBannerHtml(student.themeId, student.name, student.bannerTitle, student.bannerTagline);
-  }
-
+  // Parent workspace uses a neutral, readable palette; character worlds remain in child mode.
   // 每一筆紀錄都用「當初套用的設定檔」（沒存過就退回目前的家庭預設檔）來計算，
   // 這樣新增/切換設定檔不會改變舊紀錄已經算出來的結果。
   const enriched = records.map((r) => {
@@ -360,155 +353,34 @@
     renderBadges({ rows, progressCount, defenseCount, streak, punishCount });
   }
 
-  // ---- 成就徽章：把累計數字包裝成可解鎖的徽章，達成前顯示「還差幾次解鎖」增加動力 ----
-  // 設計原則（家長明確要求）：任何徽章都不能因為「單一一次失手」就永久無法達成。
-  // 因此每個徽章都設計成以下三種安全類型之一：
-  //   ①累計型：只會越來越多、永遠不會倒退（例如累計次數／累計金額）
-  //   ②里程碑型：只要歷史上發生過一次就永久成立的事實（例如「曾經考過100分」）
-  //   ③滾動型：像連續達標一樣可能重置，但永遠可以再挑戰一次，不會被「打入永久冷宮」
-  // 舊版「零處罰紀錄」（一次處罰就永遠無緣）已被移除，改為「📈 分數新高」等安全設計。
-  function renderBadges({ rows, progressCount, defenseCount, streak }) {
+  // 與孩子圖鑑共用定義、圖稿及判定；瀏覽家長頁不寫入成就資料。
+  function renderBadges({ rows }) {
     const el = document.getElementById("achievementBadges");
     if (!el) return;
-
-    const oldestFirst = [...rows].reverse(); // 由舊到新，方便做「歷史上是否發生過」的判斷
-
-    // 4. 💯 滿分紀錄（里程碑型）：任一科目曾經拿到最高級距
-    const hasPerfectScore = rows.some((r) => (r.result.detail || []).some((d) => d.tierKey === "A"));
-
-    // 5. 📈 分數新高（里程碑型）：歷史上曾經有一次紀錄的平均分，超越在它之前所有紀錄的最高平均分
-    let hasNewHigh = false;
-    {
-      let runningMax = null;
-      oldestFirst.forEach((r, idx) => {
-        const avg = r.result.avgScore;
-        if (idx > 0 && avg > runningMax) hasNewHigh = true;
-        runningMax = runningMax === null ? avg : Math.max(runningMax, avg);
-      });
-    }
-
-    // 6. 🚀 大躍進（里程碑型）：任一科目單次進步幅度達 10 分以上
-    const hasBigJump = rows.some((r) =>
-      (r.subjects || []).some((s) => typeof s.prevScore === "number" && s.score - s.prevScore >= 10)
-    );
-
-    // 7. 🌟 全科同框（里程碑型）：同一次紀錄裡，所有科目都達 90 分以上
-    const hasAllSubjects90 = rows.some((r) => (r.subjects || []).length > 0 && r.subjects.every((s) => s.score >= 90));
-
-    // 8. 🎖️ 連續衛冕（里程碑型）：曾經連續兩次紀錄都至少有一科衛冕成功
-    let hasConsecutiveDefense = false;
-    for (let i = 0; i < rows.length - 1; i++) {
-      const a = (rows[i].result.detail || []).some((d) => d.defenseBonus > 0);
-      const b = (rows[i + 1].result.detail || []).some((d) => d.defenseBonus > 0);
-      if (a && b) {
-        hasConsecutiveDefense = true;
-        break;
-      }
-    }
-
-    // 9. 🧗 谷底翻身（里程碑型）：任一科目曾經從 80 分以下進步到 80 分以上
-    const hasComeback80 = rows.some((r) =>
-      (r.subjects || []).some((s) => typeof s.prevScore === "number" && s.prevScore < 80 && s.score >= 80)
-    );
-
-    // 10. 🔁 五連勝（里程碑型）：歷史上曾經連續 5 次紀錄，平均分都達 90 分以上
-    let hasFiveStreak90 = false;
-    for (let i = 0; i <= rows.length - 5; i++) {
-      if (rows.slice(i, i + 5).every((r) => r.result.avgScore >= 90)) {
-        hasFiveStreak90 = true;
-        break;
-      }
-    }
-
-    // 12. 🌈 全科進步（里程碑型）：同一次紀錄中，所有「有前次分數可比對」的科目都進步了
-    const hasAllImproved = rows.some((r) => {
-      const withPrev = (r.subjects || []).filter((s) => typeof s.prevScore === "number");
-      return withPrev.length > 0 && withPrev.every((s) => s.score > s.prevScore);
+    const bonus = totalBonus + (Number(student.ruleBonusTotal) || 0);
+    const ctx = buildBadgeContext({
+      rows, totalBonus: bonus, student,
+      streak: normalizeStreak(student.streak),
+      taskStats: buildTaskStats(student, normalizeDailyTasks(student.dailyTasks)),
+      totalXp: Math.max(0, Math.round(bonus)) + (Number(student.xpFromTasks) || 0),
+      moodStreak: student.moodStreak || { best: student.moodStreakBest || 0 },
     });
-
-    // 13. 🥇 常勝軍（累計型）：累計「全科加碼」達成次數
-    const comboCount = rows.filter((r) => r.result.comboBonus > 0).length;
-
-    // 14. 🕰️ 持之以恆（累計型）：最早與最新紀錄的日期相差達半年（182天）以上
-    let longHaulDays = 0;
-    {
-      const dates = rows.map((r) => r.date).filter(Boolean).sort();
-      if (dates.length >= 2) {
-        const first = new Date(dates[0]);
-        const last = new Date(dates[dates.length - 1]);
-        longHaulDays = Math.round((last - first) / (1000 * 60 * 60 * 24));
-      }
-    }
-
-    // 16. 🎓 科科精通（累計型）：曾經考過 100 分的「不同科目數」
-    const subjectsHit100 = new Set();
-    rows.forEach((r) => (r.subjects || []).forEach((s) => { if (s.score >= 100) subjectsHit100.add(s.name); }));
-    const masterCount = subjectsHit100.size;
-
-    // 17. 🦸 逆風翻盤（里程碑型）：曾經處罰後，下一次紀錄就恢復正常
-    let hasComebackAfterPunishment = false;
-    for (let i = 0; i < oldestFirst.length - 1; i++) {
-      if (oldestFirst[i].result.hasPunishment && !oldestFirst[i + 1].result.hasPunishment) {
-        hasComebackAfterPunishment = true;
-        break;
-      }
-    }
-
-    // 18. 🌻 穩健成長（滾動型，跟「連續達標」一樣可重來）：最近 5 次紀錄，最新一次比 5 次前更好
-    let hasSteadyGrowth = false;
-    if (rows.length >= 5) {
-      const windowRows = rows.slice(0, 5); // index0=最新，index4=這個區間內最舊的一筆
-      hasSteadyGrowth = windowRows[0].result.avgScore > windowRows[4].result.avgScore;
-    }
-
-    // 19. 🎁 願望達成（累計型）：許願池中曾經有項目標記為已兌換
-    const wishlistRedeemed = ((student && student.wishlist) || []).some((item) => !!item.redeemedDate);
-
-    // 20. 🧩 全能挑戰（里程碑型）：同一次紀錄同時出現「進步獎金」＋「衛冕獎金」＋「全科加碼」
-    const hasAllInOne = rows.some((r) => {
-      const detail = r.result.detail || [];
-      const hasProgress = detail.some((d) => d.progressBonus > 0);
-      const hasDefense = detail.some((d) => d.defenseBonus > 0);
-      return hasProgress && hasDefense && r.result.comboBonus > 0;
-    });
-
-    // 每個徽章都有兩種文字：
-    // ・hint：只有「未解鎖」時顯示在徽章下方的小字，會動態倒數還差幾次／幾分（給還沒達成的人看的進度提示）
-    // ・desc：不管解鎖與否，滑鼠移上去（title tooltip）永遠顯示的「解鎖條件」固定說明，
-    //         這樣已經解鎖的徽章也能讓小朋友知道自己「為什麼」拿到這個徽章，而不是只顯示「已解鎖！」
-    const badges = [
-      { icon: "🔥", label: "進步達人", unlocked: progressCount >= 5, desc: "累計進步達 5 次即可解鎖", hint: `再進步 ${Math.max(0, 5 - progressCount)} 次解鎖` },
-      { icon: "🏆", label: "衛冕高手", unlocked: defenseCount >= 5, desc: "累計衛冕達 5 次即可解鎖", hint: `再衛冕 ${Math.max(0, 5 - defenseCount)} 次解鎖` },
-      { icon: "🎯", label: "連續達標", unlocked: streak >= 3, desc: "連續 3 次紀錄都沒有處罰即可解鎖", hint: `連續 3 次沒有處罰即可解鎖（目前連續 ${streak} 次）` },
-      { icon: "💯", label: "滿分紀錄", unlocked: hasPerfectScore, desc: "任一科目考到最高級距即可解鎖", hint: "任一科目考到最高級距即可解鎖" },
-      { icon: "📈", label: "分數新高", unlocked: hasNewHigh, desc: "刷新個人歷史最高平均分即可解鎖", hint: "刷新個人歷史最高平均分即可解鎖" },
-      { icon: "🚀", label: "大躍進", unlocked: hasBigJump, desc: "單科單次進步達 10 分以上即可解鎖", hint: "單科單次進步達 10 分以上即可解鎖" },
-      { icon: "🌟", label: "全科同框", unlocked: hasAllSubjects90, desc: "同一次紀錄所有科目都達 90 分以上即可解鎖", hint: "同一次紀錄所有科目都達 90 分以上即可解鎖" },
-      { icon: "🎖️", label: "連續衛冕", unlocked: hasConsecutiveDefense, desc: "連續兩次紀錄都有科目衛冕成功即可解鎖", hint: "連續兩次紀錄都有科目衛冕成功即可解鎖" },
-      { icon: "🧗", label: "谷底翻身", unlocked: hasComeback80, desc: "任一科目從 80 分以下進步到 80 分以上即可解鎖", hint: "任一科目從 80 分以下進步到 80 分以上即可解鎖" },
-      { icon: "🔁", label: "五連勝", unlocked: hasFiveStreak90, desc: "連續 5 次紀錄平均分都達 90 分以上即可解鎖", hint: "連續 5 次紀錄平均分都達 90 分以上即可解鎖" },
-      { icon: "📚", label: "全勤紀錄", unlocked: rows.length >= 10, desc: "累計紀錄達 10 筆即可解鎖", hint: `再新增 ${Math.max(0, 10 - rows.length)} 筆紀錄即可解鎖` },
-      { icon: "🌈", label: "全科進步", unlocked: hasAllImproved, desc: "同一次紀錄中，有比較對象的科目全部都要進步即可解鎖", hint: "同一次紀錄中，有比較對象的科目全部都要進步即可解鎖" },
-      { icon: "🥇", label: "常勝軍", unlocked: comboCount >= 3, desc: "累計 3 次全科加碼即可解鎖", hint: `再達成 ${Math.max(0, 3 - comboCount)} 次全科加碼即可解鎖` },
-      { icon: "🕰️", label: "持之以恆", unlocked: longHaulDays >= 182, desc: "記錄時間橫跨半年（182天）以上即可解鎖", hint: "記錄時間橫跨半年（182天）以上即可解鎖" },
-      { icon: "💰", label: "小富翁", unlocked: totalBonus >= 5000, desc: "累計獎金達 NT$5,000 即可解鎖", hint: `累計獎金再達 ${fmtMoney(Math.max(0, 5000 - totalBonus))} 即可解鎖` },
-      { icon: "🎓", label: "科科精通", unlocked: masterCount >= 3, desc: "3 個不同科目都考到 100 分即可解鎖", hint: `再有 ${Math.max(0, 3 - masterCount)} 個不同科目考到 100 分即可解鎖` },
-      { icon: "🦸", label: "逆風翻盤", unlocked: hasComebackAfterPunishment, desc: "處罰後，下一次紀錄恢復正常即可解鎖", hint: "處罰後，下一次紀錄恢復正常即可解鎖" },
-      { icon: "🌻", label: "穩健成長", unlocked: hasSteadyGrowth, desc: "最近 5 次紀錄要比 5 次之前更好即可解鎖", hint: "最近 5 次紀錄要比 5 次之前更好即可解鎖" },
-      { icon: "🎁", label: "願望達成", unlocked: wishlistRedeemed, desc: "完成兌換任一許願池項目即可解鎖", hint: "完成兌換任一許願池項目即可解鎖" },
-      { icon: "🧩", label: "全能挑戰", unlocked: hasAllInOne, desc: "同一次紀錄同時有進步獎金、衛冕獎金、全科加碼即可解鎖", hint: "同一次紀錄同時有進步獎金、衛冕獎金、全科加碼即可解鎖" },
-    ];
-
-    el.innerHTML = badges
-      .map(
-        (b) => `
-      <div class="badge-chip ${b.unlocked ? "unlocked" : "locked"}" title="${escapeHtml(b.desc)}">
-        <span class="badge-chip-icon">${b.icon}</span>
-        <span class="badge-chip-label">${b.label}</span>
-        ${!b.unlocked ? `<span class="badge-chip-hint">${escapeHtml(b.hint)}</span>` : ""}
-      </div>`
-      )
-      .join("");
+    const result = evaluateBadges(ctx, student.badges || {}, todayStr());
+    el.className = "parent-badge-grid";
+    el.innerHTML = result.list.map((badge, index) => {
+      const secret = badge.hidden && !badge.unlocked;
+      return `<details class="parent-badge ${badge.unlocked ? 'unlocked' : 'locked'}" data-achievement="${badge.id}">
+        <summary>
+          <span class="parent-badge-art">${JDesign.badge(badge.id, secret)}</span>
+          <span class="parent-badge-name">${secret ? '???' : escapeHtml(badge.name)}</span>
+          <span class="parent-badge-number">${secret ? 'SECRET' : 'NO. ' + String(index + 1).padStart(3, '0')}</span>
+          <span class="parent-badge-status">${badge.unlocked ? '已解鎖' : '未解鎖'} · 查看詳情</span>
+        </summary>
+        <div class="parent-badge-detail">${secret ? '隱藏成就，等待你來發現。' : escapeHtml(badge.desc)}
+          ${badge.unlocked && badge.date ? `<p>解鎖日期：${escapeHtml(badge.date)}</p>` : ''}
+        </div>
+      </details>`;
+    }).join('');
   }
 
   function renderChart(rows) {
@@ -1031,7 +903,7 @@
       editingRecordId = null;
       setFormMode("create");
       setDashboardSummaryVisible(false);
-      document.getElementById("fDate").valueAsDate = new Date();
+      document.getElementById("fDate").value = todayStr();
       document.getElementById("fExamType").value = "期中";
       document.getElementById("fNote").value = "";
       const punishmentSelectReset = document.getElementById("fPunishmentStatus");
@@ -1062,7 +934,7 @@
       setDashboardSummaryVisible(true);
     });
 
-    document.getElementById("fDate").valueAsDate = new Date();
+    document.getElementById("fDate").value = todayStr();
 
     // ---- 分數區間驗證（0-100） ----
     function validateScoreInput(input) {

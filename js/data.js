@@ -1875,7 +1875,17 @@ function settlementWeeksOf(student, rules) {
   return weeks.reverse();
 }
 
-/** 這位學生「需要家長處理」的事項：未執行的結算處罰、未發放的結算獎金、未執行的單筆登記 */
+/** Display the owning settlement's state, including legacy date-based associations. */
+function violationDisplayStatus(student, violation) {
+  if (violation.executedStatus === "done") return {label:"已執行",pending:false};
+  if (!violation.settled) return {label:"待執行",pending:true};
+  const settlement = settlementWeeksOf(student).find(w => w.details.some(d => d.kind === "violation" && d.raw.id === violation.id && d.countedInNet))?.settlement;
+  if (!settlement) return {label:"已結算・待核對",pending:true};
+  if (settlement.netJumpingJacks > 0) return {label:settlement.punishmentStatus === "done" ? "已隨週結算執行" : "併入週結算待執行",pending:settlement.punishmentStatus !== "done",settlementId:settlement.id};
+  return {label:"已併入結算",pending:false,settlementId:settlement.id};
+}
+
+/** Pending responsibilities, counted once at their owning record. */
 function pendingActionsOf(student) {
   const out = [];
   (student.ruleSettlements || []).forEach((s) => {

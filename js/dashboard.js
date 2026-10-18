@@ -34,7 +34,7 @@
   // 同一筆紀錄若兩者都尚未處理，算 2 項（因為確實有 2 件事要處理）。
   const pendingPunishmentCount = allEnriched.filter((r) => r.result.hasPunishment && r.punishmentStatus !== "done").length;
   const pendingBonusCount = allEnriched.filter((r) => r.total > 0 && r.bonusStatus !== "done").length;
-  const pendingItems = pendingPunishmentCount + pendingBonusCount;
+  const pendingItems = pendingPunishmentCount + pendingBonusCount + students.reduce((n, st) => n + pendingActionsOf(st).length, 0);
 
   const statCards = document.getElementById("statCards");
   statCards.innerHTML = [
@@ -44,8 +44,40 @@
     statCard("待處理項目", pendingItems, pendingItems > 0 ? "down" : ""),
   ].join("");
 
+  renderWorkQueue();
   renderStudentCards();
   renderRecentByStudent();
+
+  function renderWorkQueue() {
+    let queue = document.getElementById("workQueue");
+    if (!queue) { queue = document.createElement("section");queue.id="workQueue";queue.className="work-queue";document.getElementById("statCards").before(queue); }
+    const items = students.flatMap((student,i) => [
+      ...pendingActionsOf(student).map(a => ({...a,student})),
+      ...enrichedByStudent[i].flatMap(r => [
+        ...(r.total > 0 && r.bonusStatus !== "done" ? [{type:"examBonus",id:r.id,title:`待發放 ${fmtMoney(r.total)}`,sub:`${r.date} · ${r.examType || "考試"}`,student}] : []),
+        ...(r.result.hasPunishment && r.punishmentStatus !== "done" ? [{type:"examPunishment",id:r.id,title:"考試處罰待執行",sub:`${r.date} · ${r.examType || "考試"}`,student}] : [])
+      ])
+    ]);
+    queue.innerHTML = `<div class="work-queue-head"><div><h2>今天，需要你處理 <span>${items.length}</span></h2><p>所有孩子的未完成事項，不受月份限制</p></div><button class="btn btn-primary" id="queueAdd">＋ 登記事項</button></div>` +
+      (items.length ? items.map((a,i) => `<div class="work-item"><div class="work-item-copy"><strong>${escapeHtml(a.student.name)} · ${escapeHtml(a.title)}</strong><small>${escapeHtml(a.sub)}</small></div><button class="btn btn-primary" data-queue-action="${i}">${["bonus","examBonus"].includes(a.type) ? "標記已發放" : "標記已執行"}</button></div>`).join('') : '<div class="work-empty">目前沒有待處理事項，所有進度都已更新。</div>');
+    queue.querySelector('#queueAdd').onclick=()=>openQuickViolationModal(students);
+    queue.querySelectorAll('[data-queue-action]').forEach(btn => btn.onclick=async()=>{
+      const a=items[Number(btn.dataset.queueAction)];
+      const ok=await confirmDialog(`${a.student.name}：${a.title}，確認已完成？`,{title:"確認完成事項",confirmText:"確認完成",danger:false});
+      if(!ok)return;
+      btn.disabled=true;
+      try {
+        // Re-read the student before updating an array-backed record.
+        const fresh=await getStudent(a.student.id);
+        if(a.type==="punishment")await markRulePunishmentDone(fresh,a.id,true);
+        else if(a.type==="bonus")await markRuleBonusPaid(fresh,a.id,true);
+        else if(a.type==="violation")await setViolationExecuted(fresh,a.id,true);
+        else await updateExamRecord(a.id,{[a.type==="examBonus"?"bonusStatus":"punishmentStatus"]:"done"});
+        location.reload();
+      } catch(e){showToast("儲存失敗，請重試："+e.message);btn.disabled=false;}
+    });
+  }
+  document.addEventListener("jfkd:violation-logged",()=>location.reload());
 
   // ---- 學生卡片（含每人一張小型平均趨勢圖）----
   function renderStudentCards() {

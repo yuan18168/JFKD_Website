@@ -131,6 +131,10 @@
 
   function unsettledRowHtml(student, v) {
     const executed = v.executedStatus === "done";
+    const status = violationDisplayStatus(student, v);
+    if (v.settled && v.settledBy !== "manualExecute") {
+      return '<div class="settle-pending-row"><span class="settle-pending-main">' + escapeHtml(v.loggedAt || '') + ' · ' + escapeHtml(v.reason || '臨時登記') + ' · ' + Number(v.count || 0) + ' 下</span><span class="badge ' + (status.pending ? 'badge-warn' : 'badge-done') + '">' + escapeHtml(status.label) + '</span>' + (status.settlementId ? '<button class="btn btn-sm" data-show-settlement="' + escapeHtml(status.settlementId) + '">查看週結算</button>' : '<span class="text-faint">找不到對應結算，請核對歷史紀錄</span>') + '</div>';
+    }
     const ruleName = v.ruleId ? (((student.rules || []).find((r) => r.id === v.ruleId) || {}).name || "（規矩已刪除）") : "臨時登記";
     return '<div class="settle-pending-row" data-violation-row="' + v.id + '">' +
       '<span class="badge badge-normal">' + escapeHtml(ruleName) + '</span>' +
@@ -151,15 +155,13 @@
   }
 
   function unsettledSectionHtml(student) {
-    // 涵蓋兩種「還沒被週結算捲走」的登記：尚未結算的，以及被家長當場標記已執行而排除在結算外的。
-    // 若只用 unsettledViolationsOf()，第二種一按「完成」整列就會消失，按錯也找不到地方取消。
+    // Keep all registrations visible, including their transferred settlement status.
     const list = (student.ruleViolations || [])
-      .filter((v) => !v.settled || v.settledBy === "manualExecute")
       .slice()
       .sort((a, b) => entryInstantMs(b, "loggedAt", "loggedAtMs") - entryInstantMs(a, "loggedAt", "loggedAtMs"));
     if (!list.length) return "";
-    return '<div class="settle-pending-box"><div class="settle-pending-head">本週已登記、尚未結算的單筆處罰（' + list.length + '）</div>' +
-      '<div class="text-faint settle-pending-note">這些會在下次結算時併入淨值；若已當場執行完，可直接按「完成」把它排除在結算之外，避免重複處罰。</div>' +
+    return '<div class="settle-pending-box"><div class="settle-pending-head">全部單筆登記（' + list.length + '）</div>' +
+      '<div class="text-faint settle-pending-note">未結算項目可直接完成；已併入週結算的項目會保留在此供核對，執行狀態由週結算管理。</div>' +
       list.map((v) => unsettledRowHtml(student, v)).join("") + '</div>';
   }
 
@@ -202,6 +204,15 @@
   function refreshAfter(u) { replaceStudent(u); render(); }
 
   function bindAll() {
+    wrap.querySelectorAll('[data-show-settlement]').forEach((button) => button.addEventListener('click', () => {
+      const row = [...wrap.querySelectorAll('[data-settlement-row]')].find(el => el.dataset.settlementRow === button.dataset.showSettlement);
+      if (!row) return;
+      const group = row.closest('details');
+      if (group) group.open = true;
+      row.scrollIntoView({behavior:'smooth',block:'center'});
+      row.tabIndex = -1;
+      row.focus({preventScroll:true});
+    }));
     wrap.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => { activeStudentId = b.dataset.tab; render(); }));
 
     wrap.querySelectorAll("[data-todo-type]").forEach((btn) => btn.addEventListener("click", async () => {

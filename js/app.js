@@ -609,9 +609,8 @@
       })(),
     }));
     const violationItems = (student.ruleViolations || []).map((v) => {
-      const tag = v.executedStatus === "done"
-        ? '<span class="rule-settlement-tag done">已執行</span>'
-        : '<span class="rule-settlement-tag pending">待執行</span>';
+      const status = violationDisplayStatus(student, v);
+      const tag = `<span class="rule-settlement-tag ${status.pending ? 'pending' : 'done'}">${escapeHtml(status.label)}</span>`;
       const reasonText = v.reason ? `｜${escapeHtml(v.reason)}` : "";
       return {
         ms: entryInstantMs(v, "loggedAt", "loggedAtMs"),
@@ -619,7 +618,7 @@
           <span style="margin-left:auto">${v.count} 下</span>${tag}</div>`,
       };
     });
-    const list = [...settlementItems, ...violationItems].sort((a, b) => b.ms - a.ms).slice(0, 10);
+    const list = [...settlementItems, ...violationItems].sort((a, b) => b.ms - a.ms);
     if (!list.length) return "";
     return `<div class="rule-week-summary">
       <div class="kid-card-title">📅 處罰／結算紀錄</div>
