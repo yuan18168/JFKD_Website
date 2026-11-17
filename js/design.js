@@ -96,6 +96,10 @@ const JDesign = (() => {
       const w=worlds[id],labels={task:'練習時間',streak:'每天一點進步',growth:'為自己喝采'};
       return `<span class="character-stage character-stage-${slot} kpop-companion" style="--stage-accent:${w.color};--stage-light:${w.light}"><img class="kpop-action" src="images/redesign/kpop-complete/${esc(w.memberId)}-${{task:"read",streak:"wave",growth:"celebrate"}[slot]}.webp" alt="${esc(w.character)} ${labels[slot]}" width="800" height="1200" loading="lazy" decoding="async"></span>`;
     }
+    if(worlds[id].artVersion==='cinema-v2'){
+      const labels={task:'專注任務',streak:'持續前進',growth:'成長慶祝'};
+      return '<span class="character-stage character-stage-'+slot+' is-cinema"><img class="character-pose" src="images/redesign/onepiece-cinema-v2/'+esc(id)+'-'+slot+'.webp" alt="'+esc(worlds[id].character+' · '+labels[slot])+'" width="600" height="720" loading="lazy" decoding="async"></span>';
+    }
     const realistic=worlds[id].series==='stage',folder=worlds[id].series==='pokemon'?'poses-v1':'poses-v2';
     return `<span class="character-stage character-stage-${slot}${realistic?' is-realistic':''}" aria-hidden="true"><img class="character-pose" src="images/redesign/${folder}/${esc(id)}-${slot}.webp" width="${folder==='poses-v2'?600:320}" height="${folder==='poses-v2'?720:360}" alt="" loading="lazy" decoding="async"></span>`;
   }
@@ -118,6 +122,12 @@ const JDesign = (() => {
     quoteVisits.set(who,{id,text});
     return text;
   }
+  function cinemaHero(w,id,d,copy,quote){
+    return '<section class="world-hero onepiece-cinema-hero world-series-onepiece world-'+esc(id)+'" aria-label="'+esc(w.character)+' 專屬主題">'+
+      '<img class="world-art" src="images/redesign/'+esc(w.image)+'" width="1672" height="941" alt="'+esc(w.character+' · '+w.scene)+'" fetchpriority="high" decoding="async">'+
+      '<div class="world-copy"><div class="eyebrow">'+esc(w.en)+'</div><h2>'+esc(w.label)+'</h2><p class="world-intro">'+esc(copy?.intro||w.description)+'</p>'+
+      '<div class="world-encouragement"><span class="world-encouragement-label">給今天的你</span><p>'+esc(quote)+'</p></div><span class="world-date">'+icon('spark')+d.day+'</span></div></section>';
+  }
   function hero(student){
     const id=student.themeId||'',w=worlds[id]||worlds[''],d=dateStyle();
     const title=w.label;
@@ -125,6 +135,7 @@ const JDesign = (() => {
     const quote=copy?encouragement(student,id,copy.quotes):w.description;
     if(w.imageMode==='photo')return `<section class="kpop-hero" style="--stage-accent:${w.color};--stage-light:${w.light}" aria-label="${esc(w.character)} 專屬主題">
       <div class="kpop-hero-copy"><span class="kpop-eyebrow">K-POP 女團 <b>／</b> ${esc(w.group)}</span><h2>${esc(w.character)}</h2><p class="kpop-scene">${esc(w.scene)}</p><p class="kpop-intro">${esc(copy?.intro||w.description)}</p><div class="kpop-encouragement"><span>給今天的你</span><p>${esc(quote)}</p></div><span class="kpop-date">${icon('spark')}${d.day}</span></div>${photoStage(w,true)}<span class="kpop-hero-ticket" aria-hidden="true">DAILY ENCORE / YOUR OWN STAGE</span></section>`;
+    if(w.artVersion==='cinema-v2')return cinemaHero(w,id,d,copy,quote);
     const headTop=heroHeadTop[w.image];
     const framed=headTop!==undefined;
     // Crop only ~0.6% of source height beyond the hairline; keep the feet.
@@ -136,7 +147,7 @@ const JDesign = (() => {
       <div class="world-copy"><div class="eyebrow">${w.en}</div><h2>${esc(title)}</h2><p class="world-intro">${esc(copy?.intro||w.description)}</p>${copy?`<div class="world-encouragement"><span class="world-encouragement-label">給今天的你</span><p>${esc(quote)}</p></div>`:''}<span class="world-date">${pose||icon('spark')}${d.day}</span></div>
     </section>`;
   }
-  function themeArt(id){const w=worlds[id]||worlds[''];return `<div class="theme-art world-${id||'default'}${w.imageMode==='photo'?' kpop-theme-art':''}">${artworkHtml(w)}${w.imageMode==='photo'?'':`<span class="theme-edition">${w.en}</span>`}</div>`;}
+  function themeArt(id){const w=worlds[id]||worlds[''];return `<div class="theme-art world-${id||'default'}${w.imageMode==='photo'?' kpop-theme-art':w.artVersion==='cinema-v2'?' onepiece-cinema-art':''}">${artworkHtml(w)}${w.imageMode==='photo'?'':`<span class="theme-edition">${w.en}</span>`}</div>`;}
   function polish(){
     document.querySelectorAll('.kid-tab').forEach(el=>{const i=el.querySelector('.kid-tab-icon');if(i&&!i.dataset.drawn){const dot=i.querySelector('.kid-tab-dot');i.innerHTML=icon(el.dataset.tab);if(dot)i.append(dot);i.dataset.drawn='1';}el.setAttribute('aria-current',el.classList.contains('active')?'page':'false');});
     [['kidThemeEntryBtn','theme','主題造型'],['parentLink','parent','家長模式'],['kidLogoutBtn','logout','登出']].forEach(([id,type,label])=>{const el=document.getElementById(id);if(el&&!el.dataset.drawn){el.innerHTML=icon(type);el.setAttribute('aria-label',label);el.dataset.drawn='1';}});

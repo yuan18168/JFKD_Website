@@ -313,9 +313,9 @@ async function saveSiteFontScale(scale) {
 const STUDENT_THEMES = {
   "zoro": {
     "id": "zoro",
-    "name": "索隆 · 劍士冒險航線",
+    "name": "索隆 · 瞭望台修練室",
     "character": "索隆",
-    "scene": "劍士冒險航線",
+    "scene": "瞭望台修練室",
     "series": "onepiece",
     "en": "THE SWORDSMAN’S JOURNEY",
     "color": "#217760",
@@ -323,8 +323,9 @@ const STUDENT_THEMES = {
     "tagline": "帶著勇氣出發，向夢想前進一步。",
     "bodyClass": "theme-zoro",
     "xp": 1000,
-    "image": "theme-zoro.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/zoro-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "babymonster": {
     "id": "babymonster",
@@ -368,9 +369,9 @@ const STUDENT_THEMES = {
   },
   "luffy": {
     "id": "luffy",
-    "name": "魯夫 · 草帽啟航日",
+    "name": "魯夫 · 晨光啟航甲板",
     "character": "魯夫",
-    "scene": "草帽啟航日",
+    "scene": "晨光啟航甲板",
     "series": "onepiece",
     "en": "SET SAIL FOR YOUR DREAM",
     "color": "#b65c40",
@@ -378,8 +379,9 @@ const STUDENT_THEMES = {
     "tagline": "夢想的航線，從今天的第一步開始。",
     "bodyClass": "theme-luffy",
     "xp": 4000,
-    "image": "theme-luffy.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/luffy-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "ruka": {
     "id": "ruka",
@@ -423,9 +425,9 @@ const STUDENT_THEMES = {
   },
   "nami": {
     "id": "nami",
-    "name": "娜美 · 橘子島尋寶記",
+    "name": "娜美 · 航海測繪室",
     "character": "娜美",
-    "scene": "橘子島尋寶記",
+    "scene": "航海測繪室",
     "series": "onepiece",
     "en": "MAP YOUR NEXT ADVENTURE",
     "color": "#b36f2c",
@@ -433,8 +435,9 @@ const STUDENT_THEMES = {
     "tagline": "收好每一份努力，畫出自己的航海圖。",
     "bodyClass": "theme-nami",
     "xp": 7000,
-    "image": "theme-nami.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/nami-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "ahyeon": {
     "id": "ahyeon",
@@ -478,9 +481,9 @@ const STUDENT_THEMES = {
   },
   "usopp": {
     "id": "usopp",
-    "name": "騙人布 · 奇想發明工坊",
+    "name": "騙人布 · Pop Green 培育園",
     "character": "騙人布",
-    "scene": "奇想發明工坊",
+    "scene": "Pop Green 培育園",
     "series": "onepiece",
     "en": "BUILD YOUR NEXT IDEA",
     "color": "#9c7c24",
@@ -488,8 +491,9 @@ const STUDENT_THEMES = {
     "tagline": "小小想法，也能變成大大的發明。",
     "bodyClass": "theme-usopp",
     "xp": 10000,
-    "image": "theme-usopp.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/usopp-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "rami": {
     "id": "rami",
@@ -533,9 +537,9 @@ const STUDENT_THEMES = {
   },
   "sanji": {
     "id": "sanji",
-    "name": "香吉士 · 海上星光餐廳",
+    "name": "香吉士 · 千陽號料理廚房",
     "character": "香吉士",
-    "scene": "海上星光餐廳",
+    "scene": "千陽號料理廚房",
     "series": "onepiece",
     "en": "MAKE EVERY DAY SPECIAL",
     "color": "#496b92",
@@ -543,8 +547,9 @@ const STUDENT_THEMES = {
     "tagline": "細心做好每件小事，成長也有好滋味。",
     "bodyClass": "theme-sanji",
     "xp": 13000,
-    "image": "theme-sanji.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/sanji-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "rora": {
     "id": "rora",
@@ -588,9 +593,9 @@ const STUDENT_THEMES = {
   },
   "chopper": {
     "id": "chopper",
-    "name": "喬巴 · 雪國暖心小屋",
+    "name": "喬巴 · 千陽號醫務室",
     "character": "喬巴",
-    "scene": "雪國暖心小屋",
+    "scene": "千陽號醫務室",
     "series": "onepiece",
     "en": "KINDNESS IS A SUPERPOWER",
     "color": "#56899b",
@@ -598,8 +603,9 @@ const STUDENT_THEMES = {
     "tagline": "照顧自己，也把溫暖帶給身邊的人。",
     "bodyClass": "theme-chopper",
     "xp": 16000,
-    "image": "theme-chopper.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/chopper-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "chiquita": {
     "id": "chiquita",
@@ -643,9 +649,9 @@ const STUDENT_THEMES = {
   },
   "robin": {
     "id": "robin",
-    "name": "羅賓 · 古代書海秘境",
+    "name": "羅賓 · 海之森歷史本文",
     "character": "羅賓",
-    "scene": "古代書海秘境",
+    "scene": "海之森歷史本文",
     "series": "onepiece",
     "en": "EVERY PAGE IS A DISCOVERY",
     "color": "#756099",
@@ -653,8 +659,9 @@ const STUDENT_THEMES = {
     "tagline": "翻開新的一頁，讓好奇心帶你探索。",
     "bodyClass": "theme-robin",
     "xp": 19000,
-    "image": "theme-robin-v2.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/robin-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "pharita": {
     "id": "pharita",
@@ -698,9 +705,9 @@ const STUDENT_THEMES = {
   },
   "franky": {
     "id": "franky",
-    "name": "佛朗基 · 超級造船夢工場",
+    "name": "佛朗基 · 船塢機械工房",
     "character": "佛朗基",
-    "scene": "超級造船夢工場",
+    "scene": "船塢機械工房",
     "series": "onepiece",
     "en": "MAKE SOMETHING SUPER",
     "color": "#247f96",
@@ -708,8 +715,9 @@ const STUDENT_THEMES = {
     "tagline": "把努力組裝起來，造出自己的夢想。",
     "bodyClass": "theme-franky",
     "xp": 22000,
-    "image": "theme-franky.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/franky-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "asa-silver": {
     "id": "asa-silver",
@@ -755,9 +763,9 @@ const STUDENT_THEMES = {
   },
   "shanks": {
     "id": "shanks",
-    "name": "布魯克 · 靈魂爵士舞台",
+    "name": "布魯克 · 香波地靈魂舞台",
     "character": "布魯克",
-    "scene": "靈魂爵士舞台",
+    "scene": "香波地靈魂舞台",
     "series": "onepiece",
     "en": "LET YOUR SOUL SING",
     "color": "#70508f",
@@ -765,11 +773,10 @@ const STUDENT_THEMES = {
     "tagline": "把每天的努力，奏成屬於自己的旋律。",
     "bodyClass": "theme-shanks",
     "xp": 25000,
-    "image": "onepiece/brook.png",
+    "image": "onepiece-cinema-v2/shanks-hero.webp",
     "artPending": false,
-    "imageMode": "character",
-    "sceneImage": "brook-music-scene.webp",
-    "artSource": "Bandai Namco ONE PIECE ODYSSEY"
+    "artSource": "Bandai Namco ONE PIECE ODYSSEY",
+    "artVersion": "cinema-v2"
   },
   "ruka-graffiti": {
     "id": "ruka-graffiti",
@@ -814,9 +821,9 @@ const STUDENT_THEMES = {
   },
   "jinbe": {
     "id": "jinbe",
-    "name": "吉貝爾 · 深海龍宮航道",
+    "name": "吉貝爾 · 魚人島龍宮城",
     "character": "吉貝爾",
-    "scene": "深海龍宮航道",
+    "scene": "魚人島龍宮城",
     "series": "onepiece",
     "en": "STEADY AS THE OCEAN",
     "color": "#237f89",
@@ -824,8 +831,9 @@ const STUDENT_THEMES = {
     "tagline": "穩穩前進，也能航向很遠的地方。",
     "bodyClass": "theme-jinbe",
     "xp": 28000,
-    "image": "theme-jinbe.webp",
-    "artPending": false
+    "image": "onepiece-cinema-v2/jinbe-hero.webp",
+    "artPending": false,
+    "artVersion": "cinema-v2"
   },
   "chiquita-sunset": {
     "id": "chiquita-sunset",
