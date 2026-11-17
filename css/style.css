@@ -1691,6 +1691,7 @@ body.kid-app {
   display: flex; align-items: center; gap: 10px; position: relative; overflow: hidden;
   cursor: pointer; min-height: 56px;
 }
+.fx-card:not([data-rule]) { cursor: default; }
 /* 2026-07-31 修正：這條原意是把卡片內的靜態內容（emoji/文字/分數）疊在特效之上，
    但選到的是「所有直接子元素」，連後來用 JS 動態 appendChild 進來的特效覆蓋層
    （.subject-effect-rocket 等，本身需要 position:absolute + inset:0 撐滿卡片）也一起中獎，

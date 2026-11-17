@@ -771,7 +771,7 @@
     // 【每次切到「我的成績」都依序輪流播放特效】原本只有第一次看到「新紀錄」時才會自動播，
     // 改成不管是不是新紀錄，只要切到這個分頁就重播一次（跟點擊卡片手動重播是分開的兩件事）。
     setTimeout(() => autoPlayEffects(ctx, latest), 450);
-    document.querySelectorAll(".fx-card").forEach((card) => {
+    document.querySelectorAll(".fx-card[data-rule]").forEach((card) => {
       card.addEventListener("click", () => {
         const rule = card.dataset.rule;
         const cfg = effectSettings[rule];
@@ -826,28 +826,32 @@
 
   function newRecordHtml(ctx, latest, isNew) {
     const subs = latest.subjects || [];
-    const fx = subs
-      .map((s) => ({ s, rule: ruleForSubject(latest, s) }))
-      .filter((x) => x.rule && effectSettings[x.rule] && effectSettings[x.rule].enabled);
+    // 成績完整顯示；特效設定只決定能否播放，不決定科目是否出現。
+    const subjectCards = subs.map((s) => ({ s, rule: ruleForSubject(latest, s) }));
 
     return `
       <div class="new-record">
         ${isNew ? '<span class="new-record-tag">✨ NEW 新紀錄</span>' : ""}
         <h3>${escapeHtml(latest.semester || "")} ${escapeHtml(latest.examType || "")}</h3>
         <div class="new-record-sub">${escapeHtml(latest.date || "")} · 平均 ${latest.result.avgScore} 分</div>
-        ${fx.length ? `<div class="fx-list">${fx.map(({ s, rule }) => {
+        ${subjectCards.length ? `<div class="fx-list">${subjectCards.map(({ s, rule }) => {
           const diff = typeof s.prevScore === "number" ? s.score - s.prevScore : null;
+          const canReplay = !!(rule && effectSettings[rule] && effectSettings[rule].enabled);
+          const comparison = diff === null ? "首次紀錄" : diff > 0 ? `進步 ${diff} 分` : diff < 0 ? `比上次少 ${Math.abs(diff)} 分` : "與上次持平";
+          const description = rule
+            ? `${RULE_LABEL[rule]}${diff !== null && diff > 0 ? ` · 進步 ${diff} 分` : ""}`
+            : comparison;
           // 【右側比較文字】原本右邊又大又粗地重複顯示一次分數（跟左邊 fx-name 的「科目 分數」重複），
           // 改成「上次 → 這次」的比較格式，左邊科目名稱已經有了就不再重複；
           // 沒有上次分數可比（該生第一筆紀錄）時顯示「首次 X分」。
           // 進步＝綠、退步＝紅、持平／首次＝灰，三色區分一眼看出方向。
           const cmpClass = diff === null || diff === 0 ? "same" : diff > 0 ? "up" : "down";
           const cmpText = diff === null ? `首次 ${s.score}分` : `${s.prevScore} → ${s.score}`;
-          return `<div class="fx-card" data-rule="${rule}">
-            <div class="fx-emoji">${RULE_EMOJI[rule]}</div>
+          return `<div class="fx-card"${canReplay ? ` data-rule="${rule}"` : ""}>
+            <div class="fx-emoji">${RULE_EMOJI[rule] || "📘"}</div>
             <div class="fx-text">
               <div class="fx-name">${escapeHtml(s.name)} ${s.score} 分</div>
-              <div class="fx-desc">${RULE_LABEL[rule]}${diff !== null && diff > 0 ? ` · 進步 ${diff} 分` : ""} · 點一下重播特效</div>
+              <div class="fx-desc">${description}${canReplay ? " · 點一下重播特效" : ""}</div>
             </div>
             <div class="fx-score ${cmpClass}">${cmpText}</div>
           </div>`;
@@ -860,7 +864,7 @@
   }
 
   function autoPlayEffects(ctx, latest) {
-    const cards = [...document.querySelectorAll(".fx-card")];
+    const cards = [...document.querySelectorAll(".fx-card[data-rule]")];
     cards.forEach((card, i) => {
       const cfg = effectSettings[card.dataset.rule];
       if (!cfg || !cfg.enabled) return;
