@@ -1,0 +1,198 @@
+[
+  {
+    "file": "pokemon/blastoise.png",
+    "sha256": "ba0a6b633e7a5d5a8c52498b0556518005fd4c63ef4564a8b06b79a73905a635"
+  },
+  {
+    "file": "pokemon/bulbasaur.png",
+    "sha256": "7233d8d8b03b5fa91d835a3069d25769155db93c9ef91b6066e215ed3895e9d8"
+  },
+  {
+    "file": "pokemon/charizard.png",
+    "sha256": "b6d5b8ee9fb05dc6f53294b2cae660dec770b92762cdb19d16bcbd679e1ba43a"
+  },
+  {
+    "file": "pokemon/dragonite.png",
+    "sha256": "4bd7549caa15eac43a8197ba53e843a95f2b56c71b1121829ea76764fbf26f9c"
+  },
+  {
+    "file": "pokemon/eevee.png",
+    "sha256": "33ea993d3478ee920062b0bf27792a045b3a2f75d941bdb8cb3912ef50b1fb44"
+  },
+  {
+    "file": "pokemon/gengar.png",
+    "sha256": "b6549b80537676fcf4a589c8853b38cce42f42b5f707bbe2e63797666175cf06"
+  },
+  {
+    "file": "pokemon/greninja.png",
+    "sha256": "e88f4590ff53a8f8965c9e1be19a0f069c51c4dc7ca64ecb25ac96c64c8504d3"
+  },
+  {
+    "file": "pokemon/jigglypuff.png",
+    "sha256": "2d8fa64258727708417495b5ca4d28a148628d962709f58235b9e0837eb41365"
+  },
+  {
+    "file": "pokemon/lucario.png",
+    "sha256": "8c5064f1d4a37c8b554d7ad83d77970b02d6875750f934c782493c83f8943127"
+  },
+  {
+    "file": "pokemon/mewtwo.png",
+    "sha256": "d99adeb9b4523073ca218a6f472ea5b602b047ccd8af8dea6fa7ae051f80366a"
+  },
+  {
+    "file": "pokemon/pikachu.png",
+    "sha256": "759ceafdb4b8d637dfcfe673cf672bc3c472354a3b2e7e0835d9cdcacd8d195d"
+  },
+  {
+    "file": "pokemon/squirtle.png",
+    "sha256": "37cda7bf8ad6f4252d539aed3bd989a85c8cb0f8e9d815be12bad08c16f31fe9"
+  },
+  {
+    "file": "pokemon/venusaur.png",
+    "sha256": "106d0040aa775f95871706c30ddd4abaef2c962215f5e8bd4141e0caef0ef8e4"
+  },
+  {
+    "file": "poses-v1/gold-task.webp",
+    "sha256": "a5058b4ffd9807ffbe7cae2bbe231d3d2e844695f99481623ec51d7793ecf634"
+  },
+  {
+    "file": "poses-v1/gold-streak.webp",
+    "sha256": "17f627215666e1de051905235af20dbc1c3a21a22aafe680d67588f5218e23c3"
+  },
+  {
+    "file": "poses-v1/gold-growth.webp",
+    "sha256": "955b7b9a0bef935d3e43530b048ee5a1a403613736e7f7fe58ba1c58b5f3987e"
+  },
+  {
+    "file": "pokemon-scenes.webp",
+    "sha256": "bcee97eb4169c71eab2ab99e35ed67b19c666a1acbc102c586c44d4612e267a2"
+  },
+  {
+    "file": "poses-v1/aurora-task.webp",
+    "sha256": "b150a9e52ff79aae3f93f9c97d276a698ae7141e9d4b6ab1504eba365c815def"
+  },
+  {
+    "file": "poses-v1/aurora-streak.webp",
+    "sha256": "f6d0ac87b769ab736bccaebb984a8750d229a2eeb67956c42f66b3875074fca2"
+  },
+  {
+    "file": "poses-v1/aurora-growth.webp",
+    "sha256": "4f7716f97d868257533a5fb42e052fff0947e17b17b8928c7335aedcd15f9e4c"
+  },
+  {
+    "file": "poses-v1/bulbasaur-task.webp",
+    "sha256": "ee564b15e1e9daf675c19b58637e9085ad12f946e3c5456122873eeec5735678"
+  },
+  {
+    "file": "poses-v1/bulbasaur-streak.webp",
+    "sha256": "51bf83733e4f8a898847bbaf4187e1815b6ec60a86fa4f9b1ac35ff2243f72d0"
+  },
+  {
+    "file": "poses-v1/bulbasaur-growth.webp",
+    "sha256": "f4f73c9ff3f61f37079b67b923f35547bb276c91372da95afbea673bbae0feca"
+  },
+  {
+    "file": "pokemon-scenes-extra.webp",
+    "sha256": "08cbf67834d26ac47597052d6f894bfa073a8a697de9292a413379df780f136c"
+  },
+  {
+    "file": "poses-v1/squirtle-task.webp",
+    "sha256": "0ff9b76356bf25bfd46272e292eb7bda9118ed1cf8be7f729502c735a8d8a7e6"
+  },
+  {
+    "file": "poses-v1/squirtle-streak.webp",
+    "sha256": "2690dbd1bbc7e413065f2d1960f9b97012ba2d870b4ec69a7b98e691c9987bd6"
+  },
+  {
+    "file": "poses-v1/squirtle-growth.webp",
+    "sha256": "d909e323e514d9cd0aacd0422a520308b94e975c20f9a664c292a2bafd5f22c2"
+  },
+  {
+    "file": "poses-v1/dragonite-task.webp",
+    "sha256": "c02c21ba018de6fec6a2a86eab929a2c2bab62c47c2b2cdb1a6b2eec0ca978d5"
+  },
+  {
+    "file": "poses-v1/dragonite-streak.webp",
+    "sha256": "d47079a51829b53fe369112a47ebf922b30dea8da0ff7b0567116fc892930717"
+  },
+  {
+    "file": "poses-v1/dragonite-growth.webp",
+    "sha256": "a8d3478a594edc52b3291d07b4cd661314c4806313e05345ab72412a35e45fd0"
+  },
+  {
+    "file": "poses-v1/gengar-task.webp",
+    "sha256": "d2d673eb115329197405216f7e51bf8734fa177e5d444f8221db5e545047173e"
+  },
+  {
+    "file": "poses-v1/gengar-streak.webp",
+    "sha256": "affca4d64e85a5407099813b96a8ce5ce318cf28410d59e72860232ca1ae60c6"
+  },
+  {
+    "file": "poses-v1/gengar-growth.webp",
+    "sha256": "e21843488fd5ad24434c00ceb3fba72b57dd7894b50464a64fe7b6856fd4dce5"
+  },
+  {
+    "file": "poses-v1/lucario-task.webp",
+    "sha256": "0c7e55549eb328906874ae7eb6fd5eaf0d83579ad83b14b6fd92ee94b4fac229"
+  },
+  {
+    "file": "poses-v1/lucario-streak.webp",
+    "sha256": "a0741742a59b66f21413c5cc0fdf5534289da222f068d5848df3a73d60513585"
+  },
+  {
+    "file": "poses-v1/lucario-growth.webp",
+    "sha256": "e96cbef2f5a10986f741152d654197c341226075b62ce9c813d0f7b2de85bebc"
+  },
+  {
+    "file": "poses-v1/jigglypuff-task.webp",
+    "sha256": "46ee040a57c8905e3b4cd14003b2bd5857e86254cfa2f1cd5f55bad95ee05882"
+  },
+  {
+    "file": "poses-v1/jigglypuff-streak.webp",
+    "sha256": "de69391ffe1a200a3a0bd8bea2fb981aea0458efca3c51a64019f2ee9ff7b12b"
+  },
+  {
+    "file": "poses-v1/jigglypuff-growth.webp",
+    "sha256": "5d3098010abaa8beddbb34511fe319d0ab6d7bc61e0d6f38d694eb4181fd5061"
+  },
+  {
+    "file": "pokemon-greninja-scene.webp",
+    "sha256": "8f37339c89dff61e3fc6ac3bb7cb87ddf5c4ab5a95d16365fe8a035a5dabe70b"
+  },
+  {
+    "file": "poses-v1/galaxy-task.webp",
+    "sha256": "5ab3b27db7e5d9872083ad3a120d78e5dee1eeb0e148affb779ae13e51a13159"
+  },
+  {
+    "file": "poses-v1/galaxy-streak.webp",
+    "sha256": "3054cb3c3655b47d53c4900e6d987de613ac0cbc7e6b57004897b9aa8525977c"
+  },
+  {
+    "file": "poses-v1/galaxy-growth.webp",
+    "sha256": "3613fb427a2d067002eca83f008e8fba49852efb532368aefaf8591857098689"
+  },
+  {
+    "file": "poses-v1/lava-task.webp",
+    "sha256": "9c2d8bdf0da424cec473809ad6618bef73ff97645cef5040da901571a8418e82"
+  },
+  {
+    "file": "poses-v1/lava-streak.webp",
+    "sha256": "c296d36b8d28d36949cb0f18114da59eee79e605ffa95c8851f86c5f2c240321"
+  },
+  {
+    "file": "poses-v1/lava-growth.webp",
+    "sha256": "92d8eaf19c91b63c57cd405d9cafa812a088d9a4c4a42fb4671eb7fb66f71fb5"
+  },
+  {
+    "file": "pokemon-scenes.png",
+    "sha256": "c4887c7ab0757c916047319844939dcaec4a6cf8b250f3c539349870f7e8b762"
+  },
+  {
+    "file": "pokemon-scenes-extra.png",
+    "sha256": "ab9e04cb8a643741a0ab92abe0bff69023ce2e2beb8232904091db43366b3218"
+  },
+  {
+    "file": "pokemon-greninja-scene.png",
+    "sha256": "35b9f8810aecdbb846ad56165661a44bda2e4e806584e90cf4c48157b5756db7"
+  }
+]

@@ -349,9 +349,9 @@ const STUDENT_THEMES = {
   },
   "gold": {
     "id": "gold",
-    "name": "皮卡丘 · 電光向日原野",
+    "name": "皮卡丘 · 雷光充電站",
     "character": "皮卡丘",
-    "scene": "電光向日原野",
+    "scene": "雷光充電站",
     "series": "pokemon",
     "en": "A SPARK OF POSSIBILITY",
     "color": "#997321",
@@ -365,7 +365,20 @@ const STUDENT_THEMES = {
     "sceneAtlas": "pokemon-scenes.webp",
     "sceneColumns": 2,
     "sceneRows": 3,
-    "sceneIndex": 0
+    "sceneIndex": 0,
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/gold-background.webp",
+    "luxeAccent": "#ffe27a",
+    "luxePlacement": {
+      "width": 44.885,
+      "left": 51.558,
+      "top": 10.123
+    },
+    "poseImages": {
+      "task": "poses-v1/gold-task.webp",
+      "streak": "poses-v1/gold-streak.webp",
+      "growth": "pokemon-luxe-v1/gold-partner.png"
+    }
   },
   "luffy": {
     "id": "luffy",
@@ -405,9 +418,9 @@ const STUDENT_THEMES = {
   },
   "aurora": {
     "id": "aurora",
-    "name": "伊布 · 森林奇遇旅程",
+    "name": "伊布 · 星露秘境",
     "character": "伊布",
-    "scene": "森林奇遇旅程",
+    "scene": "星露秘境",
     "series": "pokemon",
     "en": "SO MANY WAYS TO GROW",
     "color": "#827049",
@@ -421,7 +434,20 @@ const STUDENT_THEMES = {
     "sceneAtlas": "pokemon-scenes.webp",
     "sceneColumns": 2,
     "sceneRows": 3,
-    "sceneIndex": 1
+    "sceneIndex": 1,
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/aurora-background.webp",
+    "luxeAccent": "#ffc68d",
+    "luxePlacement": {
+      "width": 42.177,
+      "left": 52.911,
+      "top": 12.529
+    },
+    "poseImages": {
+      "task": "poses-v1/aurora-task.webp",
+      "streak": "poses-v1/aurora-streak.webp",
+      "growth": "pokemon-luxe-v1/aurora-partner.png"
+    }
   },
   "nami": {
     "id": "nami",
@@ -461,9 +487,9 @@ const STUDENT_THEMES = {
   },
   "bulbasaur": {
     "id": "bulbasaur",
-    "name": "妙蛙花 · 盛放森林秘境",
+    "name": "妙蛙花 · 花冠日耀庭",
     "character": "妙蛙花",
-    "scene": "盛放森林秘境",
+    "scene": "花冠日耀庭",
     "series": "pokemon",
     "en": "GROW INTO YOUR FULL POTENTIAL",
     "color": "#3d885e",
@@ -477,7 +503,20 @@ const STUDENT_THEMES = {
     "sceneAtlas": "pokemon-scenes-extra.webp",
     "sceneColumns": 2,
     "sceneRows": 2,
-    "sceneIndex": 1
+    "sceneIndex": 1,
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/bulbasaur-background.webp",
+    "luxeAccent": "#99f7b4",
+    "luxePlacement": {
+      "width": 50.696,
+      "left": 48.652,
+      "top": 7.196
+    },
+    "poseImages": {
+      "task": "poses-v1/bulbasaur-task.webp",
+      "streak": "poses-v1/bulbasaur-streak.webp",
+      "growth": "poses-v1/bulbasaur-growth.webp"
+    }
   },
   "usopp": {
     "id": "usopp",
@@ -517,9 +556,9 @@ const STUDENT_THEMES = {
   },
   "squirtle": {
     "id": "squirtle",
-    "name": "水箭龜 · 深藍守護海灣",
+    "name": "水箭龜 · 蒼潮守護灣",
     "character": "水箭龜",
-    "scene": "深藍守護海灣",
+    "scene": "蒼潮守護灣",
     "series": "pokemon",
     "en": "STAND STRONG LIKE THE TIDE",
     "color": "#1682a6",
@@ -533,7 +572,20 @@ const STUDENT_THEMES = {
     "sceneAtlas": "pokemon-scenes-extra.webp",
     "sceneColumns": 2,
     "sceneRows": 2,
-    "sceneIndex": 0
+    "sceneIndex": 0,
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/squirtle-background.webp",
+    "luxeAccent": "#7be8ff",
+    "luxePlacement": {
+      "width": 42.177,
+      "left": 52.956,
+      "top": 12.529
+    },
+    "poseImages": {
+      "task": "poses-v1/squirtle-task.webp",
+      "streak": "poses-v1/squirtle-streak.webp",
+      "growth": "poses-v1/squirtle-growth.webp"
+    }
   },
   "sanji": {
     "id": "sanji",
@@ -573,9 +625,9 @@ const STUDENT_THEMES = {
   },
   "dragonite": {
     "id": "dragonite",
-    "name": "快龍 · 雲端金色遠航",
+    "name": "快龍 · 金翼雲海",
     "character": "快龍",
-    "scene": "雲端金色遠航",
+    "scene": "金翼雲海",
     "series": "pokemon",
     "en": "KIND HEART BRAVE WINGS",
     "color": "#bd873c",
@@ -589,7 +641,20 @@ const STUDENT_THEMES = {
     "sceneAtlas": "pokemon-scenes-extra.webp",
     "sceneColumns": 2,
     "sceneRows": 2,
-    "sceneIndex": 3
+    "sceneIndex": 3,
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/dragonite-background.webp",
+    "luxeAccent": "#ffd69c",
+    "luxePlacement": {
+      "width": 42.177,
+      "left": 52.911,
+      "top": 12.529
+    },
+    "poseImages": {
+      "task": "poses-v1/dragonite-task.webp",
+      "streak": "poses-v1/dragonite-streak.webp",
+      "growth": "poses-v1/dragonite-growth.webp"
+    }
   },
   "chopper": {
     "id": "chopper",
@@ -629,9 +694,9 @@ const STUDENT_THEMES = {
   },
   "gengar": {
     "id": "gengar",
-    "name": "耿鬼 · 紫夜星光嘉年華",
+    "name": "耿鬼 · 幻夜幽光庭",
     "character": "耿鬼",
-    "scene": "紫夜星光嘉年華",
+    "scene": "幻夜幽光庭",
     "series": "pokemon",
     "en": "A PLAYFUL TWIST OF MAGIC",
     "color": "#8251af",
@@ -645,7 +710,20 @@ const STUDENT_THEMES = {
     "sceneAtlas": "pokemon-scenes-extra.webp",
     "sceneColumns": 2,
     "sceneRows": 2,
-    "sceneIndex": 2
+    "sceneIndex": 2,
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/gengar-background.webp",
+    "luxeAccent": "#d7a0ff",
+    "luxePlacement": {
+      "width": 42.177,
+      "left": 52.956,
+      "top": 12.529
+    },
+    "poseImages": {
+      "task": "poses-v1/gengar-task.webp",
+      "streak": "poses-v1/gengar-streak.webp",
+      "growth": "poses-v1/gengar-growth.webp"
+    }
   },
   "robin": {
     "id": "robin",
@@ -685,9 +763,9 @@ const STUDENT_THEMES = {
   },
   "lucario": {
     "id": "lucario",
-    "name": "路卡利歐 · 波導修練山谷",
+    "name": "路卡利歐 · 波導修練峰",
     "character": "路卡利歐",
-    "scene": "波導修練山谷",
+    "scene": "波導修練峰",
     "series": "pokemon",
     "en": "FOCUS YOUR INNER STRENGTH",
     "color": "#3c7791",
@@ -701,7 +779,20 @@ const STUDENT_THEMES = {
     "sceneAtlas": "pokemon-scenes.webp",
     "sceneColumns": 2,
     "sceneRows": 3,
-    "sceneIndex": 4
+    "sceneIndex": 4,
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/lucario-background.webp",
+    "luxeAccent": "#87e7ff",
+    "luxePlacement": {
+      "width": 42.177,
+      "left": 52.956,
+      "top": 12.529
+    },
+    "poseImages": {
+      "task": "poses-v1/lucario-task.webp",
+      "streak": "poses-v1/lucario-streak.webp",
+      "growth": "poses-v1/lucario-growth.webp"
+    }
   },
   "franky": {
     "id": "franky",
@@ -741,9 +832,9 @@ const STUDENT_THEMES = {
   },
   "jigglypuff": {
     "id": "jigglypuff",
-    "name": "甲賀忍蛙 ex · 月影水之秘境",
+    "name": "甲賀忍蛙 ex · 月影水刃",
     "character": "甲賀忍蛙 ex",
-    "scene": "月影水之秘境",
+    "scene": "月影水刃",
     "series": "pokemon",
     "en": "MASTER THE MOONLIT CURRENT",
     "color": "#285990",
@@ -758,8 +849,20 @@ const STUDENT_THEMES = {
     "sceneColumns": 2,
     "sceneRows": 3,
     "sceneIndex": 2,
-    "sceneImage": "pokemon-greninja-scene.webp",
-    "edition": "ex"
+    "sceneImage": "pokemon-luxe-v1/jigglypuff-background.webp",
+    "edition": "ex",
+    "artVersion": "pokemon-luxe-v1",
+    "luxeAccent": "#83e7ff",
+    "luxePlacement": {
+      "width": 50.696,
+      "left": 48.652,
+      "top": 14.782
+    },
+    "poseImages": {
+      "task": "poses-v1/jigglypuff-task.webp",
+      "streak": "poses-v1/jigglypuff-streak.webp",
+      "growth": "poses-v1/jigglypuff-growth.webp"
+    }
   },
   "shanks": {
     "id": "shanks",
@@ -800,9 +903,9 @@ const STUDENT_THEMES = {
   },
   "galaxy": {
     "id": "galaxy",
-    "name": "超夢 ex · 星河覺醒之境",
+    "name": "超夢 ex · 超能星域",
     "character": "超夢 ex",
-    "scene": "星河覺醒之境",
+    "scene": "超能星域",
     "series": "pokemon",
     "en": "DISCOVER YOUR TRUE POTENTIAL",
     "color": "#7360b4",
@@ -817,7 +920,20 @@ const STUDENT_THEMES = {
     "sceneColumns": 2,
     "sceneRows": 3,
     "sceneIndex": 5,
-    "edition": "ex"
+    "edition": "ex",
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/galaxy-background.webp",
+    "luxeAccent": "#dbb6ff",
+    "luxePlacement": {
+      "width": 42.177,
+      "left": 52.911,
+      "top": 12.529
+    },
+    "poseImages": {
+      "task": "poses-v1/galaxy-task.webp",
+      "streak": "poses-v1/galaxy-streak.webp",
+      "growth": "poses-v1/galaxy-growth.webp"
+    }
   },
   "jinbe": {
     "id": "jinbe",
@@ -857,9 +973,9 @@ const STUDENT_THEMES = {
   },
   "lava": {
     "id": "lava",
-    "name": "噴火龍 ex · 烈焰巔峰殿堂",
+    "name": "噴火龍 ex · 熔火王座",
     "character": "噴火龍 ex",
-    "scene": "烈焰巔峰殿堂",
+    "scene": "熔火王座",
     "series": "pokemon",
     "en": "RISE TO THE BLAZING SUMMIT",
     "color": "#b8653f",
@@ -874,7 +990,20 @@ const STUDENT_THEMES = {
     "sceneColumns": 2,
     "sceneRows": 3,
     "sceneIndex": 3,
-    "edition": "ex"
+    "edition": "ex",
+    "artVersion": "pokemon-luxe-v1",
+    "sceneImage": "pokemon-luxe-v1/lava-background.webp",
+    "luxeAccent": "#ffd185",
+    "luxePlacement": {
+      "width": 50.696,
+      "left": 48.652,
+      "top": 7.007
+    },
+    "poseImages": {
+      "task": "poses-v1/lava-task.webp",
+      "streak": "poses-v1/lava-streak.webp",
+      "growth": "poses-v1/lava-growth.webp"
+    }
   }
 };
 function getStudentTheme(themeId) {
